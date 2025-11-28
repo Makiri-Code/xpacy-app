@@ -45,10 +45,7 @@ export default function LoginForm() {
                         </FormInput>
                         <FormInput label={"Password"} id={"pasword"} >
                             <input {...register("password", {
-                                required: "Password is required", minLength: {
-                                    value: 8,
-                                    message: "Password needs to be 8 characters"
-                                }
+                                required: "Password is required"
                             })} type={"password"} name={"password"} id={"password"} placeholder={"Enter your password"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.email ? "border-error" : "border-primary-200"}`} />
                             {errors.password && <span className="-mt-2 text-xs text-error">{errors.password.message}</span>}
                         </FormInput>
@@ -59,9 +56,9 @@ export default function LoginForm() {
                             </div>
                             <Link href="#" className="font-mono text-base text-primary">Forgot Password?</Link>
                         </div>
-                        <button type="submit" disabled={pending} className="bg-primary text-white  cursor-pointer  px-5 py-3 font-semibold flex space-x-2.5 font-mono items-center justify-center rounded-md hover:shadow-md disabled:bg-gray-900 disabled:cursor-not-allowed"> <span>Log In</span> <span>{pending && <SpinnerMini />}</span> </button>
+                        <button type="submit" disabled={pending} className="bg-primary text-white  cursor-pointer  px-5 py-3 font-semibold flex space-x-2.5 font-mono items-center justify-center rounded-md hover:shadow-md disabled:bg-gray-300 disabled:cursor-not-allowed"> <span>Log In</span> <span>{pending && <SpinnerMini />}</span> </button>
                     </form>
-                    <p className="text-base text-black font-mono -mt-6">Don&apos;t have an account? <Link href={"#"} className="text-primary text-base font-bold">Sign Up</Link></p>
+                    <p className="text-base text-black font-mono -mt-6">Don&apos;t have an account? <Link href={"/auth/sign-up"} className="text-primary text-base font-bold">Sign Up</Link></p>
                 </div>
             </div>
         </div>

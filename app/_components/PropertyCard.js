@@ -1,15 +1,13 @@
-"use client"
+
+import bathIcon from "@/public/bath.svg";
+import bedIcon from "@/public/bed.svg";
+import { MapPinIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
-import bedIcon from "@/public/bed.svg";
-import bathIcon from "@/public/bath.svg";
-import { HeartIcon } from "@heroicons/react/24/outline";
-import { MapPinIcon } from "@heroicons/react/24/outline";
 import { formatCurrency } from './../_lib/utils';
-import { usePathname } from "next/navigation";
+import PropertySavedIcon from "./ProperySavedIcon";
 
-export default function PropertyCard({ property, children }) {
-    const pathname = usePathname();
+export default function PropertyCard({ property }) {
     return (
         <div className=" h-[522px] flex flex-col rounded-bl-md rounded-br-md shadow-lg">
             <Link href={`${property.property_status.toLowerCase()}/${property?.property_slug}`} className="relative p-4 overflow-hidden h-[280px] rounded-tl-md rounded-tr-md">
@@ -17,7 +15,7 @@ export default function PropertyCard({ property, children }) {
                     <span className="rounded-full z-10 px-4 py-2 bg-primary text-white font-mono text-sm  text-center">
                         {property.property_status}
                     </span>
-                   {children}
+                   <PropertySavedIcon isPropertyCard={true} propertyId={property.id} />
                 </div>
                 <Image
                     fill

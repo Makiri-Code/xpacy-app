@@ -15,7 +15,7 @@ import PropertySavedIcon from "@/app/_components/ProperySavedIcon";
             </div>
             <div className="grid grid-cols-2  gap-x-6 gap-y-12">
                 {
-                    properties?.map((property, index) => <PropertyCard property={property} key={index}><PropertySavedIcon isPropertyCard={true} propertyId={property.id} /></PropertyCard>)
+                    properties?.map((property, index) => <PropertyCard property={property} key={index}/>)
                 }
             </div>
         </>

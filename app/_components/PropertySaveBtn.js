@@ -17,7 +17,7 @@ export default function PropertySaveBtn({ isSaved, propertyId, isPropertyCard })
                 success: (data) => ` ${data.message}`,
                 error: (err) => {
                         router.push(`/auth/log-in?redirectUrl=${encodeURIComponent(pathname)}`);
-                    return `${err.message}`
+                    return `Please log-in to continue`
                 }
             });
 

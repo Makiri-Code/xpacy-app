@@ -7,6 +7,7 @@ import { TbLogout2 } from "react-icons/tb";
 import { getUserProfile } from "../_lib/data-services";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { cookies } from "next/headers";
+import { handleLogOut } from "../_lib/action";
 export default async function ProfileDisplay(){
     const cookieStore = await cookies();
     const token = cookieStore.get("token")
@@ -40,10 +41,12 @@ export default async function ProfileDisplay(){
                 </Link>
                 <div className="border border-primary-200"></div>
                 {/* Log out */}
-                <button className="p-1 cursor-pointer  flex items-center gap-4 text-gray-500 font-mono hover:text-gray-800 ">
+                <form action={handleLogOut}>
+                    <button className="p-1 cursor-pointer  flex items-center gap-4 text-gray-500 font-mono hover:text-gray-800 ">
                     <span className="text-lg"><TbLogout2/></span>
                     <span>Log out</span>
-                </button>
+                    </button>
+                </form>
             </div>
         </div>
     )

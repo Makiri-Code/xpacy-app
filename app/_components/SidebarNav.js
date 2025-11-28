@@ -33,22 +33,22 @@ const navList = [
     },
     {
         text: "Booked Services",
-        link: "/dashboard/booked-services",
+        link: "/dashboard/user/booked-services",
         icon: <IoCalendarOutline />
     },
     {
         text: "Payments",
-        link: "/dashboard/payments",
+        link: "/dashboard/user/payments",
         icon: <IoCardOutline />
     },
     {
         text: "Profile Settings",
-        link: "/dashboard/settings",
+        link: "/dashboard/user/settings",
         icon: <RiUserSettingsLine />
     },
     {
         text: "Help/Support",
-        link: "/dashboard/help",
+        link: "/dashboard/user/help",
         icon: <LuMessageCircleQuestion />
     }
 ]

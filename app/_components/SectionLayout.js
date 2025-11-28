@@ -1,11 +1,11 @@
 
 
-export default function SectionLayout({children, heading, subheading, bgColor}){
+export default function SectionLayout({children, heading, subheading, bgColor, featured = false}){
 
     return (
       <section
-        className={`py-[120px] px-[7%] flex flex-col space-y-16 ${
-          bgColor && "bg-linear-180 from-[#E3ECF2] to-[#FCFCFC]"
+        className={`py-[120px] px-[7%] flex flex-col space-y-16 ${featured && "relative"}  ${
+          bgColor && "bg-linear-180 from-primary-100 to-[#FCFCFC] overflow-hidden"
         }`}
       >
         <div className="flex flex-col text-center space-y-4">

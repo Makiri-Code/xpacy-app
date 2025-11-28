@@ -8,7 +8,6 @@ export async function middleware(req){
 
     if(url.pathname === "/auth/verify-email"){
         const userToken = url.searchParams.get("token")
-        console.log(userToken)
         if(userToken) return Response.redirect(new URL("/auth/verify-success", req.url))
     }
     if(!token) {

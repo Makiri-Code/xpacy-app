@@ -12,6 +12,8 @@ import { formatCurrency } from './../_lib/utils';
 import { useTransition } from 'react';
 import { handleDelteSavedProp } from "../_lib/action";
 import { usePathname, useRouter } from "next/navigation";
+import SpinnerMini from "./SpinnerMini";
+import { GoHeartFill } from "react-icons/go";
 
 export default function SavedPropertyCard({ property, id }) {
     const pathname = usePathname();
@@ -21,7 +23,7 @@ export default function SavedPropertyCard({ property, id }) {
     const handleDelete  = () => {
         startTransition(() => {
             toast.promise(() => handleDelteSavedProp(id), {
-                loading: "Deleting",
+                loading: "Deleting...",
                 success: (data) => `${data.message}`,
                 error: (error) => {
                     router.push(`/auth/log-in?redirectUrl=${encodeURIComponent(pathname)}`);
@@ -38,7 +40,7 @@ export default function SavedPropertyCard({ property, id }) {
                         {property.property_status}
                     </span>
                     <button className="rounded-full bg-gray-300 p-3 z-10">
-                        <HeartIcon className="size-6" />
+                        <span className="text-primary text-2xl"><GoHeartFill /></span>
                     </button>
                 </div>
                 <Image
@@ -80,9 +82,11 @@ export default function SavedPropertyCard({ property, id }) {
                 </div>
                 <div className="border border-neutrals" />
                 <div className="flex items-center justify-between font-mono">
-                    <Link href={`/${property?.property_status}/${property?.property_slug}`} className="p-2 font-bold text-white bg-primary rounded-lg cursor-pointer">View Details</Link>
-                    <button onClick={handleDelete} className="p-2 font-bold text-primary bg-white border border-primary rounded-lg cursor-pointer flex items-center gap-1 ">
-                        <span className="text-2xl"><IoMdClose/></span>
+                    <Link href={`/${property?.property_status.toLowerCase()}/${property?.property_slug}`} className="p-2 font-bold text-white bg-primary rounded-lg cursor-pointer">View Details</Link>
+                    <button onClick={handleDelete} disabled={isPending} className="p-2 font-bold text-primary bg-white border border-primary rounded-lg cursor-pointer flex items-center gap-1 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                        <span className="text-2xl">
+                           {isPending ? <SpinnerMini/> :  <IoMdClose/>}
+                        </span>
                         <span>Remove</span>
                     </button>
                 </div>

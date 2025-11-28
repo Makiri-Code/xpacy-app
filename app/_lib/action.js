@@ -110,7 +110,6 @@ export async function handleBookProperty() {
 export async function handleDelteSavedProp(savedPropertyId){
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
-  console.log(token)
   if(!token?.value) throw new Error("Please Log in to continue");
   const response = await fetch(`${URL}/user-property/delete-saved-property/${savedPropertyId}`, {
     method: "DELETE",
@@ -121,6 +120,12 @@ export async function handleDelteSavedProp(savedPropertyId){
   });
   const data = await response.json();
   revalidateTag('saved-properties');
-  console.log(data)
   return data
+}
+
+export async function handleLogOut(){
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token");
+    cookieStore.delete("token");
+    redirect("/auth/log-in")
 }
