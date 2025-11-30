@@ -41,7 +41,6 @@ export const handleSearch = async (formData) => {
 }
 
 export async function handleLogin(userData, redirectUrl) {
-  console.log(redirectUrl, userData)
   const response = await fetch(`${URL}/user/login`, {
     method: "POST",
     headers: {
@@ -51,7 +50,6 @@ export async function handleLogin(userData, redirectUrl) {
 
   });
   const data = await response.json();
-  console.log(data)
   if (!response.ok) return { success: false, message: data.message }
 
   const cookieStore = await cookies();
