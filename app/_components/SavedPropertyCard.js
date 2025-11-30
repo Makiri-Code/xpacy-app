@@ -18,7 +18,6 @@ import { GoHeartFill } from "react-icons/go";
 export default function SavedPropertyCard({ property, id }) {
     const pathname = usePathname();
     const router = useRouter();
-    console.log(id)
     const [ isPending, startTransition] = useTransition();
     const handleDelete  = () => {
         startTransition(() => {

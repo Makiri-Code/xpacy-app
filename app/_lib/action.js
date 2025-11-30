@@ -1,9 +1,10 @@
 "use server";
 import { NextResponse } from "next/server";
-import { URL } from "./utils";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers"
 import { revalidateTag } from "next/cache";
+
+const URL = process.env.BACKEND_URL;
 
 export const submitSubscribe = async (formData) => {
   const email = formData.get("email");

@@ -4,7 +4,6 @@ import Image from "next/image"
 import {useState} from "react"
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 export default function CarouselPhotos({propertyImages}) {
-    console.log(propertyImages)
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
     const handleNext = () => {
         setCurrentSlideIndex((prev) => (prev + 1 + propertyImages?.length) % propertyImages?.length);

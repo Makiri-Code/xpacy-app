@@ -22,7 +22,6 @@ const selectOptions = [
 ]
 function BookDayPicker() {
     const [selected, setSelected] = useState(null)
-    console.log(selected)
     return (
         <div className="flex flex-col p-6 w-[500px] max-h-[500px] gap-6 font-mono ">
             <h3 className="text-primary text-xl font-sans text-center ">Select booking dates</h3>

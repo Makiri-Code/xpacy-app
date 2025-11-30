@@ -56,7 +56,6 @@ const navList = [
 
 export default function SidebarNav() {
     const pathname = usePathname();
-    console.log(pathname)
     return (
         <ul className="flex flex-col gap-4">
             {navList.map((list, index) => (
