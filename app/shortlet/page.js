@@ -3,11 +3,9 @@ import Footer from "../_components/Footer";
 import PropertyHeader from "../_components/PropertyHeader";
 import PropertyLayout from "../_components/PropertyLayout";
 
-export async function generateMetadata(){
-    return {
-      title: "Shortlets",
-      description: "Find and book available shortlets with ease"
-    }
+export const metadata = {
+      title: "Shortlets ",
+      description: "Find and book available shortlets with ease",
 }
 
 export default async function Page({searchParams}) {

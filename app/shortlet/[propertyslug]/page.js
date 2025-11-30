@@ -7,13 +7,13 @@ import PropertySavedIcon from "@/app/_components/ProperySavedIcon";
 import { getProperty } from "@/app/_lib/data-services"
 
 export async function generateMetadata({params}){
-    const {propertySlug} = await params;
-    const property = await getProperty(propertySlug);
+    const pageParams = await params
+    const property = await getProperty(pageParams.propertyslug);
     return {
-        title: property.property_name,
-        description: property.description,
+        title: property?.property_name,
+        description: property?.description,
         openGraph: {
-            title: property.property_name,
+            title: property?.property_name,
             description: property.description,
             images: [
                 {url: `https://app.xpacy.com/src/upload/properties/${property?.images.at(0)}`,

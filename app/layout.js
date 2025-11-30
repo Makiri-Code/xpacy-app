@@ -3,7 +3,7 @@ import {Toaster} from "react-hot-toast";
 import { UserProvider } from "./_context/UserContext";
 export const metadata = {
   title: {
-    template: "%/s | Xpacy",
+    template: "%s | Xpacy",
     default: "Xpacy | Find Properties with ease",
   },
   description:
