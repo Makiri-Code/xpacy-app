@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers"
 import { revalidateTag } from "next/cache";
 
-const URL = process.env.BACKEND_URL;
+const URL = "https://app.xpacy.com";
 
 export const submitSubscribe = async (formData) => {
   const email = formData.get("email");
