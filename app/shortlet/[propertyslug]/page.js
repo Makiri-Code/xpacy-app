@@ -6,7 +6,7 @@ import PropertyPhotoSection from "@/app/_components/PropertyPhotosSection";
 import PropertySavedIcon from "@/app/_components/ProperySavedIcon";
 import { getProperty } from "@/app/_lib/data-services"
 
-export async function generateMetadata({params}){
+export async function generateMetadata({ params }) {
     const pageParams = await params
     const property = await getProperty(pageParams.propertyslug);
     return {
@@ -15,12 +15,11 @@ export async function generateMetadata({params}){
         openGraph: {
             title: property?.property_name,
             description: property.description,
-            images: [
-                {url: `https://app.xpacy.com/src/upload/properties/${property?.images.at(0)}`,
-                    width: 1200,
-                    height: 630
-                }
-            ]
+            images: property.images.map((img) => ({
+                url: `https://app.xpacy.com/src/upload/properties/${img}`,
+                width: 1200,
+                height: 630
+            }))
         }
     }
 }
