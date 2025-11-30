@@ -13,8 +13,6 @@ import ShareBtn from "./ShareBtn";
 
 
 export default function PropertyDetailsHeader({propertyName, propertyAddress, propertyStatus,  viewPhotos = null, children}){
-    // const pathname = usePathname();
-    // const headerText = pathname.split("/").at(1)
     return ( 
         <header className="flex flex-col gap-12 py-6">
             <div className="flex items-center space-x-2 font-mono text-black text-base">

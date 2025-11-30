@@ -7,7 +7,7 @@ import PropertySavedIcon from "@/app/_components/ProperySavedIcon";
 import { getProperty } from "@/app/_lib/data-services"
 
 export async function generateMetadata({params}){
-    const {propertySlug} =  params;
+    const {propertySlug} = await params;
     const property = await getProperty(propertySlug);
     return {
         title: property.property_name,
