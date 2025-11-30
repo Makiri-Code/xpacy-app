@@ -51,6 +51,7 @@ export async function handleLogin(userData, redirectUrl) {
 
   });
   const data = await response.json();
+  console.log(data)
   if (!response.ok) return { success: false, message: data.message }
 
   const cookieStore = await cookies();
@@ -107,10 +108,10 @@ export async function handleBookProperty() {
 
 
 
-export async function handleDelteSavedProp(savedPropertyId){
+export async function handleDelteSavedProp(savedPropertyId) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
-  if(!token?.value) throw new Error("Please Log in to continue");
+  if (!token?.value) throw new Error("Please Log in to continue");
   const response = await fetch(`${URL}/user-property/delete-saved-property/${savedPropertyId}`, {
     method: "DELETE",
     headers: {
@@ -123,9 +124,9 @@ export async function handleDelteSavedProp(savedPropertyId){
   return data
 }
 
-export async function handleLogOut(){
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token");
-    cookieStore.delete("token");
-    redirect("/auth/log-in")
+export async function handleLogOut() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  cookieStore.delete("token");
+  redirect("/auth/log-in")
 }
