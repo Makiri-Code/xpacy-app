@@ -13,7 +13,7 @@ export default function MobileNav() {
                 <MobileNavBtns/>
             </NavMenu.Open>
             <NavMenu.Window>
-                <ul className="border border-primary-200 rounded-lg font-mono">
+                <ul className="border border-primary-200 rounded-lg font-mono md:hidden">
                     <li className="py-2 border-b border-primary-100">
                         <Link href={"/"}>Home</Link>
                     </li>
@@ -52,9 +52,9 @@ const MobileNavBtns = ({isOpen, open}) => {
 
         <>
             {isOpen ? (
-                 <button onClick={open} className="text-2xl"><IoCloseSharp/></button>
+                 <button onClick={open} className="text-2xl md:hidden"><IoCloseSharp/></button>
             ): (
-                <button onClick={open} className="text-2xl"><FaBarsStaggered/></button>
+                <button onClick={open} className="text-2xl md:hidden"><FaBarsStaggered/></button>
             ) 
             }
         </>
