@@ -18,7 +18,7 @@ export default async function Page({searchParams}) {
   return (
     <>
       <AppHeader />
-      <main className="flex flex-col gap-6 mt-6 px-[7%] mb-[72px]">
+      <main className="flex flex-col gap-8 md:gap-6 mt-6 px-6 md:px-[7%] mb-[72px]">
         <PropertyHeader />
         <PropertyLayout search={search} />
       </main>

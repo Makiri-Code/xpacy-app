@@ -6,9 +6,9 @@ import { FaTiktok } from "react-icons/fa6";
 import SubscribeForm from "./SubscribeForm";
 export default function Footer() {
   return (
-    <footer className="px-[7%] pt-[120px] pb-6 flex flex-col gap-8 bg-primary-900">
-      <div className="flex justify-between">
-        <div className="flex flex-col gap-8 w-[338px]">
+    <footer className="px-6 py-12 md:px-[7%] md:pt-[120px] md:pb-6 md:py-0 flex flex-col gap-8 bg-primary-900">
+      <div className="md:flex md:justify-between md:gap-y-0 grid grid-cols-2 gap-y-16 ">
+        <div className="flex flex-col gap-8 w-[338px] col-span-full ">
           <div className="space-y-2 w-[294px]">
             <img
               src={"/xpacy-footer-logo.png"}
@@ -65,7 +65,7 @@ export default function Footer() {
             <Link href={"#"}>Privacy Policy</Link>
           </div>
         </div>
-        <div className="flex flex-col w-[302px] gap-4">
+        <div className="flex flex-col w-[302px] gap-4 col-span-full">
           <h5 className="font-normal text-lg text-white uppercase">Newsletter</h5>
           
            <SubscribeForm/>

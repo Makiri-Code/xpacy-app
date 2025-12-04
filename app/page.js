@@ -26,12 +26,11 @@ import FaqSection from "./_components/FaqSection";
 import BlogCard from "./_components/BlogCard";
 import FeaturedSection from "./_components/FeaturedSection";
 export default async function Home() {
-  const faqs = await getFaqs()
   return (
     <>
       <AppHeader />
       <HomeCarousel />
-      <section className="px-[7%] -mt-40 z-40 flex items-center justify-center">
+      <section className="px-6 py-6 md:py-0 md:px-[7%] md:-mt-40 z-40 flex items-center justify-center">
         <Filter />
       </section>
       <FeaturedSection />
@@ -55,7 +54,7 @@ export default async function Home() {
         bgColor={true}
       >
         <div className="space-y-16">
-          <FaqSection faqs={faqs} />
+          <FaqSection />
           <section className="flex flex-col p-8 gap-6 bg-primary rounded-lg">
             <div className="flex items-center justify-center">
               <div className="flex -space-x-2">
@@ -69,8 +68,8 @@ export default async function Home() {
               </div>
             </div>
             <div className="text-center space-y-2">
-              <h3 className="text-white text-xl ">Still have questions?</h3>
-              <p className="font-mono text-white text-base">
+              <h3 className="text-white md:text-xl text-lg">Still have questions?</h3>
+              <p className="font-mono text-white md:text-base text-sm">
                 Can’t find the answer you’re looking for? Please chat to our
                 friendly team.
               </p>
@@ -87,12 +86,12 @@ export default async function Home() {
         </div>
       </SectionLayout>
 
-      <div className="py-[120px] px-[7%] flex space-x-22">
-        <div className="w-[612px] h-[459px] relative grow shrink-0 ">
-          <Image src={image4} fill alt="" className="object-cover rounded-lg" />
+      <div className="md:py-[120px] md:px-[7%] flex md:space-x-22 flex-col md:flex-row gap-8 md:gap-0">
+        <div className="md:w-[612px] w-full h-[459px] relative grow shrink-0 ">
+          <Image src={image4} fill alt="" className="object-cover md:rounded-lg" />
         </div>
-        <div className=" flex flex-col items-center justify-center text-center gap-8">
-          <h2 className="font-bold text-4xl">Want To List Your Property?</h2>
+        <div className=" flex flex-col items-center justify-center text-center gap-8 px-6 pb-12 md:pb-0 md:px-0 ">
+          <h2 className="font-bold md:text-4xl text-[28px]">Want To List Your Property?</h2>
           <p className="text-base font-mono ">
             At Xpacy, we manage your property listings from start to finish,
             ensuring you enjoy peace of mind while maximizing your returns.
@@ -107,23 +106,23 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <div className="py-[120px] px-[7%]">
-        <div className="bg-primary px-[120px] py-12">
-          <div className="flex items-center">
-            <div className="flex flex-col items-center justify-center space-y-8 text-white text-center">
-              <h2 className="font-bold text-4xl">
+      <div className="md:py-[120px] md:px-[7%] ">
+        <div className="bg-primary md:px-[120px] md:py-12 px-6 py-12">
+          <div className="flex items-center flex-col md:flex-row">
+            <div className="flex flex-col items-center justify-center space-y-8 text-white text-center px-6 md:px-0">
+              <h2 className="font-bold md:text-4xl text-[28px]">
                 Take Xpacy with You Anywhere!
               </h2>
-              <p className="font-mono text-base">
+              <p className="font-mono md:text-base text-sm">
                 Download our mobile app and enjoy seamless property management
                 on the go.
               </p>
               <div className="flex space-x-2">
                 <Link
                   href={"#"}
-                  className="flex pl-2 pr-2.5 py-1.5 bg-white border border-black rounded-lg space-x-1.5"
+                  className="flex md:pl-2 pr-2.5 py-1.5 bg-white border border-black rounded-lg space-x-1.5 items-center"
                 >
-                  <div className="relative shrink-0 w-[40px] h-[44px]">
+                  <div className="relative shrink-0 w-10 h-11">
                     <Image
                       src={playstoreIcon}
                       alt="play store icon"
@@ -132,17 +131,17 @@ export default async function Home() {
                     />
                   </div>
                   <div className="flex flex-col ">
-                    <span className="text-sm font-light uppercase text-black font-mono">
+                    <span className="text-[10px] md:text-sm font-light uppercase text-black font-mono">
                       Get It on
                     </span>
-                    <span className="text-md font-bold  text-black font-mono">
+                    <span className="text-xs md:text-md font-bold  text-black font-mono">
                       Google Play
                     </span>
                   </div>
                 </Link>
                 <Link
                   href={"#"}
-                  className="flex pl-2 pr-2.5 py-1.5 bg-white border border-black rounded-lg space-x-1.5"
+                  className="flex pl-2 pr-2.5 py-1.5 bg-white border border-black rounded-lg space-x-1.5 items-center"
                 >
                   <div className="relative shrink-0 w-[40px] h-[44px]">
                     <Image
@@ -153,17 +152,17 @@ export default async function Home() {
                     />
                   </div>
                   <div className="flex flex-col ">
-                    <span className="text-sm font-semibold text-black font-mono">
+                    <span className="text-[10px] md:text-sm font-semibold text-black font-mono">
                       Download on the
                     </span>
-                    <span className="text-md font-bold  text-black font-mono">
+                    <span className="text-xs md:text-md font-bold  text-black font-mono">
                       App Store
                     </span>
                   </div>
                 </Link>
               </div>
             </div>
-            <div className="relative w-[329px] h-[637px] shrink-0">
+            <div className="relative w-[329px] h-[637px] shrink-0 -order-1">
               <Image src={image5} alt="" fill className="object-cover" />
             </div>
           </div>

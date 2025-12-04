@@ -30,7 +30,7 @@ export default function SignupForm({cities}){
         }
         return (
             <form className="space-y-6 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-                <div className="flex items-center gap-6">
+                <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
                     <FormInput label={"First Name"} id={"firstname"} >
                         <input {...register("firstname", {
                             required: "Please enter your first name"
@@ -74,7 +74,7 @@ export default function SignupForm({cities}){
                    <SelectCity cities={cities} register={register} errors={errors}/>
                 </div>
                 <div className="flex items-center gap-1 font-mono -mt-2">
-                    <input type="checkbox" id="checkbox" className="w-6 h-6" checked />
+                    <input type="checkbox" id="checkbox" className="w-6 h-6"  />
                     <label htmlFor="checkbox" className="text-base text-black">I agree to Xpacy’s Terms & Conditions and Privacy Policy.</label>
                 </div>
                 <button type="submit" disabled={pending} className="bg-primary text-white  cursor-pointer  px-5 py-3 font-semibold flex space-x-2.5 font-mono items-center justify-center rounded-md hover:shadow-md disabled:bg-gray-900 disabled:cursor-not-allowed"> <span>Sign Up</span> <span>{pending && <SpinnerMini />}</span> </button>

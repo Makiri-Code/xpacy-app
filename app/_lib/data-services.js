@@ -96,6 +96,9 @@ export async function getOtherProperties() {
 export async function getUserProfile(token) {
   try {
     const response = await fetch(`${url}/user/fetch-profile`, {
+       next: {
+        tags: ['user-profile']
+      },
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token?.value}`,
@@ -180,5 +183,39 @@ export async function getInvoiceList(token) {
     console.error("Error fetching user invoices:", error)
   }
 }
+
+export async function getInvoice(token, id) {
+  try {
+    const response = await fetch(`${url}/user/fetch-invoice/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+      }
+    });
+    const  data  = await response.json();
+    return data
+  } catch (error) {
+    console.error("Error fetching user invoice:", error)
+  }
+}
+
+export async function getBookingList(token) {
+  try {
+    const response = await fetch(`${url}/user/fetch-bookings`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+      }
+    });
+    const  {data}  = await response.json();
+    return data
+  } catch (error) {
+    console.error("Error fetching user invoice:", error)
+  }
+}
+
+
+
+
 
 

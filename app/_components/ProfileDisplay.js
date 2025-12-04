@@ -15,7 +15,7 @@ export default async function ProfileDisplay(){
     
     if(!token) return null
     return (
-        <div className="group flex items-center gap-1.5 relative">
+        <div className="hidden group md:flex items-center gap-1.5 relative">
             <span className="text-2xl relative">
                 <span className="text-2xl" ><FiBell/></span>
                 <span className="absolute text-xs -top-2 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center bg-red-600 text-black font-mono">5</span>

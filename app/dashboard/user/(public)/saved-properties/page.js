@@ -2,11 +2,13 @@ import SavedPropertyCard from "@/app/_components/SavedPropertyCard";
 import Pagination from "@/app/_components/Pagination";
 import { getSavedProperties } from "@/app/_lib/data-services";
 import {cookies } from "next/headers"
+import EmptyState from "@/app/_components/EmptyState";
 
 export default async function Page() {
         const cookieStore = await cookies();
     const token = cookieStore.get("token");
     const {data, pagination} = await getSavedProperties(token);
+        if(data.length <= 0 ) return <EmptyState message={"Oops!... You have no booked services yet."} cta={"Explore properties"}/>
     
     return (
         <main className="p-6 flex flex-col gap-4">

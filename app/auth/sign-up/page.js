@@ -10,8 +10,8 @@ import { getCities, getBanners } from "@/app/_lib/data-services";
 export default async function Page(){
         const cities = await  getCities()
     return(
-        <div className="flex min-h-dvh ">
-            <div className=" flex-1 py-16 flex justify-center">
+        <div className="flex flex-col md:flex-row min-h-dvh px-6 ">
+            <div className="w-full md:flex-1 py-16 flex md:justify-center flex-col md:flex-row">
                 <div className="flex flex-col gap-12">
                     <div className="self-center">
                         <Logo />
@@ -26,7 +26,7 @@ export default async function Page(){
                     </div>
                 </div>
             </div>
-            <div className="w-1/2">
+            <div className="w-1/2 hidden md:block">
                 <AuthCarousel position="top-30" />
             </div>
         </div>

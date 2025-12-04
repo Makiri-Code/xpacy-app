@@ -1,0 +1,19 @@
+import InvoiceContainer from "@/app/_components/InvoiceContainer";
+import InvoiceBtn from "@/app/_components/InvoiceBtns";
+import InvoiceNav from "@/app/_components/InvoiceNav";
+import { getInvoice } from "@/app/_lib/data-services";
+import { cookies } from "next/headers";
+
+
+export default async function Page({ params }) {
+    const pageParam = await params;
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token");
+    const invoice = await getInvoice(token, pageParam.invoiceId)
+    return (
+        <div className="flex flex-col px-[7%] gap-8 pb-28">
+            <InvoiceNav />
+            <InvoiceContainer invoice={invoice} token={token}/>
+        </div>
+    )
+}

@@ -21,12 +21,12 @@ const Open = ({name, children}) => {
 }
 
 
-const Window = ({name, children}) => {
+const Window = ({name, children, top="top-[100%]", right="-right-4"}) => {
     const {close, filterByName} = useContext(FilterMenuContext);
     const ref = useCloseModal(close)
     if(name !== filterByName) return null
     return(
-        <div ref={ref} className='absolute -right-4 top-[100%] z-10'>
+        <div ref={ref} className={`absolute z-30 bg-white ${top} ${right} w-max`}>
             {cloneElement(children, {onClose: close})}
         </div>
     )

@@ -8,7 +8,7 @@ import LatestPropertyList from "./LatestPropertyList";
 export default function PropertyLayout({search}){
     return (
         <div className="flex gap-6 ">
-            <div className="w-[347px] pt-14 flex flex-col gap-12 ">
+            <div className="w-[347px] pt-14 md:flex flex-col gap-12 hidden ">
                 <FilterSidebar/>
                 <LatestPropertyList/>
             </div>

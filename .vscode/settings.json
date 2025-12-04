@@ -6,5 +6,6 @@
   "[javascript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
-  "files.autoSaveDelay": 1000
+  "files.autoSaveDelay": 1000,
+  "files.refactoring.autoSave": false
 }

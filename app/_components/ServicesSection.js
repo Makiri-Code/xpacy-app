@@ -42,7 +42,7 @@ const services = [
 export default function ServicesSection() {
 
   return (
-    <div className="h-80 flex space-x-2.5">
+    <div className="md:h-80 flex md:space-x-2.5 md:flex-row flex-col space-y-6 md:space-y-0 ">
       {services.map((service, i) => (
         <ServicesCard key={i} service={service} />
       ))}

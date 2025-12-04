@@ -3,7 +3,8 @@ import Link from "next/link";
 import Logo from "./Logo";
 import Navigation from "./Navigation";
 import ProfileDisplay from "./ProfileDisplay";
-
+import { FaBarsStaggered } from "react-icons/fa6";
+import MobileNav from "./MobileNav";
 export default async function AppHeader() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
@@ -30,6 +31,7 @@ export default async function AppHeader() {
           )
         }
       </Navigation>
+      <MobileNav/>
     </header >
   );
 }

@@ -3,10 +3,9 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import {handleSearch} from "@/app/_lib/action"
 export default function Filter(){
 
-
     return (
-      <form action={handleSearch} className="p-6 bg-white flex space-x-14 rounded-md items-center">
-        <div className="flex space-x-4 ">
+      <form action={handleSearch} className="md:p-6 bg-white md:flex md:space-x-14 rounded-md md:items-center grid grid-cols-2 grid-rows-[auto] gap-y-4 md:gap-y-0">
+        <div className="md:flex  md:space-x-4 col-[1/-1] grid grid-cols-2 grid-rows-auto gap-4 ">
           <select className="px-4 py-2 border rounded-md border-neutrals font-mono font-normal text-neutrals-900 text-md" name="purpose">
             <option value={""}>Purpose</option>
             <option value={"buy"}>Buy</option>
@@ -91,12 +90,13 @@ export default function Filter(){
             <option value={200000000}>{"200m"}</option>
           </select>
         </div>
-        <div className="flex-1 font-mono text-md">
-          <LinkBtn to="#">
+        <div className="col-span-2 grid place-content-center md:flex ">
+          <LinkBtn>
             <MagnifyingGlassIcon className="size-6" />
             <span>Search</span>
           </LinkBtn>
         </div>
+
       </form>
     );
 }

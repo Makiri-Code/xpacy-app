@@ -23,7 +23,7 @@ const navList = [
     },
     {
         text: "My Properties",
-        link: "/dashboard/user/properties",
+        link: "/dashboard/user/my-properties",
         icon: <BiBuildingHouse />
     },
     {
@@ -43,12 +43,12 @@ const navList = [
     },
     {
         text: "Profile Settings",
-        link: "/dashboard/user/settings",
+        link: "/dashboard/user/profile-settings",
         icon: <RiUserSettingsLine />
     },
     {
         text: "Help/Support",
-        link: "/dashboard/user/help",
+        link: "/dashboard/user/support",
         icon: <LuMessageCircleQuestion />
     }
 ]

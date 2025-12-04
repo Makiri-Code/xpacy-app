@@ -20,7 +20,7 @@ function Carousel({ slides, indicators }) {
         className="flex min-w-full h-full transition-transform duration-300 ease-in-out"
       >
         {slides?.map((slide, index) => (
-          <div key={index} className="w-full min-h-dvh shrink-0">
+          <div key={index} className="w-full h-[431px] md:min-h-dvh shrink-0">
             {slide}
           </div>
         ))}

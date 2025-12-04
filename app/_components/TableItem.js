@@ -14,7 +14,7 @@ export default function TableItem({ service_type, address, scheduled_date, servi
             <td className="p-4">{address}</td>
             <td className="p-4">{scheduled_date}</td>
             <td className="px-4">
-                <span className={`${keys.map((key) => key === service_status && statusBg[service_status.toLowerCase()])} px-0.5 py-1 flex items-center justify-center rounded-full  text-sm font-bold`}>Upcoming</span>
+                <span className={`${keys.map((key) => key === service_status && statusBg[service_status.toLowerCase()])} px-0.5 py-1 flex items-center justify-center rounded-full  text-sm font-bold`}>{service_status}</span>
             </td>
         </tr>
     )

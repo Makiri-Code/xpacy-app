@@ -13,9 +13,9 @@ export default async function HomeCarousel() {
           src={`https://app.xpacy.com/src/upload/homepage_slider/${banner.image_url}`}
           alt="Xpacy Hero"
         />
-        <div className="absolute flex flex-col space-y-8 z-20 w-10/12 text-white text-center translate-x-[-50%] translate-y-[-50%] top-1/3 left-[50%]">
-          <h1 className="leading-15  md:text-5xl">{banner.title}</h1>
-          <p className="text-xl font-light">
+        <div className="absolute flex flex-col p-4 md:p-0 space-y-8 z-20 md:w-10/12 w-full text-white text-center translate-x-[-50%] translate-y-[-50%] md:top-1/3 top-1/2 left-[50%]">
+          <h1 className="leading-15 text-[32px] md:text-5xl">{banner.title}</h1>
+          <p className="md:text-xl text-lg font-light ">
             Search, buy, or rent properties across Nigeria
           </p>
         </div>

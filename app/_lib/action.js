@@ -129,3 +129,69 @@ export async function handleLogOut() {
   cookieStore.delete("token");
   redirect("/auth/log-in")
 }
+
+export async function processInvoice(id) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  if (!token?.value) throw new Error("Please Log in to continue");
+  const response = await fetch(`${URL}/payment/paystack/initialize`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ invoice_id: 9 })
+  });
+  const data = await response.json();
+  return data
+
+}
+
+export async function uploadDisplayPhoto(formData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  if (!token?.value) throw new Error("Please Log in to continue");
+  const response = await fetch(`${URL}/user/upload-display-image`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+    },
+    body: formData
+  });
+  const data = await response.json();
+   revalidateTag("user-profile");
+  return data
+}
+
+export async function updateUserProfile(userData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  if (!token?.value) throw new Error("Please Log in to continue");
+  const response = await fetch(`${URL}/user/update-profile`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({...userData})
+  });
+  const data = await response.json();
+   revalidateTag("user-profile");
+  return data
+}
+
+export async function updateUserPassword(userData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  if (!token?.value) throw new Error("Please Log in to continue");
+  const response = await fetch(`${URL}/user/change-password`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({...userData})
+  });
+  const data = await response.json();
+  return data
+}
