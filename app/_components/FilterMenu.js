@@ -26,7 +26,7 @@ const Window = ({name, children, top="top-[100%]", right="-right-4"}) => {
     const ref = useCloseModal(close)
     if(name !== filterByName) return null
     return(
-        <div ref={ref} className={`absolute z-30 bg-white ${top} ${right} w-max`}>
+        <div ref={ref} className={`absolute z-30 bg-white ${top} ${right} w-max `}>
             {cloneElement(children, {onClose: close})}
         </div>
     )

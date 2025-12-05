@@ -26,7 +26,7 @@ const Open = ({children}) => {
 const Window = ({children}) => {
     const {isOpen, open} = useContext(FilterMenuContext)
     return (
-        <div className={`absolute top-12 z-50 left-0  w-full p-6 flex flex-col gap-4 text-center ${isOpen ? "translate-x-0" : "-translate-x-[120%]"} transition-transform duration-300 ease-in-out`}>
+        <div className={`fixed top-0 w-full left-0 bottom-0 h-screen bg-gray-0 backdrop-blur-xs z-50 overflow-y-scroll  w-full p-6 flex bg-white flex-col gap-4 text-center ${isOpen ? "translate-y-0" : "-translate-y-[120%]"} transition-transform duration-300 ease-in-out`}>
             <div className=' flex px-6 py-2 items-center justify-center bg-white border border-primary-100 rounded-2xl'>
                 <button onClick={open} className='flex flex-col items-center gap-2 text-error font-mono'>
                     <span><IoClose/></span>

@@ -27,7 +27,7 @@ export default async function Page() {
                     <BookedServiceList/>
                 </DashboardGridItem>
                 {/* Payments */}
-                <DashboardGridItem title={"Payments"} viewAllLink={"#"}>
+                <DashboardGridItem title={"Payments"} viewAllLink={"/user/payments"}>
                     <PaymentList/>
                 </DashboardGridItem>
             </div>

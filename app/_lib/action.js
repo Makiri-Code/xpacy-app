@@ -140,7 +140,7 @@ export async function processInvoice(id) {
       "Authorization": `Bearer ${token?.value}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ invoice_id: 9 })
+    body: JSON.stringify({ invoice_id: id })
   });
   const data = await response.json();
   return data

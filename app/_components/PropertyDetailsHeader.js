@@ -38,7 +38,7 @@ export default function PropertyDetailsHeader({propertyName, propertyAddress, pr
                         <PropertySearchBtn />
                         {children}
                         <Modal>
-                            <Modal.Open>
+                            <Modal.Open name={"share"}>
                                 <ShareBtn/>
                             </Modal.Open>
                             <Modal.Window name="share">

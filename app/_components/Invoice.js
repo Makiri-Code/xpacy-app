@@ -35,7 +35,7 @@ export default function Invoice({ invoice, ref }) {
                         <p>{invoice?.user?.phone}</p>
                     </div>
                 </div>
-                <p className={`bg-error text-secondary-100 w-max  px-1.5 py-1 flex items-center justify-center rounded-full  text-2xl font-bold font-mono`}>{invoice?.status}</p>
+                <p className={`bg-error text-secondary-100 w-max  px-2.5 py-2  rounded-full text-center text-2xl font-bold font-mono`}><span className="block my-auto">{invoice?.status}</span></p>
             </section>
             {/* Invoice details table */}
             <section className="py-6">

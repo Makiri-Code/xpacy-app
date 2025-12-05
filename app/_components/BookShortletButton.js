@@ -1,10 +1,11 @@
 "use client"
 import toast from "react-hot-toast";
-import {useRouter} from "next/navigation" 
+import {useRouter, usePathname} from "next/navigation" 
 import { handleBookProperty } from "../_lib/action";
 
 export default function BookShortletButton({ onOpen, children }) {
     const router = useRouter();
+    const pathname = usePathname()
     const handleClick = async () => {
         toast.promise( () =>  handleBookProperty(), {
             loading: "Loading...",
@@ -12,8 +13,8 @@ export default function BookShortletButton({ onOpen, children }) {
                 onOpen("booking")
             },
             error: (err) => {
-                router.push("/auth/log-in")
-                return `${err.message}`
+                router.push(`/auth/log-in?redirectUrl=${encodeURIComponent(pathname)}`)
+                return "Please log in to book this property"
             }
         })
     }
