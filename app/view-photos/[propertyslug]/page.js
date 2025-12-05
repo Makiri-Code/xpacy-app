@@ -8,6 +8,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import PropertyDetailsHeader from "@/app/_components/PropertyDetailsHeader";
 import PropertySavedIcon from "@/app/_components/ProperySavedIcon";
 import CarouselPhotos from "@/app/_components/CarouselPhotos";
+import MobileViewPhotos from "@/app/_components/MobileViewPhotos";
 export default async function Page({ params }) {
     const pageParams = await params;
     const property = await getProperty(pageParams.propertyslug)
@@ -24,6 +25,7 @@ export default async function Page({ params }) {
                     <PropertySavedIcon propertyId={property?.id}/>
                 </PropertyDetailsHeader>
                 <CarouselPhotos propertyImages={property?.images}/>
+                <MobileViewPhotos propertyImages={property?.images} />
             </main>
             <Footer />
         </>

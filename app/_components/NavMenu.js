@@ -21,11 +21,11 @@ const Open = ({children}) => {
 }
 
 
-const Window = ({children}) => {
+const Window = ({children, isSidebar}) => {
     const {isOpen} = useContext(NavMenuContext)
     return (
-        <div className={`absolute top-full left-0 bg-white w-full p-6 flex flex-col gap-4 text-center ${isOpen ? "translate-x-0" : "-translate-x-[120%]"} transition-transform duration-300 ease-in-out`}>
-            <h2 className='text-md'>Menu</h2>
+        <div className={`absolute top-full left-0 ${isSidebar ? "backdrop-blur-xs h-screen" : "bg-white p-6"} w-full z-40 flex flex-col gap-4 text-center ${isOpen ? "translate-x-0" : "-translate-x-[120%]"} transition-transform duration-300 ease-in-out`}>
+            {!isSidebar && <h2 className='text-md'>Menu</h2>}
             {children}
         </div>
     )

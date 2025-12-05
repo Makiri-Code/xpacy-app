@@ -30,12 +30,12 @@ export default async function Page({ params }) {
     return (
         <>
             <AppHeader />
-            <main className="flex flex-col px-[7%]">
+            <main className="flex flex-col px-6 md:px-[7%]">
                 <PropertyDetailsHeader propertyName={property?.property_name} propertyStatus={property?.property_status} propertyAddress={property?.address}>
                     <PropertySavedIcon propertyId={property?.id} />
                 </PropertyDetailsHeader>
                 <PropertyPhotoSection property={property} />
-                <div className="grid grid-cols-4 gap-12 py-12">
+                <div className="md:grid md:grid-cols-4 gap-12 py-12 flex flex-col ">
                     <PropertiesDetailsSection property={property} />
                 </div>
             </main>

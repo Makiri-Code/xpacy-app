@@ -65,7 +65,7 @@ export default function Footer() {
             <Link href={"#"}>Privacy Policy</Link>
           </div>
         </div>
-        <div className="flex flex-col w-[302px] gap-4 col-span-full">
+        <div className="flex flex-col md:w-[302px] w-full gap-4 col-span-full">
           <h5 className="font-normal text-lg text-white uppercase">Newsletter</h5>
           
            <SubscribeForm/>

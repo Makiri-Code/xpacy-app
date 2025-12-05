@@ -8,43 +8,43 @@ import { getUserProfile } from "../_lib/data-services";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { cookies } from "next/headers";
 import { handleLogOut } from "../_lib/action";
-export default async function ProfileDisplay(){
+export default async function ProfileDisplay() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")
     const profile = await getUserProfile(token);
-    
-    if(!token) return null
+
+    if (!token) return null
     return (
-        <div className="hidden group md:flex items-center gap-1.5 relative">
+        <div className=" hidden group lg:flex items-center gap-1.5 relative">
             <span className="text-2xl relative">
-                <span className="text-2xl" ><FiBell/></span>
+                <span className="text-2xl" ><FiBell /></span>
                 <span className="absolute text-xs -top-2 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center bg-red-600 text-black font-mono">5</span>
             </span>
             <div className=" cursor-pointer flex items-center border border-primary-200 rounded-lg bg-white justify-center py-1 px-3">
                 <div className="w-8 h-8 p-1 relative">
                     <Image unoptimized src={`https://app.xpacy.com/src/upload/display_img/${profile?.display_picture}`} alt="avatar" fill className="rounded-full" />
                 </div>
-                <span className="text-2xl text-primary-200 p-2 group-hover:rotate-180"><MdKeyboardArrowDown/></span>
+                <span className="text-2xl text-primary-200 p-2 group-hover:rotate-180"><MdKeyboardArrowDown /></span>
             </div>
             {/* Dropdown */}
             <div className="w-[194px] hidden flex-col gap-4 border border-primary-200 rounded-lg group-hover:flex p-4 absolute bg-white top-13 -right-0.5 z-40">
                 {/* Notifications */}
                 <Link href={"/dashboard/user"} className="p-1  flex items-center gap-2 text-gray-500 font-mono hover:text-gray-800 ">
-                    <span className="text-lg"><MdOutlineDashboardCustomize/></span>
+                    <span className="text-lg"><MdOutlineDashboardCustomize /></span>
                     <span>Dashboard</span>
                 </Link>
                 <div className="border border-primary-200"></div>
                 {/* Profile settings */}
-                <Link href={"#"} className="p-1  flex items-center gap-4 text-gray-500 font-mono hover:text-gray-800 ">
-                    <span className="text-lg"><RiUserSettingsLine/></span>
+                <Link href={"/dashboard/user/profile-settings"} className="p-1  flex items-center gap-4 text-gray-500 font-mono hover:text-gray-800 ">
+                    <span className="text-lg"><RiUserSettingsLine /></span>
                     <span>Profile settings</span>
                 </Link>
                 <div className="border border-primary-200"></div>
                 {/* Log out */}
                 <form action={handleLogOut}>
                     <button className="p-1 cursor-pointer  flex items-center gap-4 text-gray-500 font-mono hover:text-gray-800 ">
-                    <span className="text-lg"><TbLogout2/></span>
-                    <span>Log out</span>
+                        <span className="text-lg"><TbLogout2 /></span>
+                        <span>Log out</span>
                     </button>
                 </form>
             </div>

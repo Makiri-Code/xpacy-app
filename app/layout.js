@@ -13,7 +13,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="max-w-[1600px] mx-auto text-primary flex flex-col">
+      <body className="text-primary flex flex-col">
         <UserProvider>{children}</UserProvider>
       <Toaster
           position="top-center"

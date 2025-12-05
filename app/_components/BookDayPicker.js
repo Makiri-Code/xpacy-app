@@ -20,11 +20,11 @@ const selectOptions = [
         label: "Others",
     }
 ]
-function BookDayPicker() {
+function BookDayPicker({onClose}) {
     const [selected, setSelected] = useState(null)
     return (
-        <div className="flex flex-col p-6 w-[500px] max-h-[500px] gap-6 font-mono ">
-            <h3 className="text-primary text-xl font-sans text-center ">Select booking dates</h3>
+        <div className="flex flex-col p-6 md:w-[500px] w-[350px] max-h-[500px] gap-6 font-mono ">
+            <h3 className="text-primary md:text-xl text-md font-sans text-center ">Select booking dates</h3>
             <form className="flex flex-col gap-6 overflow-y-auto">
                 <div className="self-center">
                     <DayPicker
@@ -43,7 +43,7 @@ function BookDayPicker() {
                     </select>
                 </div>
                 <div className="flex items-center justify-between">
-                    <button className="py-2 px-3.5 border border-gray-400 rounded-lg bg-white cursor-pointer">Cancel</button>
+                    <button onClick={onClose} className="py-2 px-3.5 border border-gray-400 rounded-lg bg-white cursor-pointer">Cancel</button>
                     <button className="py-2 px-5 border border-primary rounded-lg bg-primary cursor-pointer text-white">Book</button>
                 </div>
             </form>

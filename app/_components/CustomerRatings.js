@@ -10,7 +10,7 @@ export default function CustomerRatings() {
             <p>Very Comfortable and serene space</p>
             <div className="flex items-center justify-between ">
                 <p className="text-gray-400">12-11-25 by Martins</p>
-                <div className="flex items-center text-lg text-secondary gap-2">
+                <div className="flex items-center md:text-lg text-base text-secondary gap-2">
                     <span>
                         <IoMdCheckmarkCircleOutline />
                     </span>

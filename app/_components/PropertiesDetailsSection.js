@@ -14,11 +14,11 @@ function PropertiesDetailsSection({ property }) {
 
     return (
         <>
-            <div className="flex flex-col gap-[72px] col-span-3">
+            <div className="flex flex-col gap-[72px] md:col-span-3">
                 {/* Specification */}
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 ">
                     <h3 className="text-primary-900 text-[1.375rem] font-normal">Specification</h3>
-                    <div className="px-12 py-6 bg-white shadow-lg flex justify-between rounded-lg">
+                    <div className="px-12 py-6 bg-white shadow-lg md:flex md:justify-between rounded-lg grid gap-y-2 md:gap-y-0 grid-cols-[1fr_1fr]">
                         {/* Bedroom */}
                         <div className="flex flex-col gap-2 items-center font-mono">
                             <div className="flex items-center gap-2 font-mono text-2xl text-black">
@@ -66,11 +66,14 @@ function PropertiesDetailsSection({ property }) {
                         </TextExpander>
                     </div>
                 </div>
+                <section className="md:col-span-1 md:hidden">
+                    <PropertyDetailsSidebar property={property} />
+                </section>
                 <div className="border border-neutral-300"></div>
                 {/* Property features */}
                 <div className="flex flex-col gap-4">
                     <h3 className="text-primary-900 text-[1.375rem] font-normal">Property Features</h3>
-                    <div className="text-base text-black font-mono grid grid-cols-2 gap-x-20 gap-y-6 grid-rows-auto">
+                    <div className="text-base text-black font-mono grid md:grid-cols-2 grid-cols-1 gap-x-20 gap-y-6 grid-rows-auto">
                         <div className="flex justify-between text-base text-black font-mono">
                             <span>Location</span>
                             <span>{property?.city}, {property?.state}</span>
@@ -108,7 +111,7 @@ function PropertiesDetailsSection({ property }) {
                 {/* Property Amenties */}
                 <div className="flex flex-col gap-4">
                     <h3 className="text-primary-900 text-[1.375rem] font-normal">Amenities</h3>
-                    <div className="grid auto-rows-auto grid-cols-3 gap-x-10 gap-y-6 text-base text-black font-mono">
+                    <div className="grid auto-rows-auto md:grid-cols-3 grid-cols-1 gap-x-10 gap-y-6 text-base text-black font-mono">
                         {
                             property?.property_amenities.map((amenity, index) => (<div className="flex gap-4 items-center" key={index}>
                                 <IoMdCheckmark /> <span>{amenity}</span>
@@ -122,7 +125,7 @@ function PropertiesDetailsSection({ property }) {
                 <div className="border border-neutral-300"></div>
 
             </div>
-            <section className="col-span-1">
+            <section className="md:col-span-1 hidden md:block">
                 <PropertyDetailsSidebar property={property} />
             </section>
             <section className="flex flex-col col-span-4 gap-[72px]">

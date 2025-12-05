@@ -15,7 +15,7 @@ export default function FeaturedListBtns({children}){
         ref={containerRef}
         className=" overflow-x-scroll no-scrollbar flex  flex-nowrap"
       >
-        <div className=" hidden w-6/7 absolute top-1/2 md:justify-between md:flex z-10 ">
+        <div className=" hidden w-6/7 absolute top-1/2 lg:justify-between lg:flex z-10 ">
           <button onClick={moveLeft} className="bg-white rounded-full cursor-pointer p-3 border border-black flex items-center justify-center">
             <ArrowLeftIcon className="size-6" />
           </button>

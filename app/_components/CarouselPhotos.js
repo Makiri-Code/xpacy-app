@@ -12,7 +12,7 @@ export default function CarouselPhotos({propertyImages}) {
         setCurrentSlideIndex((prev) => (prev - 1 + propertyImages?.length) % propertyImages?.length);
     }
     return (
-        <div className="flex flex-col gap-6">
+        <div className="md:flex flex-col gap-6 hidden">
             <div className="w-full h-full  overflow-hidden relative">
                 <div
                     style={{ transform: `translateX(-${currentSlideIndex * 100}%)` }}
