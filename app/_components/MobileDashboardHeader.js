@@ -6,14 +6,14 @@ import Link from "next/link";
 import { BiCalendarCheck } from "react-icons/bi";
 
 
-export default function MobileDashboardHeader() {
+export default function MobileDashboardHeader({showMenu = true}) {
     const pathname = usePathname();
     let heading = pathname.split("/")[3] || "Dashboard"
     heading = heading?.includes("-") ? heading.split("-").join(" ") : heading
     return (
         <div className="flex lg:hidden items-center justify-between mb-3 relative">
-            <h2 className="text-md">{heading}</h2>
-            <Option/>
+            <h2 className="text-md capitalize">{heading}</h2>
+           {showMenu &&  <Option/>}
         </div>
     )
 }

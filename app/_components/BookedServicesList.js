@@ -13,7 +13,7 @@ export default async function BookedServiceList() {
     if (bookedServices.length <= 0) return <EmptyState message={"Oops!... You have no booked services yet."} cta={"Book A Service"} />
     return (
         <>
-            <table className="lg:table-auto font-mono hidden">
+            <table className="table-auto lg:table font-mono hidden">
                 {/* Title */}
                 <thead>
                     <tr className="font-bold border-b border-gray-300">

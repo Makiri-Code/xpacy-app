@@ -27,8 +27,8 @@ export default function MobileProfileMenu({ profile }) {
                     </div>
                 </button>
             </FilterMenu.Open>
-            <FilterMenu.Window>
-                <div className="w-[194px] flex-col gap-4 border border-primary-200 rounded-lg p-4 absolute bg-white z-40 ">
+            <FilterMenu.Window right={"-left-8"}>
+                <div className="w-max flex flex-col gap-2 border border-primary-200 rounded-lg p-4 absolute bg-white z-40 ">
                     {/* Notifications */}
                     <Link href={"/dashboard/user"} className="p-1  flex items-center gap-2 text-gray-500 font-mono hover:text-gray-800 ">
                         <span className="text-lg"><MdOutlineDashboardCustomize /></span>
