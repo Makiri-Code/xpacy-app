@@ -16,17 +16,17 @@ export default function SupportForm({profile}) {
     })
     async function onSubmit(data) {
         startTransition(async () => {
-            const response = await updateUserProfile(data);
-            if (response.success) {
-                toast.success(response.message)
-            };
-            if (!response.success) toast.error(response.message);
+            // const response = await updateUserProfile(data);
+            // if (response.success) {
+            //     toast.success(response.message)
+            // };
+            // if (!response.success) toast.error(response.message);
         });
     }
     return (
         <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
             {/* Name */}
-            <div className="w-full flex items-center gap-4">
+            <div className="w-full flex lg:items-center flex-col lg:flex-row gap-4">
                 <FormInput label={"First Name"} id={"firstname"} >
                     <input  {...register("firstname", {
                         required: "Please enter your first name"

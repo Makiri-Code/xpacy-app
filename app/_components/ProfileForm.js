@@ -31,7 +31,7 @@ export default function ProfileForm({ profile }) {
     return (
         <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
             {/* Name */}
-            <div className="w-full flex items-center gap-4">
+            <div className="w-full flex lg:items-center flex-col lg:flex-row gap-4">
                 <FormInput label={"First Name"} id={"firstname"} >
                     <input {...register("firstname", {
                         required: "Please enter your first name"

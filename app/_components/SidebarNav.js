@@ -9,8 +9,13 @@ import { IoCardOutline } from "react-icons/io5";
 import { RiUserSettingsLine } from "react-icons/ri";
 import { LuMessageCircleQuestion } from "react-icons/lu";
 import { IoCalendarOutline } from "react-icons/io5";
-
+import { RiHome2Line } from "react-icons/ri";
 const navList = [
+    {
+        text: "Go to Homepage",
+        link: "/",
+        icon: <RiHome2Line />
+    },
     {
         text: "Dashboard",
         link: "/dashboard/user",

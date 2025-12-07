@@ -21,7 +21,7 @@ export default function ProfilePhoto({ profile }) {
         })
     }
     return (
-        <div className="flex items-center justify-between">
+        <div className="flex lg:items-center gap-8 lg:gap-0 flex-col lg:flex-row lg:justify-between">
             <div className="grid grid-cols-[100px_1fr] grid-rows-[auto] gap-y-2 gap-x-4">
                 <div className="w-[100px] h-[100px] relative row-span-2 bg-gray-200 rounded-full flex justify-center items-center ">
                     {

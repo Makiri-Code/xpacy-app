@@ -1,5 +1,6 @@
 import EmptyState from "./EmptyState";
 import InvoiceTableItem from "./InvoiceTableItem";
+import MobileInvoiceItem from "./MobileInvoiceItem";
 import UserFilterMenu from "./UserFilterMenu";
 import { getInvoiceList } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
@@ -12,10 +13,10 @@ export default async function InvoiceListTable() {
     return (
         <div className="flex flex-col p-6 gap-6 border border-primary-200 bg-white rounded-lg">
             <header className="flex items-center justify-between relative">
-                <h2 className="text-md">Invoice list</h2>
+                <h2 className="lg:text-md text-sm">Invoice list</h2>
                 <div className="flex items-center gap-2">
                     {/* Sortby */}
-                    <div className="flex items-center space-x-2.5 font-mono text-base-500">
+                    <div className=" hidden lg:flex items-center space-x-2.5 font-mono text-base-500">
                         <span>Sort by:</span>
                         <select className="p-2.5 border border-neutral-200 rounded-lg">
                             <option>Default</option>
@@ -27,7 +28,7 @@ export default async function InvoiceListTable() {
                     <UserFilterMenu />
                 </div>
             </header>
-            <table className="table-auto font-mono">
+            <table className="table-auto font-mono lg:table hidden">
                 <thead>
                     <tr className="font-bold border-b border-gray-300">
                         <td className="p-4">Invoice No</td>
@@ -44,6 +45,16 @@ export default async function InvoiceListTable() {
                     {invoices?.map((invoice) => <InvoiceTableItem invoice={invoice} key={invoice.id} />)}
                 </tbody>
             </table>
+            <MobileInvoiceTable invoices={invoices}/>
         </div>
     )
 }
+
+const MobileInvoiceTable = ({invoices}) => {
+    return (
+        <div className="flex lg:hidden flex-col gap-4">
+            {invoices?.map((invoice) => <MobileInvoiceItem invoice={invoice} key={invoice.id}/>)}
+        </div>
+    )
+}
+

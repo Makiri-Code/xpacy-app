@@ -1,11 +1,11 @@
-import { format, formatDate } from "date-fns";
+import { format } from "date-fns";
+import Link from "next/link";
 import { GiReceiveMoney } from "react-icons/gi";
 import { IoCalendarOutline } from "react-icons/io5";
 import { formatCurrency } from "../_lib/utils";
-import Link from "next/link";
 
 
-export default function InvoiceTableItem({ invoice }) {
+export default function MobileInvoiceItem({ invoice }) {
     const statusBg = {
         "paid": " bg-[#C3E5C4] text-[#357B38] ",
         "unpaid": " bg-[#F44336] text-[#F5F0E7] ",
@@ -14,9 +14,9 @@ export default function InvoiceTableItem({ invoice }) {
     }
 
     return (
-        <tr className="border-b border-gray-200 text-sm">
-            <td className="p-4">{invoice?.invoiceNumber}</td>
-            <td className="p-4">
+        <div className="border-t border-b border-gray-200 text-sm grid grid-cols-2 gap-6 py-6 font-mono">
+            <p className="col-span-2">{invoice?.invoiceNumber}</p>
+            <div className="col-span-2">
                 <div className="flex items-center space-x-1.5">
                     <div className="flex items-center justify-center w-8 h-8 rounded-full border border-gray-300 ">
                         {invoice?.invoice_reason === "rent" && <span className="text-base w-6 h-6 text-primary bg-secondary-100 rounded-full flex items-center justify-center"><GiReceiveMoney /></span>}
@@ -25,18 +25,21 @@ export default function InvoiceTableItem({ invoice }) {
                     </div>
                     <span className="capitalize">{invoice?.invoice_reason}</span>
                 </div>
-            </td>
-            <td className="p-4">{invoice?.description}</td>
-            <td className="p-4">{format(invoice?.issuedDate, "dd/MM/yy")}</td>
-            <td className="p-4">{format(invoice?.dueDate, "dd/MM/yy")}</td>
-            <td className="p-4 font-bold">{formatCurrency(invoice?.total)}</td>
-            <td className="px-4">
+            </div>
+            <p className="col-span-2">{invoice?.description}</p>
+            <p className="text-neutral-600">Payment Amount</p>
+            <p className="font-bold text-right">{formatCurrency(invoice?.total)}</p>
+            <p className="text-neutral-600">Issued Date</p>
+            <p className="text-right font-bold">{format(invoice?.issuedDate, "dd/MM/yy")}</p>
+            <p className="text-neutral-600">Due Date</p>
+            <p className="text-right">{format(invoice?.dueDate, "dd/MM/yy")}</p>
+            <p className="">
                 <span className={`${statusBg[invoice?.status.toLowerCase()] || ""} w-max  px-1.5 py-1 flex items-center justify-center rounded-full  text-sm font-bold`}>{invoice?.status}</span>
-            </td>
-            <td className="p-4 text-primary font-bold">
+            </p>
+            <p className="text-right text-primary font-bold">
                 <Link href={`/invoice/${invoice.id}`}>View</Link>
-            </td>
-        </tr>
+            </p>
+        </div>
     )
 }
 
