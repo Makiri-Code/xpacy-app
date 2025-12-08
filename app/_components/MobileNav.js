@@ -6,6 +6,7 @@ import Link from "next/link";
 import ReferralSidebarNav from "./ReferralSidebarNav";
 import SidebarLogo from "./SidebarLogo";
 import SidebarNav from "./SidebarNav";
+import { useCloseModal } from "../_hooks/useCloseModal";
 
 
 export default function MobileNav({ children, isSidebar = false }) {

@@ -14,7 +14,7 @@ export default function MobileInvoiceItem({ invoice }) {
     }
 
     return (
-        <div className="border-t border-b border-gray-200 text-sm grid grid-cols-2 gap-6 py-6 font-mono">
+        <div className="border-t  border-gray-200 text-sm grid grid-cols-2 gap-6 py-6 font-mono">
             <p className="col-span-2">{invoice?.invoiceNumber}</p>
             <div className="col-span-2">
                 <div className="flex items-center space-x-1.5">
@@ -37,7 +37,7 @@ export default function MobileInvoiceItem({ invoice }) {
                 <span className={`${statusBg[invoice?.status.toLowerCase()] || ""} w-max  px-1.5 py-1 flex items-center justify-center rounded-full  text-sm font-bold`}>{invoice?.status}</span>
             </p>
             <p className="text-right text-primary font-bold">
-                <Link href={`/invoice/${invoice.id}`}>View</Link>
+                <Link href={`/invoice/${invoice.id}`} className="underline">View</Link>
             </p>
         </div>
     )

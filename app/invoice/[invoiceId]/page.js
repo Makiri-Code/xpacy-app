@@ -11,9 +11,9 @@ export default async function Page({ params }) {
     const token = cookieStore.get("token");
     const invoice = await getInvoice(token, pageParam.invoiceId)
     return (
-        <div className="flex flex-col px-[7%] gap-8 pb-28">
+        <div className="flex flex-col lg:px-[7%] gap-8 lg:pb-28 px-6 pb-12">
             <InvoiceNav />
-            <InvoiceContainer invoice={invoice} token={token}/>
+            <InvoiceContainer invoice={invoice} token={token} />
         </div>
     )
 }

@@ -18,7 +18,7 @@ const Open = ({ children, name}) => {
     return cloneElement(children, {onClick: () => open(name), onOpen: open})
 };
 
-const Window = ({ children, name }) => {
+const Window = ({ children, name, property_id }) => {
     const { close, windowName } = useContext(ModalContext);
     const ref = useCloseModal(close);
     if (name !== windowName) return null;
@@ -28,7 +28,7 @@ const Window = ({ children, name }) => {
                 <button onClick={close} className="bg-none p-1 text-2xl cursor-pointer text-gray-900 rounded-full absolute top-2 right-2.5 transition-all duration-300 ease-in hover:bg-gray-100">
                     <HiMiniXMark />
                 </button>
-                {cloneElement(children, { onClose: close })}
+                {cloneElement(children, { onClose: close, property_id })}
             </div>
         </div>
     )

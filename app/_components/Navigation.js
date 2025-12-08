@@ -7,7 +7,7 @@ export default function Navigation({children}) {
   return (
     <>
       <nav>
-        <ul className="hidden md:flex md:space-x-6 ">
+        <ul className="hidden lg:flex lg:space-x-6 ">
           <li className={`p-2.5 hover:border-b-2 hover:border-primary text-md ${pathname === '/' && 'border-b-2 border-primary'}`}>
             <Link href={"/"}>Home</Link>
           </li>

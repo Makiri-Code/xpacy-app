@@ -23,7 +23,7 @@ export default function LoginForm() {
         })
     }
     return (
-        <div className=" flex-1 py-16 flex justify-center">
+        <div className=" flex-1 py-16 flex justify-center px-6">
             <div className="flex flex-col gap-12">
                 <div className="self-center">
                     <Logo />

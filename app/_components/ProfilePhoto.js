@@ -13,7 +13,7 @@ export default function ProfilePhoto({ profile }) {
         const formData = new FormData();
         formData.append("display_picture", image)
         startTransition( () => {
-            toast.promise(() => uploadDisplayPhoto(formData), {
+            toast.promise( async () => await uploadDisplayPhoto(formData), {
                 loading: "Loading...",
                 success: (data) => `${data.message}`,
                 error: "Error uploading photo, please try again"
@@ -28,7 +28,7 @@ export default function ProfilePhoto({ profile }) {
                         isPending ?
                             <SpinnerMini />
                             :
-                            <Image src={profile?.display_picture ? `https://app.xpacy.com/src/upload/display_img/${profile?.display_picture}` : "/avatar.png"} alt="avatar" fill className="object-cover rounded-full" unoptimized />
+                            <Image src={profile?.display_picture ? `https://app.xpacy.com/src/upload/display_img/${profile?.display_picture}` : "/avatar.png"} alt="avatar" fill className="object-contain rounded-full" unoptimized />
 
                     }
                 </div>
@@ -37,7 +37,7 @@ export default function ProfilePhoto({ profile }) {
             </div>
             <div className="flex items-center gap-3.5">
                 <label className="px-3.5 py-3 bg-primary font-bold rounded-lg flex items-center justify-center text-white font-mono cursor-pointer" htmlFor="profile">
-                    <input ref={fileInputRef} type="file" id="profile" className="hidden" onChange={handleChange} accept="image/png, image/jpeg, image/webp" />
+                    <input ref={fileInputRef} disabled={isPending} type="file" id="profile" className="hidden" onChange={handleChange} accept="image/png, image/jpeg, image/webp" />
                     <span>{profile?.display_picture ? "Replace Picture" : "Upload Picture"}</span>
                 </label>
                 <span className="flex items-center justify-center p-3 text-2xl border border-primary-100 rounded-lg">

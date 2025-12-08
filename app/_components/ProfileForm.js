@@ -46,12 +46,12 @@ export default function ProfileForm({ profile }) {
                 </FormInput>
             </div>
             <FormInput register={register} errors={errors} label={"Email address"} id={"email"} >
-                <input {...register("email", {
+                <input disabled {...register("email", {
                     required: "Email is required", pattern: {
                         value: /\S+@\S+\.\S+/,
                         message: "Provide a valid email address",
                     }
-                })} type={"email"} name={"email"} id={"email"} placeholder={"Enter your email address"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.email ? "border-error" : "border-primary-200"}`} />
+                })} type={"email"} name={"email"} id={"email"} placeholder={"Enter your email address"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none disabled:bg-gray-200 disabled:cursor-not-allowed ${errors.email ? "border-error" : "border-primary-200"}`} />
                 {errors.email && <span className="-mt-2 text-xs text-error">{errors.email.message}</span>}
             </FormInput>
             <FormInput label={"Phone number"} id={"phone"} >

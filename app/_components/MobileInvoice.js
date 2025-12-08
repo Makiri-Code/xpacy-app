@@ -6,26 +6,26 @@ import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter } from "react-icons/fa6";
 import { format } from "date-fns";
 
 
-export default function Invoice({ invoice, ref }) {
+export default function MobileInvoice({ invoice }) {
     return (
-        <div className="hidden lg:flex flex-col gap-16 p-6 rounded-lg border-2 border-primary-200 bg-white" ref={ref}>
+        <div className="flex flex-col gap-16 lg:p-6 rounded-lg lg:border-2 lg:border-primary-200 bg-white lg:hidden w-full">
             {/* Invoice Header */}
-            <header className="flex items-start justify-between ">
-                <div className="w-[180px] h-[123px] relative">
+            <header className="flex items-start lg:flex-row flex-col justify-between gap-12 lg:gap-0 ">
+                <div className="lg:w-[180px] lg:h-[123px] w-[90px] h-[61px] self-center lg:self-auto relative">
                     <Image src={"/invoice-logo.png"} alt="logo" fill className="object-cover" />
                 </div>
-                <div className="flex flex-col gap-8">
-                    <h1 className="text-[64px] text-primary font-bold">INVOICE</h1>
+                <div className="flex flex-col lg:gap-8 gap-6">
+                    <h1 className="lg:text-[64px] text-[32px] text-primary font-bold">INVOICE</h1>
                     {/* Invoice number & dates */}
-                    <div className="flex flex-col items-end gap-6">
-                        <p className="text-md text-black">Invoice Number: <span className="text-base font-mono"> {invoice?.invoiceNumber}</span></p>
-                        <p className="text-md text-black">Issued Date: <span className="text-base font-mono"> {format(invoice?.issuedDate, "dd/MM/yy")}</span></p>
-                        <p className="text-md text-black">Due Date:  <span className="text-base font-mono"> {format(invoice?.dueDate, "dd/MM/yy")} </span></p>
+                    <div className="flex flex-col lg:items-end lg:gap-6 gap-4">
+                        <p className="text-base lg:text-md text-black">Invoice Number: <span className="text-base font-mono"> {invoice?.invoiceNumber}</span></p>
+                        <p className="text-base lg:text-md text-black">Issued Date: <span className="text-base font-mono"> {format(invoice?.issuedDate, "dd/MM/yy")}</span></p>
+                        <p className="text-base lg:text-md text-black">Due Date:  <span className="text-base font-mono"> {format(invoice?.dueDate, "dd/MM/yy")} </span></p>
                     </div>
                 </div>
             </header>
             {/* Recipent section */}
-            <section className="flex items-start justify-between ">
+            <section className="flex items-start justify-between flex-col lg:flex-row gap-8 lg:gap-0">
                 <div className="flex flex-col items-start gap-6">
                     <h2 className="text-primary">Recipient&apos;s Details</h2>
                     <div className="space-y-2 font-mono">
@@ -35,7 +35,7 @@ export default function Invoice({ invoice, ref }) {
                         <p>{invoice?.user?.phone}</p>
                     </div>
                 </div>
-                <p className={`bg-error text-secondary-100 w-max  px-2.5 py-2  rounded-full text-center text-2xl font-bold font-mono`}><span className="block my-auto">{invoice?.status}</span></p>
+                <p className={`-order-1 bg-error text-secondary-100 w-max  px-2.5 py-2  rounded-full text-center text-2xl font-bold font-mono`}><span className="block my-auto">{invoice?.status}</span></p>
             </section>
             {/* Invoice details table */}
             <section className="py-6">
@@ -83,7 +83,7 @@ export default function Invoice({ invoice, ref }) {
                 <p className="font-mono">Payments made into Xpacy account cannot be refunded.</p>
             </section>
             {/* Invoice Payment Information */}
-            <section className="flex items-center justify-between">
+            <section className="flex lg:items-center justify-between lg:flex-row flex-col gap-8 lg:gap-0">
                 <div className="flex flex-col gap-8">
                     <div className="flex flex-col gap-2 font-mono text-base text-black">
                         <p>

@@ -195,3 +195,21 @@ export async function updateUserPassword(userData) {
   const data = await response.json();
   return data
 }
+
+export async function createBooking (formData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  if (!token?.value) throw new Error("Please Log in to continue");
+  const response = await fetch(`${URL}/user/create-booking`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({...formData})
+  });
+  const data = await response.json();
+  console.log(data);
+  if(!data.success) throw new Error(data.message)
+  return data;
+}
