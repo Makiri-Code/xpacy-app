@@ -16,7 +16,7 @@ export default async function SidebarHeader() {
             <MobileNav isSidebar={true} />
             <div className="flex gap-4 items-center relative">
                 <SearchInput />
-                <Link href="#" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Book A Service</Link>
+                <Link href="/book-service" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Book A Service</Link>
                 <div className="w-0.5 h-10 bg-gray-300">
                 </div>
                 <ProfileDisplay />

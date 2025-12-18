@@ -5,6 +5,9 @@ import { useEffect, useState, useTransition } from "react"
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import { createBooking } from "../_lib/action";
+import { useRouter } from "next/navigation";
+import CustomCheckbox from "./CustomCheckbox";
+import Link from "next/link";
 const selectOptions = [
     {
         label: "Lodging",
@@ -26,7 +29,8 @@ function BookDayPicker({onClose, property_id}) {
     const [selected, setSelected] = useState({from: undefined, to: undefined});
     const [isPending, startTransition] = useTransition()
     const [bookingReason, setBookingReason] = useState("")
-        
+    const router = useRouter()
+    
     const handleSubmit = (e) => {
         e.preventDefault();
         startTransition ( () => {
@@ -41,17 +45,20 @@ function BookDayPicker({onClose, property_id}) {
         }
         toast.promise( async () => await createBooking(bookingData), {
             loading: "Loading...",
-            success: (data) => `${data.message}`,
+            success: (data) => {
+                router.push("/dashboard/user/my-properties");
+                return `${data.message}`
+            },
             error: (error) => `${error.message}`
         })
     })
     }
 
     return (
-        <div className="flex flex-col p-6 md:w-[500px] w-[350px] max-h-[500px] gap-6 font-mono ">
-            <h3 className="text-primary md:text-xl text-md font-sans text-center ">Select booking dates</h3>
+        <div className="flex flex-col p-6 md:w-[450px] w-[350px] max-h-[500px] gap-6 font-mono ">
+            <h3 className="text-primary md:text-xl text-md font-sans text-center font-bold lg:mb-4">Select booking dates</h3>
             <form className="flex flex-col gap-6 overflow-y-auto" onSubmit={handleSubmit}>
-                <div className="self-center">
+                <div className="w-full">
                     <DayPicker
                         animate
                         mode="range"
@@ -66,6 +73,9 @@ function BookDayPicker({onClose, property_id}) {
                         <option value="">Please choose the reason for booking</option>
                         {selectOptions.map(option => <option value={option.label} key={option.label}>{option.label}</option>)}
                     </select>
+                </div>
+                <div className="mb-2">
+                    <CustomCheckbox labelSize="text-md" label={<p>I agree to the <Link href={"#"} className="text-primary font-bold"> Terms and Conditions</Link> </p>}/> 
                 </div>
                 <div className="flex items-center justify-between">
                     <button onClick={onClose} className="py-2 px-3.5 border border-gray-400 rounded-lg bg-white cursor-pointer">Cancel</button>

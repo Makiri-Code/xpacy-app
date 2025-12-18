@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 
 
-export async function middleware(req){
+export async function proxy(req){
     const url = new URL(req.url);
 
     const token = await req.cookies.get("token")?.value;
@@ -17,5 +17,5 @@ export async function middleware(req){
 }
 
 export const config = {
-    matcher: ["/dashboard/user/:path*", "/auth/verify-email", "/invoice/:invoiceId"]
+    matcher: ["/dashboard/user/:path*", "/auth/verify-email", "/invoice/:invoiceId", "/book-service"]
 }

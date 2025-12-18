@@ -9,9 +9,9 @@ export default function BackBtn() {
     return (
         <div>
             <button className="flex items-center gap-2 text-black cursor-pointer font-mono" onClick={() => router.back()}>
-            <span className="text-2xl"><FaArrowLeft /></span>
-            <span>Back</span>
-        </button>
+                <span className="text-2xl"><FaArrowLeft /></span>
+                <span>Back</span>
+            </button>
         </div>
     )
 }

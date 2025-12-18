@@ -159,7 +159,7 @@ export async function uploadDisplayPhoto(formData) {
     body: formData
   });
   const data = await response.json();
-   revalidateTag("user-profile");
+  revalidateTag("user-profile");
   return data
 }
 
@@ -173,10 +173,10 @@ export async function updateUserProfile(userData) {
       "Authorization": `Bearer ${token?.value}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({...userData})
+    body: JSON.stringify({ ...userData })
   });
   const data = await response.json();
-   revalidateTag("user-profile");
+  revalidateTag("user-profile");
   return data
 }
 
@@ -190,13 +190,13 @@ export async function updateUserPassword(userData) {
       "Authorization": `Bearer ${token?.value}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({...userData})
+    body: JSON.stringify({ ...userData })
   });
   const data = await response.json();
   return data
 }
 
-export async function createBooking (formData) {
+export async function createBooking(formData) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
   if (!token?.value) throw new Error("Please Log in to continue");
@@ -206,10 +206,47 @@ export async function createBooking (formData) {
       "Authorization": `Bearer ${token?.value}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({...formData})
+    body: JSON.stringify({ ...formData })
   });
   const data = await response.json();
-  console.log(data);
-  if(!data.success) throw new Error(data.message)
+  if (!data.success) throw new Error(data.message)
   return data;
+};
+
+export async function handleBookService(form) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  if (!token?.value) throw new Error("Please Log in to continue");
+  const data = new FormData();
+  Object.entries(form).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      // Handle arrays separately (e.g., property_amenities, images, videos)
+      value.forEach((item) => {
+        data.append(key, item); // Append each item in the array
+      });
+    } else if (value !== null && value !== undefined) {
+      data.append(key, value);
+    }
+  });
+  const response = await fetch(`${URL}/service/request-service`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+    },
+    body: data
+  });
+  const res = await response.json();
+  return res
+};
+
+export async function handleContact(formData){
+  const response = await fetch(`${URL}/contact/send-mail`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData)
+  });
+  const data = await response.json();
+  return data
 }
