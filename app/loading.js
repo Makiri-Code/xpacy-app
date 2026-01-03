@@ -4,7 +4,7 @@ import Navigation from "./_components/Navigation";
 import Link from "next/link";
 export default function Loading() {
     return (
-        <>
+        <div className="min-h-screen">
             <header className="flex items-center justify-between px-[7%] py-6 sticky top-0 z-50 bg-white border-b border-gray-700">
                 <div >
                     <Image src={"/logo.png"} width={"156"} height={"32"} alt={"Xpacy Logo"} />
@@ -28,7 +28,7 @@ export default function Loading() {
             </header>
             <div className="spinner"></div>
             <Footer />
-        </>
+        </div>
     )
 
 }

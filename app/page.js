@@ -1,30 +1,24 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 
+import applestoreIcon from "@/public/apple-store.svg";
 import image1 from "@/public/image1.png";
 import image2 from "@/public/image2.png";
 import image3 from "@/public/image3.png";
 import image4 from "@/public/listproperty-image.png";
 import image5 from "@/public/mobile-img.png";
 import playstoreIcon from "@/public/play-store.svg";
-import applestoreIcon from "@/public/apple-store.svg";
 
 import AppHeader from "./_components/AppHeader";
+import BlogCard from "./_components/BlogCard";
+import FaqSection from "./_components/FaqSection";
+import FeaturedSection from "./_components/FeaturedSection";
 import Filter from "./_components/Filter";
+import Footer from "./_components/Footer";
 import HomeCarousel from "./_components/HomeCarousel";
 import SectionLayout from "./_components/SectionLayout";
-import Featured from "./_components/Featured";
-import Footer from "./_components/Footer";
-import {
-  getBanners,
-  getFaqs,
-  getFeaturedProperties,
-} from "./_lib/data-services";
 import ServicesSection from "./_components/ServicesSection";
 import TestimonySection from "./_components/TestimonySection";
-import FaqSection from "./_components/FaqSection";
-import BlogCard from "./_components/BlogCard";
-import FeaturedSection from "./_components/FeaturedSection";
 export default async function Home() {
   return (
     <>
@@ -76,7 +70,7 @@ export default async function Home() {
             </div>
             <div className="flex items-center justify-center">
               <Link
-                href="#"
+                href="/contact"
                 className="p-4 bg-secondary-500 text-black text-base font-mono rounded-lg font-bold "
               >
                 Get In Touch
@@ -98,7 +92,7 @@ export default async function Home() {
           </p>
           <div className="flex items-center justify-center">
             <Link
-              href="#"
+              href="/contact"
               className="bg-primary text-white text-base p-4 font-mono rounded-lg"
             >
               List My Property

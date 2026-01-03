@@ -9,7 +9,7 @@ export default function PropertyLayout({search}){
     return (
         <div className="flex gap-6 ">
             <div className="w-[347px] pt-14 md:flex flex-col gap-12 hidden ">
-                <FilterSidebar/>
+                <FilterSidebar search={search}/>
                 <LatestPropertyList/>
             </div>
             <Suspense fallback={<LoadingPropertiesCard/>}>
