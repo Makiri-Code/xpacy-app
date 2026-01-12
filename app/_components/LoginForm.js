@@ -4,23 +4,34 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { handleLogin } from "../_lib/action";
+import {  handleUserLogin, handleAdminLogin } from "../_lib/action";
 import FormInput from "./FormInput";
 import Logo from "./Logo";
 import SpinnerMini from "./SpinnerMini";
 import { useSearchParams } from "next/navigation";
-export default function LoginForm() {
+export default function LoginForm({role}) {
     const searchParams = useSearchParams();
     const redirectUrl = searchParams.get("redirectUrl") ?? "/dashboard/user";
     const [pending, startTransition] = useTransition();
-    const { register, handleSubmit, formState: { errors }, reset } = useForm()
+    const { register, handleSubmit, formState: { errors }, reset } = useForm();
+    
     async function onSubmit(data) {
-        startTransition(async () => {
-            const response = await handleLogin(data, redirectUrl);
-            if (response.success) toast.success(response.message);
-            if (!response.success) toast.error(response.message);
-            reset();
-        })
+        if(role === "user"){
+            startTransition(async () => {
+                const response = await handleUserLogin(data, redirectUrl);
+                if (response.success) toast.success(response.message);
+                if (!response.success) toast.error(response.message);
+                reset();
+            })
+        }
+        if(role === "admin"){ 
+            startTransition(async () => {
+                const response = await handleAdminLogin(data, "/dashboard/admin");
+                if (response.success) toast.success(response.message);
+                if (!response.success) toast.error(response.message);
+                reset();
+            })
+         }
     }
     return (
         <div className=" flex-1 py-16 flex justify-center px-6">

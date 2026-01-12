@@ -5,7 +5,7 @@ export default function Page() {
 
     return (
         <div className="flex min-h-dvh ">
-            <LoginForm/>
+            <LoginForm role={"user"}/>
             <div className="w-1/2 hidden md:block">
                 <AuthCarousel />
             </div>

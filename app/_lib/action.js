@@ -41,7 +41,7 @@ export const handleSearch = async (formData) => {
   redirect(`/search?purpose=${purpose}&type=${type}&location=${location}&minBedrooms=${minBedrooms}&minPrice=${minPrice}&maxPrice=${maxPrice}`)
 }
 
-export async function handleLogin(userData, redirectUrl) {
+export async function handleUserLogin(userData, redirectUrl) {
   const response = await fetch(`${URL}/user/login`, {
     method: "POST",
     headers: {
@@ -49,7 +49,7 @@ export async function handleLogin(userData, redirectUrl) {
     },
     body: JSON.stringify({ ...userData }),
 
-  });
+  });  
   const data = await response.json();
   if (!response.ok) return { success: false, message: data.message }
 
@@ -65,7 +65,33 @@ export async function handleLogin(userData, redirectUrl) {
   });
   if (data.role === "User") redirect(redirectUrl)
   return { success: true, message: data.message }
-}
+};
+
+export async function handleAdminLogin(userData, redirectUrl) {
+  const response = await fetch(`${URL}/admin/admin-login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ...userData }),
+  });
+  const data = await response.json();
+  if (!response.ok) return { success: false, message: data.message }
+
+  const cookieStore = await cookies();
+  cookieStore.set({
+    name: "token",
+    value: data.token,
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    path: "/",
+    maxAge: 60 * 60, // 1 day
+  });
+  if (data.role === "Admin") redirect(redirectUrl)
+  return { success: true, message: data.message }
+};
+
 
 export async function handleSignup(userData, referralCode) {
   const response = await fetch(`${URL}/user/register?referralCode=${referralCode}`, {

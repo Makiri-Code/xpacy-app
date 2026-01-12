@@ -10,7 +10,9 @@ import { RiUserSettingsLine } from "react-icons/ri";
 import { LuMessageCircleQuestion } from "react-icons/lu";
 import { IoCalendarOutline } from "react-icons/io5";
 import { RiHome2Line } from "react-icons/ri";
-const navList = [
+
+
+const userNavList = [
     {
         text: "Go to Homepage",
         link: "/",
@@ -58,13 +60,63 @@ const navList = [
     }
 ]
 
+const adminNavList = [
+  
+    {
+        text: "Dashboard",
+        link: "/dashboard/admin",
+        icon: <RxDashboard />
+    },
+    {
+        text: "Notifications",
+        link: "/dashboard/admin/notifications",
+        icon: <FiBell />
+    },
+    {
+        text: "Properties",
+        link: "/dashboard/admin/properties",
+        icon: <BiBuildingHouse />
+    },
+    {
+        text: "Services",
+        link: "/dashboard/admin/services",
+        icon: <FaRegHeart />
+    },
+    {
+        text: "Users",
+        link: "/dashboard/admin/users",
+        icon: <IoCalendarOutline />
+    },
+    {
+        text: "Payments",
+        link: "/dashboard/admin/payments",
+        icon: <IoCardOutline />
+    },
+    {
+        text: "Reports & Analytics",
+        link: "/dashboard/admin/reports-analytics",
+        icon: <RiUserSettingsLine />
+    },
+    {
+        text: "Settings",
+        link: "/dashboard/admin/settings",
+        icon: <LuMessageCircleQuestion />
+    },
+    {
+        text: "FAQs",
+        link: "/dashboard/admin/faqs",
+        icon: <LuMessageCircleQuestion />
+    }
+]
 
-export default function SidebarNav() {
+export default function SidebarNav({ role = "user" }) {
+    let navList = [];
+    role === "admin" ? navList = adminNavList : navList = userNavList;
     const pathname = usePathname();
     return (
-        <ul className="flex flex-col gap-4">
+        <ul className="flex flex-col gap-4 h-full">
             {navList.map((list, index) => (
-                <li key={index} className={`${pathname === list.link && "bg-[#477899]"} px-4 py-2 rounded-lg hover:bg-[#477899] group transition-all duration-300`}>
+                <li key={index} className={`${pathname === list.link && "bg-primary-700"} px-4 py-2 rounded-lg hover:bg-primary-700 group transition-all duration-300`}>
                     <Link href={list.link} className="flex gap-4 items-center ">
                         <span className={`${pathname === list.link ? "text-secondary" : "text-white"} text-2xl group-hover:text-secondary`}>{list.icon}</span>
                         <span className="text-base text-white font-mono">{list.text}</span>

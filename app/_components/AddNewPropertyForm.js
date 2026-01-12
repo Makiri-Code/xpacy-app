@@ -1,0 +1,551 @@
+"use client";
+
+import { useEffect, useState, useTransition } from "react";
+import ProgressBar from "./ProgressBar";
+import SearchPropertyOwner from "./SearchPropertyOwner";
+import FormInput from "./FormInput";
+import { useForm } from "react-hook-form";
+
+import { FaAngleLeft, FaAngleRight, FaNairaSign } from "react-icons/fa6";
+import SelectAmeneties from "./SelectAmeneties";
+import DragnDrop from './DragnDrop';
+import CustomToogle from "./CustomToogle";
+import { de } from "date-fns/locale";
+import SpinnerMini from "./SpinnerMini";
+import { url } from "../_lib/data-services";
+import toast from "react-hot-toast";
+
+
+// options for property type
+const propertyType = [
+    {
+        id: 1,
+        type: "Commercial",
+    },
+    {
+        id: 2,
+        type: "Residential",
+    },
+    {
+        id: 3,
+        type: "Terrace",
+    },
+    {
+        id: 4,
+        type: "Flat/Apartment",
+    },
+    {
+        id: 5,
+        type: "Duplex",
+    },
+    {
+        id: 6,
+        type: "Semi-detached",
+    },
+    {
+        id: 7,
+        type: "Fully-detached",
+    },
+    {
+        id: 9,
+        type: "Villa",
+    },
+];
+// Options for availability status
+const availabilityStatus = [
+    {
+        id: 1,
+        status: "Available",
+    },
+    {
+        id: 2,
+        status: "Unavailable",
+    },
+    {
+        id: 3,
+        status: "Sold",
+    },
+];
+const propertyStatus = [
+    {
+        id: 1,
+        status: "Sale",
+    },
+    {
+        id: 2,
+        status: "Rent",
+    },
+    {
+        id: 3,
+        status: "Lease",
+    },
+    {
+        id: 4,
+        status: "Shortlet",
+    },
+];
+const bedroomCounts = [
+    {
+        id: 1,
+        count: 1,
+    },
+    {
+        id: 2,
+        count: 2,
+    },
+    {
+        id: 3,
+        count: 3,
+    },
+    {
+        id: 4,
+        count: 4,
+    },
+    {
+        id: 5,
+        count: 5,
+    },
+    {
+        id: 6,
+        count: 6,
+    },
+];
+const bathroomCounts = [
+    {
+        id: 1,
+        count: 1,
+    },
+    {
+        id: 2,
+        count: 2,
+    },
+    {
+        id: 3,
+        count: 3,
+    },
+    {
+        id: 4,
+        count: 4,
+    },
+    {
+        id: 5,
+        count: 5,
+    },
+    {
+        id: 6,
+        count: 6,
+    },
+];
+const toiletCounts = [
+    {
+        id: 1,
+        count: 1,
+    },
+    {
+        id: 2,
+        count: 2,
+    },
+    {
+        id: 3,
+        count: 3,
+    },
+    {
+        id: 4,
+        count: 4,
+    },
+    {
+        id: 5,
+        count: 5,
+    },
+    {
+        id: 6,
+        count: 6,
+    },
+];
+const parkingAreaCount = [
+    {
+        id: 1,
+        count: "Fit 1 car",
+    },
+    {
+        id: 2,
+        count: "Fit 2 cars",
+    },
+    {
+        id: 3,
+        count: "Fit 3 cars",
+    },
+    {
+        id: 4,
+        count: "Fit 4 cars",
+    },
+    {
+        id: 5,
+        count: "Fit 5 cars",
+    },
+];
+const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
+    const [activeStep, setActiveStep] = useState(1);
+    const [propertyOwner, setPropertyOwner] = useState(null);
+    const [propertyAmenities, setPropertyAmenities] = useState([]); 
+    const [selectedFiles, setSelectedFiles] = useState([]); 
+    const [isFeatured, setIsFeatured] = useState(false);
+    const [isPending, setIsPending] = useState(false);
+    const { register, handleSubmit, formState: { errors }, reset, getValues, setValue } = useForm({
+        defaultValues: {
+            firstname: propertyOwner?.first_name,
+            lastname: propertyOwner?.last_name,
+            email: propertyOwner?.email,
+            phone: propertyOwner?.phone || "",
+            owner_address: propertyOwner?.address || "",
+        }
+    });
+
+    const onSubmit = (data) => {
+        delete data.firstname;
+        delete data.lastname;
+        delete data.email;
+        delete data.phone;
+        delete data.owner_address;
+        const propertyInfo = {
+            ...data,
+            property_owner_id: propertyOwner?.id,
+            property_amenities: propertyAmenities,
+            images:selectedFiles,
+            isFeatured: isFeatured,
+            total_bathrooms: Number(data.total_bathrooms),
+            total_bedrooms: Number(data.total_bedrooms),
+            total_toilets: Number(data.total_toilets),
+            property_price: Number(data.property_price),
+            long: Number(data.long),   
+            lat: Number(data.lat),    
+        }
+
+
+        setIsPending(true); 
+        toast.promise(submitForm(propertyInfo), {
+            loading: 'Adding new property...',
+            success: (data) => {
+                setActiveStep(1);
+                setIsPending(false);
+                if(!data.success) throw new Error(data.message || data.errors[0].message || "Failed to add property.");
+                reset();
+                return "Property added successfully!";
+            },
+            error: (error) => {
+                setIsPending(false);
+                return `${error.message || "Failed to add property."}`
+            },
+        })
+        
+    
+
+    } 
+    const submitForm = async (propertyInfo) => {
+        const formData = new FormData();
+        Object.entries(propertyInfo).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                // Handle arrays separately (e.g., property_amenities, images, videos)
+                value.forEach((item) => {
+                    formData.append(key, item); // Append each item in the array
+                });
+            } else if (value !== null && value !== undefined) {
+                formData.append(key, value);
+            }
+        });
+        try {
+            const response = await fetch(`${url}/property/create-property`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token?.value}`,
+                },
+                body: formData,
+            });
+            
+            const data = await response.json();
+            console.log(data)
+            return data;         
+        } catch (error) {
+            console.log("Error submitting form:", error);
+            toast.error(error.message || "An error occurred. Please try again.");
+        }
+    }
+    
+    useEffect(() => {
+        if (propertyOwner) {
+            setValue("firstname", propertyOwner.first_name || "");
+            setValue("lastname", propertyOwner.last_name || "");
+            setValue("email", propertyOwner.email || "");
+            setValue("phone", propertyOwner.phone || "");
+            setValue("owner_address", propertyOwner.address || "");
+        }
+    }, [propertyOwner, setValue]);
+    return (
+        <div className="flex flex-col gap-12 w-[796px]">
+            {/* Header */}
+            <header className="flex flex-col items-center justify-center gap-4">
+                <h2 className="text-3xl font-bold text-primary">Add New Property</h2>
+                <p className="font-mono">Fill in the correct detailed information for the new property.</p>
+            </header>
+            {/* Progress bar */}
+            <ProgressBar activeStep={activeStep} setActiveStep={setActiveStep} />
+            {/* Form Steps */}
+            <form className="p-6 flex flex-col gap-8" onSubmit={handleSubmit(onSubmit)}>
+                {/* 1. Owner Info */}
+                {activeStep === 1 && (
+                    <>
+                        <h3 className="text-lg">Owner Information</h3>
+                        <SearchPropertyOwner propertyOwner={propertyOwner} setPropertyOwner={setPropertyOwner} allOwners={allOwners} />
+                        <div className="flex flex-col gap-6">
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"First Name"} id={"firstname"} >
+                                    <input disabled {...register("firstname", {
+                                        required: "Please enter your first name"
+                                    })} type={"text"} name={"firstname"} id={"firstname"} placeholder={"Enter your first name"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.firstname ? "border-error" : "border-primary-200"}`} />
+                                    {errors.firstname && <span className="-mt-2 text-xs text-error">{errors.firstname.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Last Name"} id={"lastname"} >
+                                    <input disabled {...register("lastname", {
+                                        required: "Please enter your lastname"
+                                    })} type={"text"} name={"lastname"} id={"lastname"} placeholder={"Enter your last name"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.lastname ? "border-error" : "border-primary-200"}`} />
+                                    {errors.lastname && <span className="-mt-2 text-xs text-error">{errors.lastname.message}</span>}
+                                </FormInput>
+                            </div>
+                            <FormInput label={"Email address"} id={"email"} >
+                                <input disabled {...register("email", {
+                                    required: "Email is required", pattern: {
+                                        value: /\S+@\S+\.\S+/,
+                                        message: "Provide a valid email address",
+                                    }
+                                })} type={"email"} name={"email"} id={"email"} placeholder={"Enter your email address"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.phone ? "border-error" : "border-primary-200"}`} />
+                                {errors.email && <span className="-mt-2 text-xs text-error">{errors.email.message}</span>}
+                            </FormInput>
+                            <FormInput label={"Phone number"} id={"phone"} >
+                                <input disabled {...register("phone")} type={"phone"} name={"phone"} id={"phone"} placeholder={"Enter your phone number"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.phone ? "border-error" : "border-primary-200"}`} />
+                                {errors.phone && <span className="-mt-2 text-xs text-error">{errors.phone.message}</span>}
+                            </FormInput>
+                            <FormInput label={"Address"} id={"address"} >
+                                <input disabled {...register("owner_address")} type={"text"} name={"address"} id={"address"} placeholder={"Enter your address"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.owner_address ? "border-error" : "border-primary-200"}`} />
+                                {errors.owner_address && <span className="-mt-2 text-xs text-error">{errors.owner_address.message}</span>}
+                            </FormInput>
+                        </div>
+                    </>
+                )}
+                {/* 2. Property Overview */}
+                {activeStep === 2 && (
+                    <>
+                        <h3 className="text-lg">Property Overview</h3>
+                        <div className="flex flex-col gap-6">
+                            <FormInput label={"Property Name"} id={"property_name"} >
+                                <input  {...register("property_name", {
+                                    required: "Property Name is required",
+                                })} type={"text"} name={"property_name"} id={"property_name"} placeholder={"Enter your property name"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_name ? "border-error" : "border-primary-200"}`} />
+                                {errors.property_name && <span className="-mt-2 text-xs text-error">{errors.property_name.message}</span>}
+                            </FormInput>
+                            <FormInput label={"Property Address"} id={"address"} >
+                                <input  {...register("address", {
+                                    required: "Property Address is required",
+                                })} type={"text"} name={"address"} id={"address"} placeholder={"Enter your property address"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.address ? "border-error" : "border-primary-200"}`} />
+                                {errors.address && <span className="-mt-2 text-xs text-error">{errors.address.message}</span>}
+                            </FormInput>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                               
+                                <FormInput label={"State"} id={"state"} >
+                                    <select {...register("state", {
+                                        required: "State is required",
+                                    })} type={"text"} name={"state"} id={"state"} placeholder={"Enter your state"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.state ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a state</option>
+                                        {allCities.map(city => (
+                                            <option key={city.id} value={city.location}>{city.location}</option>
+                                        ))}
+                                    </select>
+                                    {errors.state && <span className="-mt-2 text-xs text-error">{errors.state.message}</span>}
+                                </FormInput>
+                                <FormInput label={"City/Town"} id={"city"} >
+                                    <input  {...register("city", {
+                                        required: "City/Town is required",
+                                    })} type={"text"} name={"city"} id={"city"} placeholder={"Enter your city/town"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.city ? "border-error" : "border-primary-200"}`} />
+                                    {errors.city && <span className="-mt-2 text-xs text-error">{errors.city.message}</span>}
+                                </FormInput>
+                            </div>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Property Type"} id={"property_type"} >
+                                    <select {...register("property_type", {
+                                        required: "Property Type is required",
+                                    })} name={"property_type"} id={"property_type"} placeholder={"Enter your property type"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_type ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a property type</option>
+                                        {propertyType.map(item => (
+                                            <option key={item.id} value={item.type}>{item.type}</option>
+                                        ))}
+                                    </select>
+                                    {errors.property_type && <span className="-mt-2 text-xs text-error">{errors.property_type.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Availability Status"} id={"availability_status"} >
+                                    <select {...register("availability_status", {
+                                        required: "Availability Status is required",
+                                    })} name={"availability_status"} id={"availability_status"} placeholder={"Enter your availability status"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.availability_status ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select an availability status</option>
+                                        {availabilityStatus.map(item => (
+                                            <option key={item.id} value={item.status}>{item.status}</option>
+                                        ))}
+                                    </select>
+                                    {errors.availability_status && <span className="-mt-2 text-xs text-error">{errors.availability_status.message}</span>}
+                                </FormInput>
+                            </div>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Property Price"} id={"property_price"} >
+                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_price ? "border-error" : "border-primary-200"}`}>
+                                        <span><FaNairaSign /></span>
+                                        <input  {...register("property_price", {
+                                            required: "Property Price is required",
+                                        })} type={"number"} name={"property_price"} id={"property_price"} placeholder={"Enter your property price"} className={`focus:outline-none flex-1`} />
+                                    </div>
+                                    {errors.property_price && <span className="-mt-2 text-xs text-error">{errors.property_price.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Property Status"} id={"property_status"} >
+                                    <select {...register("property_status", {
+                                        required: "Property Status is required",
+                                    })} name={"property_status"} id={"property_status"} placeholder={"Enter your property status"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_status ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a property status</option>
+                                        {propertyStatus.map(item => (
+                                            <option key={item.id} value={item.status}>{item.status}</option>
+                                        ))}
+                                    </select>
+                                    {errors.property_status && <span className="-mt-2 text-xs text-error">{errors.property_status.message}</span>}
+                                </FormInput>
+                            </div>
+                            <FormInput label={"Property Description"} id={"description"} >
+                                <textarea {...register("description", {
+                                    required: "Property Description is required",
+                                })} name={"description"} id={"description"} placeholder={"Enter your property description"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 h-32 resize-none focus:outline-none ${errors.description ? "border-error" : "border-primary-200"}`}></textarea>
+                                {errors.description && <span className="-mt-2 text-xs text-error">{errors.description.message}</span>}
+                            </FormInput>
+                        </div>
+                    </>
+                )}
+                {/* 3. Property Information */}
+                {activeStep === 3 && (
+                    <>
+                        <h3 className="text-lg">Property Information</h3>
+                        <div className="flex flex-col gap-6">
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Bedrooms"} id={"total_bedrooms"} >
+                                    <select {...register("total_bedrooms", {
+                                        required: "Property Status is required",
+                                    })} name={"total_bedrooms"} id={"total_bedrooms"} placeholder={"Enter your bedrooms"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.total_bedrooms ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a bedroom count</option>
+                                        {bedroomCounts.map(item => (
+                                            <option key={item.id} value={item.count}>{item.count}</option>
+                                        ))}
+                                    </select>
+                                    {errors.total_bedrooms && <span className="-mt-2 text-xs text-error">{errors.total_bedrooms.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Bathrooms"} id={"total_bathrooms"} >
+                                    <select {...register("total_bathrooms", {
+                                        required: "Property Status is required",
+                                    })} name={"total_bathrooms"} id={"total_bathrooms"} placeholder={"Enter your bathrooms"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.total_bathrooms ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a bathroom count</option>
+                                        {bathroomCounts.map(item => (
+                                            <option key={item.id} value={item.count}>{item.count}</option>
+                                        ))}
+                                    </select>
+                                    {errors.total_bathrooms && <span className="-mt-2 text-xs text-error">{errors.total_bathrooms.message}</span>}
+                                </FormInput>
+                            </div>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Toilets"} id={"total_toilets"} >
+                                    <select {...register("total_toilets", {
+                                        required: "Property Status is required",
+                                    })} name={"total_toilets"} id={"total_toilets"} placeholder={"Enter your toilets"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.total_toilets ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a toilet count</option>
+                                        {toiletCounts.map(item => (
+                                            <option key={item.id} value={item.count}>{item.count}</option>
+                                        ))}
+                                    </select>
+                                    {errors.total_toilets && <span className="-mt-2 text-xs text-error">{errors.total_toilets.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Parking Area"} id={"parking_area"} >
+                                    <select {...register("parking_area", {
+                                        required: "Property Status is required",
+                                    })} name={"parking_area"} id={"parking_area"} placeholder={"Enter your parking area"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.parking_area ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a parking area</option>
+                                        {parkingAreaCount.map(item => (
+                                            <option key={item.id} value={item.count}>{item.count}</option>
+                                        ))}
+                                    </select>
+                                    {errors.parking_area && <span className="-mt-2 text-xs text-error">{errors.parking_area.message}</span>}
+                                </FormInput>
+                            </div>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Property size (square area)"} id={"property_square_area"} >
+                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_price ? "border-error" : "border-primary-200"}`}>
+                                        <span>sqm2</span>
+                                        <input  {...register("property_square_area")} type={"number"} name={"property_square_area"} id={"property_square_area"} placeholder={"Enter your property square area"} className={`focus:outline-none flex-1`} />
+                                    </div>
+                                    {errors.property_square_area && <span className="-mt-2 text-xs text-error">{errors.property_square_area.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Land area"} id={"land_area"} >
+                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_price ? "border-error" : "border-primary-200"}`}>
+                                        <span>sqm2</span>
+                                        <input  {...register("land_area")} type={"number"} name={"land_area"} id={"land_area"} placeholder={"Enter your land area"} className={`focus:outline-none flex-1`} />
+                                    </div>
+                                    {errors.land_area && <span className="-mt-2 text-xs text-error">{errors.land_area.message}</span>}
+                                </FormInput>
+                            </div>
+                            <SelectAmeneties propertyAmenities={propertyAmenities} setPropertyAmenities={setPropertyAmenities} />
+                        </div>
+                    </>
+                )}
+                {/* 4. Media */}
+                {activeStep === 4 && (
+                    <>
+                        <h3 className="text-lg">Media</h3>
+                        <DragnDrop selectedFiles={selectedFiles} setSelectedFiles={setSelectedFiles} maxFiles={9}/>
+                        <FormInput label={"Property Video Tour (Optional)"} id={"property_video_tour"} >
+                            <input  {...register("virtual_tour_url")} type={"text"} name={"virtual_tour_url"} id={"virtual_tour_url"} placeholder={"Enter your property video tour link"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.virtual_tour_url ? "border-error" : "border-primary-200"}`} />
+                            {errors.virtual_tour_url && <span className="-mt-2 text-xs text-error">{errors.virtual_tour_url.message}</span>}
+                        </FormInput>
+                            <div className="flex flex-col gap-6">
+                                <span className="font-mono font-medium">Location Coordinates <a className="text-blue-500 fonr-medium" href="https://www.latlong.net" target="_blank">(Get coordinates)</a></span>
+                                <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                    <FormInput label={"Latitude"} id={"lat"} >
+                                        <input  {...register("lat")} type={"text"} name={"lat"} id={"lat"} placeholder={"Enter your property latitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.lat ? "border-error" : "border-primary-200"}`} />
+                                        {errors.lat && <span className="-mt-2 text-xs text-error">{errors.lat.message}</span>}
+                                    </FormInput>
+                                    <FormInput label={"Longitude"} id={"long"} >
+                                        <input  {...register("long")} type={"text"} name={"long"} id={"long"} placeholder={"Enter your property longitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.long ? "border-error" : "border-primary-200"}`} />
+                                        {errors.long && <span className="-mt-2 text-xs text-error">{errors.long.message}</span>}
+                                    </FormInput>
+                                </div>
+                                <div className="flex items-center justify-between font-mono">
+                                    <span>Feature this property</span>
+                                    <CustomToogle checked={isFeatured} onChange={setIsFeatured} />  
+                                </div>
+                          </div>
+                    </>
+                )}
+                {/* Navigation Buttons */}
+                <div className={`${activeStep > 1 ? "flex items-center justify-between" : "self-end"}`}>
+                    {activeStep > 1 && (<button type="button" onClick={() => setActiveStep(prev => prev > 1 ? prev - 1 : 1)} className="bg-white px-4 py-2 font-mono text-primary rounded-lg hover:bg-primary-100/80 cursor-pointer transition flex items-center gap-2">
+                        <span><FaAngleLeft /></span>
+                        <span>Previous</span>
+                    </button>)}
+                    {activeStep  < 4 ? (
+                        <div type="button" onClick={() => setActiveStep(prev => prev < 4 ? prev + 1 : 4)} className="px-4 py-2 font-mono text-primary rounded-lg hover:bg-primary-100/80 cursor-pointer transition flex items-center gap-2">
+                            <span>Next</span>
+                            <span><FaAngleRight /></span>
+                        </div>
+                    ) : (
+                        <button disabled={isPending} type="submit" className=" px-4 py-2 bg-primary-200 font-mono text-primary rounded-lg hover:bg-primary-200/80 cursor-pointer transition flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50">
+                             <span>Finish</span>
+                                {isPending && <span><SpinnerMini /></span>}
+                        </button>
+                    )   }
+                </div>
+            </form>
+
+        </div>
+    );
+};
+
+export default AddNewPropertyForm;

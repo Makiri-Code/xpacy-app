@@ -1,4 +1,4 @@
-const url = "https://app.xpacy.com"
+export const url = "https://app.xpacy.com"
 
 export async function getBanners() {
   try {
@@ -112,6 +112,8 @@ export async function getUserProfile(token) {
   }
 }
 
+
+
 export async function getSavedProperties(token) {
   try {
     const response = await fetch(`${url}/user-property/saved-properties`, {
@@ -216,6 +218,87 @@ export async function getBookingList(token) {
 
 
 
+////// Admin Data Services /////
 
+export async function getAdminProfile(token) {
+  try {
+    const response = await fetch(`${url}/admin/fetch-admin-profile`, {
+      next: {
+        tags: ['admin-profile']
+      },
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-type": "application/json",
+      },
+    });
+    const { admin } = await response.json();
+    return admin
+  } catch (error) {
+    console.error("Error fetching user profile:", error)
+  }
+}
 
+export async function getAdminProperties(token) {
+  try {
+    const response = await fetch(`${url}/admin/fetch-all-propreties`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-type": "application/json",
+      },
+    });
+    const {properties, pagination} = await response.json();
+    return {properties, pagination}
+  } catch (error) {
+    console.error("Error fetching user profile:", error)
+  }
+}
 
+export async function getAdminServices(token) {
+  try {
+    const response = await fetch(`${url}/service/fetch-services`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-type": "application/json",
+      },
+    });
+    const {data} = await response.json();
+    return data
+  } catch (error) {
+    console.error("Error fetching user profile:", error)
+  }
+}
+
+export async function getPropertyOwner(token) {
+  try {
+    const response = await fetch(`${url}/admin/property-owner/fetch-propertowners`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-type": "application/json",
+      },
+    });
+    const { data } = await response.json();
+    return data
+  } catch (error) {
+    console.error("Error fetching user profile:", error)
+  }
+}
+
+export async function getAllAdmin(token) {
+  try {
+    const response = await fetch(`${url}/admin/fetch-admin`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-type": "application/json",
+      },
+    });
+    const { data } = await response.json();
+    return data 
+  } catch (error) {
+    console.error("Error fetching user profile:", error)
+  }
+}
