@@ -9,10 +9,10 @@ import { BiPlus } from "react-icons/bi";
 import { LiaFileVideoSolid, LiaFileImageSolid } from "react-icons/lia";
 import { PiFloppyDiskThin } from "react-icons/pi";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { useCompressImage } from "../_hooks/useCompressImage";
 
-export default function DragnDrop({accept, selectedFiles, setSelectedFiles, maxFiles}) {
-
-  const [chosenFile, setChosenFile] = useState(() => selectedFiles[0]);
+export default function DragnDrop({accept, maxFiles, files, setFiles}) {
+  const { compressImage, files: selectedFiles, setFiles: setSelectedFiles, chosenFile, setChosenFile } = useCompressImage(files, setFiles);
 
   const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
     noKeyboard: true,
@@ -20,18 +20,21 @@ export default function DragnDrop({accept, selectedFiles, setSelectedFiles, maxF
     maxFiles,
     accept,
     onDrop: (acceptedFiles) => {
-      setSelectedFiles((prev) => {
-        const newFiles = acceptedFiles.map((file) =>
-          Object.assign(file, { preview: URL.createObjectURL(file) })
-        );
-        return [...prev, ...newFiles];
-      });
-      setChosenFile(
-        acceptedFiles.map((file) =>
-          Object.assign(file, { preview: URL.createObjectURL(file) })
-        )[0]
-      );
+      compressImage(acceptedFiles);
     },
+    // onDrop: (acceptedFiles) => {
+    //   setSelectedFiles((prev) => {
+    //     const newFiles = acceptedFiles.map((file) =>
+    //       Object.assign(file, { preview: URL.createObjectURL(file) })
+    //     );
+    //     return [...prev, ...newFiles];
+    //   });
+    //   setChosenFile(
+    //     acceptedFiles.map((file) =>
+    //       Object.assign(file, { preview: URL.createObjectURL(file) })
+    //     )[0]
+    //   );
+    // },
   });
   // useEffect(() => {
   //   // Make sure to revoke the data uris to avoid memory leaks, will run on unmount

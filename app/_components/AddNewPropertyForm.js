@@ -10,10 +10,13 @@ import { FaAngleLeft, FaAngleRight, FaNairaSign } from "react-icons/fa6";
 import SelectAmeneties from "./SelectAmeneties";
 import DragnDrop from './DragnDrop';
 import CustomToogle from "./CustomToogle";
-import { de } from "date-fns/locale";
+import axios from "axios";
 import SpinnerMini from "./SpinnerMini";
 import { url } from "../_lib/data-services";
 import toast from "react-hot-toast";
+import { progress } from "../_lib/utils";
+import UploadingFileModal from "./UploadingFileModal";
+import { useCompressImage } from "../_hooks/useCompressImage";
 
 
 // options for property type
@@ -187,10 +190,15 @@ const parkingAreaCount = [
 const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
     const [activeStep, setActiveStep] = useState(1);
     const [propertyOwner, setPropertyOwner] = useState(null);
-    const [propertyAmenities, setPropertyAmenities] = useState([]); 
-    const [selectedFiles, setSelectedFiles] = useState([]); 
+    const [propertyAmenities, setPropertyAmenities] = useState([]);
+    const [files, setFiles] = useState([]);
+    const { files: selectedFiles } = useCompressImage(files, setFiles);
     const [isFeatured, setIsFeatured] = useState(false);
     const [isPending, setIsPending] = useState(false);
+    const [isOpenModal, setIsOpenModal] = useState(false);
+    const [uploadingProgress, setUploadingProgress] = useState(0);
+    const [estimatedTime, setEstimatedTime] = useState(0);
+    const controller = new AbortController();
     const { register, handleSubmit, formState: { errors }, reset, getValues, setValue } = useForm({
         defaultValues: {
             firstname: propertyOwner?.first_name,
@@ -211,25 +219,26 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
             ...data,
             property_owner_id: propertyOwner?.id,
             property_amenities: propertyAmenities,
-            images:selectedFiles,
+            images: selectedFiles,
             isFeatured: isFeatured,
             total_bathrooms: Number(data.total_bathrooms),
             total_bedrooms: Number(data.total_bedrooms),
             total_toilets: Number(data.total_toilets),
             property_price: Number(data.property_price),
-            long: Number(data.long),   
-            lat: Number(data.lat),    
+            long: Number(data.long),
+            lat: Number(data.lat),
         }
 
 
-        setIsPending(true); 
+        setIsPending(true);
         toast.promise(submitForm(propertyInfo), {
             loading: 'Adding new property...',
             success: (data) => {
                 setActiveStep(1);
                 setIsPending(false);
-                if(!data.success) throw new Error(data.message || data.errors[0].message || "Failed to add property.");
+                if (!data.success) throw new Error(data.message || data.errors[0].message || "Failed to add property.");
                 reset();
+                setIsOpenModal(false);
                 return "Property added successfully!";
             },
             error: (error) => {
@@ -237,10 +246,10 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
                 return `${error.message || "Failed to add property."}`
             },
         })
-        
-    
 
-    } 
+
+
+    }
     const submitForm = async (propertyInfo) => {
         const formData = new FormData();
         Object.entries(propertyInfo).forEach(([key, value]) => {
@@ -253,24 +262,24 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
                 formData.append(key, value);
             }
         });
+        const startTime = new Date();
         try {
-            const response = await fetch(`${url}/property/create-property`, {
-                method: "POST",
+            const response = await axios.post(`${url}/property/create-property`, formData, {
                 headers: {
                     Authorization: `Bearer ${token?.value}`,
+                    "Content-Type": "multipart/form-data",
                 },
-                body: formData,
+                onUploadProgress: (progressEvent) => progress(progressEvent, setIsOpenModal, setUploadingProgress, setEstimatedTime, startTime)
             });
+            if (controller.signal.aborted) throw new Error("Upload cancelled")
             
-            const data = await response.json();
-            console.log(data)
-            return data;         
+            return response.data;
         } catch (error) {
             console.log("Error submitting form:", error);
             toast.error(error.message || "An error occurred. Please try again.");
         }
     }
-    
+
     useEffect(() => {
         if (propertyOwner) {
             setValue("firstname", propertyOwner.first_name || "");
@@ -280,6 +289,13 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
             setValue("owner_address", propertyOwner.address || "");
         }
     }, [propertyOwner, setValue]);
+
+    useEffect(() => {
+        // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
+        return () => {
+            selectedFiles.forEach((file) => URL.revokeObjectURL(file.preview));
+        }
+    }, [selectedFiles]);
     return (
         <div className="flex flex-col gap-12 w-[796px]">
             {/* Header */}
@@ -349,7 +365,7 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
                                 {errors.address && <span className="-mt-2 text-xs text-error">{errors.address.message}</span>}
                             </FormInput>
                             <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
-                               
+
                                 <FormInput label={"State"} id={"state"} >
                                     <select {...register("state", {
                                         required: "State is required",
@@ -500,28 +516,28 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
                 {activeStep === 4 && (
                     <>
                         <h3 className="text-lg">Media</h3>
-                        <DragnDrop selectedFiles={selectedFiles} setSelectedFiles={setSelectedFiles} maxFiles={9}/>
+                        <DragnDrop files={files} setFiles={setFiles} maxFiles={9} />
                         <FormInput label={"Property Video Tour (Optional)"} id={"property_video_tour"} >
                             <input  {...register("virtual_tour_url")} type={"text"} name={"virtual_tour_url"} id={"virtual_tour_url"} placeholder={"Enter your property video tour link"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.virtual_tour_url ? "border-error" : "border-primary-200"}`} />
                             {errors.virtual_tour_url && <span className="-mt-2 text-xs text-error">{errors.virtual_tour_url.message}</span>}
                         </FormInput>
-                            <div className="flex flex-col gap-6">
-                                <span className="font-mono font-medium">Location Coordinates <a className="text-blue-500 fonr-medium" href="https://www.latlong.net" target="_blank">(Get coordinates)</a></span>
-                                <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
-                                    <FormInput label={"Latitude"} id={"lat"} >
-                                        <input  {...register("lat")} type={"text"} name={"lat"} id={"lat"} placeholder={"Enter your property latitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.lat ? "border-error" : "border-primary-200"}`} />
-                                        {errors.lat && <span className="-mt-2 text-xs text-error">{errors.lat.message}</span>}
-                                    </FormInput>
-                                    <FormInput label={"Longitude"} id={"long"} >
-                                        <input  {...register("long")} type={"text"} name={"long"} id={"long"} placeholder={"Enter your property longitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.long ? "border-error" : "border-primary-200"}`} />
-                                        {errors.long && <span className="-mt-2 text-xs text-error">{errors.long.message}</span>}
-                                    </FormInput>
-                                </div>
-                                <div className="flex items-center justify-between font-mono">
-                                    <span>Feature this property</span>
-                                    <CustomToogle checked={isFeatured} onChange={setIsFeatured} />  
-                                </div>
-                          </div>
+                        <div className="flex flex-col gap-6">
+                            <span className="font-mono font-medium">Location Coordinates <a className="text-blue-500 fonr-medium" href="https://www.latlong.net" target="_blank">(Get coordinates)</a></span>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Latitude"} id={"lat"} >
+                                    <input  {...register("lat")} type={"text"} name={"lat"} id={"lat"} placeholder={"Enter your property latitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.lat ? "border-error" : "border-primary-200"}`} />
+                                    {errors.lat && <span className="-mt-2 text-xs text-error">{errors.lat.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Longitude"} id={"long"} >
+                                    <input  {...register("long")} type={"text"} name={"long"} id={"long"} placeholder={"Enter your property longitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.long ? "border-error" : "border-primary-200"}`} />
+                                    {errors.long && <span className="-mt-2 text-xs text-error">{errors.long.message}</span>}
+                                </FormInput>
+                            </div>
+                            <div className="flex items-center justify-between font-mono">
+                                <span>Feature this property</span>
+                                <CustomToogle checked={isFeatured} onChange={setIsFeatured} />
+                            </div>
+                        </div>
                     </>
                 )}
                 {/* Navigation Buttons */}
@@ -530,20 +546,26 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
                         <span><FaAngleLeft /></span>
                         <span>Previous</span>
                     </button>)}
-                    {activeStep  < 4 ? (
+                    {activeStep < 4 ? (
                         <div type="button" onClick={() => setActiveStep(prev => prev < 4 ? prev + 1 : 4)} className="px-4 py-2 font-mono text-primary rounded-lg hover:bg-primary-100/80 cursor-pointer transition flex items-center gap-2">
                             <span>Next</span>
                             <span><FaAngleRight /></span>
                         </div>
                     ) : (
                         <button disabled={isPending} type="submit" className=" px-4 py-2 bg-primary-200 font-mono text-primary rounded-lg hover:bg-primary-200/80 cursor-pointer transition flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50">
-                             <span>Finish</span>
-                                {isPending && <span><SpinnerMini /></span>}
+                            <span>Finish</span>
+                            {isPending && <span><SpinnerMini /></span>}
                         </button>
-                    )   }
+                    )}
                 </div>
             </form>
-
+            <UploadingFileModal
+                isOpenModal={isOpenModal}
+                setIsOpenModal={setIsOpenModal}
+                uploadingProgress={uploadingProgress}
+                estimatedTime={estimatedTime}
+                controller={controller}
+            />
         </div>
     );
 };
