@@ -1,8 +1,5 @@
-import { TiStarFullOutline } from "react-icons/ti";
-import { TiStarHalfOutline } from "react-icons/ti";
-import StarRating from "./StarRating";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { TiStarFullOutline, TiStarHalfOutline } from "react-icons/ti";
 import CustomerRatings from "./CustomerRatings";
 export default function ReviewsBox({ totalRating = 4.5 }) {
     return (

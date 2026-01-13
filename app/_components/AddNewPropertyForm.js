@@ -295,7 +295,7 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
         return () => {
             selectedFiles.forEach((file) => URL.revokeObjectURL(file.preview));
         }
-    }, [selectedFiles]);
+    }, []);
     return (
         <div className="flex flex-col gap-12 w-[796px]">
             {/* Header */}

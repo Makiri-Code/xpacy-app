@@ -33,7 +33,7 @@ export const useCompressImage = (files, setFiles) => {
 
             // Set the first file from the current batch as the chosen file
             if (newFilesWithPreviews.length > 0) {
-                setChosenFile(newFilesWithPreviews[0]);
+                setChosenFile(newFilesWithPreviews[0] || null);
             }
 
         } catch (error) {
