@@ -1,121 +1,158 @@
+"use client"
+import Image from "next/image"
+import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter } from "react-icons/fa6"
+import { format } from "date-fns"
+import { formatCurrency } from "../_lib/utils"
+import { useEffect } from "react"
 
-import Image from "next/image";
-import { formatCurrency } from "../_lib/utils";
-import Link from "next/link";
-import { FaFacebook, FaInstagram, FaTiktok, FaXTwitter } from "react-icons/fa6";
-import { format } from "date-fns";
+export default function Invoice({
+  invoice,
+  mode = "view",
+  onChange,
+  ref
+}) {
+  const isEdit = mode === "edit"
 
+  const update = (path, value) => {
+    onChange?.(path, value)
+  }
 
-export default function Invoice({ invoice, ref }) {
-    return (
-        <div className="hidden lg:flex flex-col gap-16 p-6 rounded-lg border-2 border-primary-200 bg-white" ref={ref}>
-            {/* Invoice Header */}
-            <header className="flex items-start justify-between ">
-                <div className="w-[180px] h-[123px] relative">
-                    <Image src={"/invoice-logo.png"} alt="logo" fill className="object-cover" />
-                </div>
-                <div className="flex flex-col gap-8">
-                    <h1 className="text-[64px] text-primary font-bold">INVOICE</h1>
-                    {/* Invoice number & dates */}
-                    <div className="flex flex-col items-end gap-6">
-                        <p className="text-md text-black">Invoice Number: <span className="text-base font-mono"> {invoice?.invoiceNumber}</span></p>
-                        <p className="text-md text-black">Issued Date: <span className="text-base font-mono"> {format(invoice?.issuedDate, "dd/MM/yy")}</span></p>
-                        <p className="text-md text-black">Due Date:  <span className="text-base font-mono"> {format(invoice?.dueDate, "dd/MM/yy")} </span></p>
-                    </div>
-                </div>
-            </header>
-            {/* Recipent section */}
-            <section className="flex items-start justify-between ">
-                <div className="flex flex-col items-start gap-6">
-                    <h2 className="text-primary">Recipient&apos;s Details</h2>
-                    <div className="space-y-2 font-mono">
-                        <p>{invoice?.user.firstname} {invoice?.user.lastname}</p>
-                        <p>{invoice?.user?.address}</p>
-                        <p>{invoice?.user?.email}</p>
-                        <p>{invoice?.user?.phone}</p>
-                    </div>
-                </div>
-                <p className={`bg-error text-secondary-100 w-max  px-2.5 py-2  rounded-full text-center text-2xl font-bold font-mono`}><span className="block my-auto">{invoice?.status}</span></p>
-            </section>
-            {/* Invoice details table */}
-            <section className="py-6">
-                {/* Header */}
-                <div className="grid grid-cols-[3fr_1fr_1fr_2fr] text-neutrals-900 text-sm font-mono font-bold border-b border-primary-100">
-                    <p className="p-4 ">Description</p>
-                    <p className="p-4 text-right">Price</p>
-                    <p className="p-4 text-right">Qty</p>
-                    <p className="p-4 text-right">Total Amount</p>
-                </div>
-                {/* Body */}
-                {invoice?.items.map((item) => (
-                    <div className="grid grid-cols-[3fr_1fr_1fr_2fr] text-neutrals-900 text-sm font-mono border-b border-primary-100" key={item?.id}>
-                        <p className="p-4 ">{item?.description}</p>
-                        <p className="p-4 text-right">{formatCurrency(item?.unitPrice)}</p>
-                        <p className="p-4 text-right">{item?.quantity}</p>
-                        <p className="p-4 text-right font-bold">{formatCurrency(item?.total)}</p>
-                    </div>
-                ))}
-                <div className="grid grid-cols-[3fr_1fr_1fr_2fr] text-neutrals-900 text-sm font-mono border-b border-primary-100">
-                    <p className="p-4 "></p>
-                    <p className="p-4 text-right"></p>
-                    <p className="p-4 text-right"></p>
-                    <p className="p-4 text-right font-bold"></p>
-                </div>
-                {/* Sub-total */}
-                <div className="flex items-center justify-between text-neutrals-900 text-sm font-bold font-mono border-b border-primary-100">
-                    <p className="p-4 ">Sub-total</p>
-                    <p className="p-4 text-right">{formatCurrency(invoice?.subTotal)}</p>
-                </div>
-                {/* tax */}
-                <div className="flex items-center justify-between text-neutrals-900 text-sm font-bold font-mono border-b border-primary-100">
-                    <p className="p-4 ">Tax (7.5%)</p>
-                    <p className="p-4 text-right">{formatCurrency(invoice?.tax)}</p>
-                </div>
-                {/* Total */}
-                <div className="flex items-center justify-between text-neutrals-900 text-md font-bold font-mono bg-primary-200 border-b border-primary-100">
-                    <p className="p-4 ">TOTAL</p>
-                    <p className="p-4 text-right">{formatCurrency(invoice?.total)}</p>
-                </div>
-            </section>
-            {/* Terms and Conditions */}
-            <section className="flex flex-col gap-4 ">
-                <p className="text-md">Terms & Conditions</p>
-                <p className="font-mono">Payments made into Xpacy account cannot be refunded.</p>
-            </section>
-            {/* Invoice Payment Information */}
-            <section className="flex items-center justify-between">
-                <div className="flex flex-col gap-8">
-                    <div className="flex flex-col gap-2 font-mono text-base text-black">
-                        <p>
-                            <span className="font-bold">Address:</span> No. 1 Joe Akonobi
-                            Street, Ojodu Berger.
-                        </p>
-                        <p>
-                            <span className="font-bold">Email:</span> info@xpacy.com
-                        </p>
-                        <p>
-                            <span className="font-bold">Phone:</span> 09068557780
-                        </p>
-                    </div>
-                    <div className="flex space-x-6">
-                        <Link href={"#"} className="text-black text-2xl">
-                            <FaFacebook />
-                        </Link>
-                        <Link href={"#"} className="text-black text-2xl">
-                            <FaXTwitter />
-                        </Link>
-                        <Link href={"#"} className="text-black text-2xl">
-                            <FaInstagram />
-                        </Link>
-                        <Link href={"#"} className="text-black text-2xl">
-                            <FaTiktok />
-                        </Link>
-                    </div>
-                </div>
-                <div className="w-[217px] h-[217px] relative">
-                    <Image src={'/invoice-stamp.png'} alt="stamp" fill className="object-cover" />
-                </div>
-            </section>
-        </div>
+  // Recalculate subtotal, tax, total whenever items change
+  useEffect(() => {
+    const subTotal = invoice.items.reduce(
+      (sum, i) => sum + Number(i.unitPrice) * Number(i.quantity),
+      0
     )
+    const tax = subTotal * 0.075
+    const total = subTotal + tax
+
+    onChange?.("subTotal", subTotal)
+    onChange?.("tax", tax)
+    onChange?.("total", total)
+  }, [invoice.items])
+
+  return (
+    <div ref={ref} className="hidden lg:flex flex-col gap-16 p-6 rounded-lg border-2 border-primary-200 bg-white">
+      {/* Header */}
+      <header className="flex items-start justify-between">
+        <div className="w-[180px] h-[123px] relative">
+          <Image src="/invoice-logo.png" alt="logo" fill className="object-cover" />
+        </div>
+
+        <div className="flex flex-col gap-8">
+          <h1 className="text-[64px] text-primary font-bold">INVOICE</h1>
+          <div className="flex flex-col items-end gap-6 font-mono">
+            <Field label="Invoice Number" value={invoice.invoiceNumber} />
+            <Field label="Issued Date" value={invoice.issuedDate} type="date" isEdit={isEdit} onChange={v => update("issuedDate", v)} />
+            <Field label="Due Date" value={invoice.dueDate} type="date" isEdit={isEdit} onChange={v => update("dueDate", v)} />
+          </div>
+        </div>
+      </header>
+
+      {/* Recipient */}
+      <section className="flex justify-between items-center">
+        <div className="flex flex-col gap-6">
+          <h2 className="text-primary">Recipient&apos;s Details</h2>
+          <div className="space-y-2 font-mono">
+            <EditableText value={invoice.user.firstname} isEdit={isEdit} onChange={v => update("user.firstname", v)} placeholder={"Enter Recipent's first name"} />
+            <EditableText value={invoice.user.lastname} isEdit={isEdit} onChange={v => update("user.lastname", v)} placeholder={"Enter Recipent's last name"} />
+            <EditableText value={invoice.user.address} isEdit={isEdit} onChange={v => update("user.address", v)} placeholder={"Enter Recipent's address"} />
+            <EditableText value={invoice.user.email} isEdit={isEdit} onChange={v => update("user.email", v)} placeholder={"Enter Recipent's email"} />
+            <EditableText value={invoice.user.phone} isEdit={isEdit} onChange={v => update("user.phone", v)} placeholder={"Enter Recipent's phone number"} />
+          </div>
+        </div>
+        <span className="bg-error w-max text-secondary-100 px-4 py-2 rounded-full text-2xl font-bold font-mono">
+          {invoice.status}
+        </span>
+      </section>
+
+      {/* Items */}
+      <section className="py-6">
+        <div className="grid grid-cols-[3fr_1fr_1fr_2fr] font-mono font-bold border-b">
+          <p className="p-4 text-left">Description</p>
+          <p className="p-4 text-right">Price</p>
+          <p className="p-4 text-right">Qty</p>
+          <p className="p-4 text-right">Total</p>
+        </div>
+
+        {invoice.items.map((item, i) => (
+          <div key={i} className="grid grid-cols-[3fr_1fr_1fr_2fr] font-mono border-b">
+            <Cell value={item.description} isEdit={isEdit} onChange={v => update(`items.${i}.description`, v)} align="left" />
+            <Cell value={item.unitPrice} isEdit={isEdit} onChange={v => update(`items.${i}.unitPrice`, Number(v))} type="number" />
+            <Cell value={item.quantity} isEdit={isEdit} onChange={v => update(`items.${i}.quantity`, Number(v))} type="number" />
+            <p className="p-4 text-right font-bold">{formatCurrency(item.unitPrice * item.quantity)}</p>
+          </div>
+        ))}
+
+        <TotalRow label="Sub-total" value={invoice.subTotal} />
+        <TotalRow label="Tax (7.5%)" value={invoice.tax} />
+        <TotalRow label="TOTAL" value={invoice.total} highlight />
+      </section>
+
+      {/* Footer */}
+      <section className="flex justify-between">
+        <div className="flex flex-col gap-6 font-mono">
+          <p><b>Address:</b> No. 1 Joe Akonobi Street</p>
+          <p><b>Email:</b> info@xpacy.com</p>
+          <p><b>Phone:</b> 09068557780</p>
+          <div className="flex space-x-6 text-2xl">
+            <FaFacebook />
+            <FaXTwitter />
+            <FaInstagram />
+            <FaTiktok />
+          </div>
+        </div>
+        <div className="w-[217px] h-[217px] relative">
+          <Image src="/invoice-stamp.png" alt="stamp" fill />
+        </div>
+      </section>
+    </div>
+  )
 }
+
+/* ---------- Primitives ---------- */
+
+const Field = ({ label, value, isEdit, onChange, type="text" }) => (
+  <p>
+    {label}:{" "}
+    {isEdit ? (
+      <input
+        type={type}
+        value={type === "date" ? new Date(value).toISOString().slice(0, 10) : value}
+        onChange={e => onChange(type === "date" ? new Date(e.target.value) : e.target.value)}
+        className="border border-primary-700 px-3 py-2 rounded-lg outline-none"
+      />
+    ) : (
+      <span>{type === "date" ? format(new Date(value), "dd/MM/yy") : value}</span>
+    )}
+  </p>
+)
+
+const EditableText = ({ value, isEdit, onChange, placeholder }) =>
+  isEdit ? (
+    <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} className="border-b border-primary-200 outline-none w-full" />
+  ) : (
+    <p>{value}</p>
+  )
+
+const Cell = ({ value, isEdit, onChange, type="text", align="right" }) => (
+  <div className="p-4">
+    {isEdit ? (
+      <input
+        type={type}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        className={`w-full border py-2 px-3 rounded-lg border-primary-100 outline-none text-${align}`}
+      />
+    ) : (
+      <p className={`text-${align}`}>{value}</p>
+    )}
+  </div>
+)
+
+const TotalRow = ({ label, value, highlight }) => (
+  <div className={`flex justify-between font-mono font-bold border-b ${highlight ? "bg-primary-200" : ""}`}>
+    <p className="p-4">{label}</p>
+    <p className="p-4">{formatCurrency(value)}</p>
+  </div>
+)

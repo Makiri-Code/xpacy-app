@@ -26,7 +26,7 @@ export default function InvoiceSummary() {
                         <p className="text-center font-bold text-lg font-mono">{formatCurrency(0)}</p>
                     </div>
                     {/* Purchases */}
-                     <div className="flex flex-col items-center justify-center p-6 rounded-lg shadow-lg bg-white border border-primary-100 lg:w-[322px] w-full">
+                    <div className="flex flex-col items-center justify-center p-6 rounded-lg shadow-lg bg-white border border-primary-100 lg:w-[322px] w-full">
                         <p className="font-mono text-[#477899] text-base">Purchases</p>
                         <p className="text-center font-bold text-lg font-mono">{formatCurrency(0)}</p>
                     </div>
@@ -38,5 +38,5 @@ export default function InvoiceSummary() {
                 </div>
             </div>
         </div>
-            )
+    )
 }

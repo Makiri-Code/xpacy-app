@@ -10,7 +10,7 @@ import MobileDashboardHeader from "@/app/_components/MobileDashboardHeader";
 export default async function Page() {
      const cookieStore = await cookies();
     const token = cookieStore.get("token")
-    const profile = await getUserProfile(token)
+    const profile = await getUserProfile(token);
     return (
         <div className="p-6 ">
             <MobileDashboardHeader/>

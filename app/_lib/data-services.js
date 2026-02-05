@@ -144,9 +144,10 @@ export async function getUserNotifications(token) {
       }
     });
     const { data } = await response.json();
+    console.log(data)
     return data
   } catch (error) {
-    console.error("Error fetching user profile:", error)
+    console.error("Error fetching user notifications:", error)
   }
 }
 
@@ -239,9 +240,9 @@ export async function getAdminProfile(token) {
   }
 }
 
-export async function getAdminProperties(token) {
+export async function getAdminProperties(token, page) {
   try {
-    const response = await fetch(`${url}/admin/fetch-all-propreties`, {
+    const response = await fetch(`${url}/admin/fetch-all-propreties?page=${page || 1}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token?.value}`,
@@ -286,7 +287,22 @@ export async function getPropertyOwner(token) {
     console.error("Error fetching user profile:", error)
   }
 }
-
+export async function getPropertyOwnerById(token, id) {
+  console.log(id)
+  try {
+    const response = await fetch(`${url}/admin/property-owner/fetch-propertowner/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-type": "application/json",
+      },
+    });
+    const {property_owner} = await response.json();
+    return property_owner
+  } catch (error) {
+    console.error("Error fetching property-owner:", error)
+  }
+}
 export async function getAllAdmin(token) {
   try {
     const response = await fetch(`${url}/admin/fetch-admin`, {

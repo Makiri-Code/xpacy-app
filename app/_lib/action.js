@@ -49,7 +49,7 @@ export async function handleUserLogin(userData, redirectUrl) {
     },
     body: JSON.stringify({ ...userData }),
 
-  });  
+  });
   const data = await response.json();
   if (!response.ok) return { success: false, message: data.message }
 
@@ -265,7 +265,7 @@ export async function handleBookService(form) {
   return res
 };
 
-export async function handleContact(formData){
+export async function handleContact(formData) {
   const response = await fetch(`${URL}/contact/send-mail`, {
     method: "POST",
     headers: {
@@ -275,4 +275,56 @@ export async function handleContact(formData){
   });
   const data = await response.json();
   return data
+}
+
+export async function handleRegisterOwner(formData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/admin/register-propertyowner`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData)
+  });
+  const data = await response.json();
+  return data;
+}
+
+
+export async function submitInvoiceAction(invoice, token) {
+  const payload = {
+    recipientId: Number(invoice.recipientId),
+    recipientType: "User",
+    issuedDate: invoice.issuedDate.toISOString().split("T")[0],
+    dueDate: invoice.dueDate.toISOString().split("T")[0],
+    invoice_reason: invoice.invoiceReason,
+    tax: Number(invoice.tax),
+    amountPaid: invoice.total,
+    items: invoice.items.map(item => ({
+      description: item.description,
+      quantity: Number(item.quantity),
+      unitPrice: Number(item.unitPrice),
+    })),
+  }
+
+  const res = await fetch(
+    `${URL}/invoice/create-invoice`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token?.value}`,
+      },
+      body: JSON.stringify(payload),
+      cache: "no-store",
+    }
+  )
+
+  if (!res.ok) {
+    const error = await res.text()
+    throw new Error(error || "Invoice creation failed")
+  }
+  return res.json()
 }
