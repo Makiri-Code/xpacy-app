@@ -20,7 +20,6 @@ export default async function AppHeader() {
         <Suspense fallback={<SpinnerMini />}>
           <MobileHeaderCta />
         </Suspense>
-
       </MobileNav>
     </header >
   );

@@ -1,14 +1,18 @@
 import Link from "next/link";
 import ProfileDisplay from "./ProfileDisplay";
 import { cookies } from "next/headers";
+import { getAdminProfile, getUserProfile } from "../_lib/data-services";
 
 const HeaderCta = async () => {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
+    const userProfile = await getUserProfile(token)
+    const adminProfile = await getAdminProfile(token)
+    const role = adminProfile || userProfile;
     return (
         <>
             {
-                token ? <ProfileDisplay /> : (
+                token ? <ProfileDisplay role={role?.role} /> : (
                     <div className=" hidden md:flex items-center space-x-5">
                         <Link
                             href="/auth/log-in"
