@@ -20,7 +20,7 @@ export default async function SidebarHeader({role = "user"}) {
                     <Link href="/book-service" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Book A Service</Link>
                     <div className="w-0.5 h-10 bg-gray-300">
                     </div>
-                    <ProfileDisplay />
+                    <ProfileDisplay role="user" />
                     <MobileProfileMenu profile={profile} />
                 </div>
             )}
