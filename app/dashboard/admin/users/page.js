@@ -9,7 +9,6 @@ export default async function Page(){
         const cookieStore = await cookies();
         const token = cookieStore.get("token")
         const owners = await getPropertyOwner(token);
-        console.log(owners)
     return (
         <div className="p-6 space-y-6">
             <AdminUsersSummary/>

@@ -11,7 +11,7 @@ import { handleLogOut } from "../_lib/action";
 export default async function ProfileDisplay({role}) {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")
-    const profile = role.toLowerCase() === "admin" ? await getAdminProfile(token) : await getUserProfile(token);
+    const profile = role?.toLowerCase() === "admin" ? await getAdminProfile(token) : await getUserProfile(token);
     if (!token) return null
     return (
         <div className=" hidden group lg:flex items-center gap-1.5 relative">
