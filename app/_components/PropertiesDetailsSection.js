@@ -138,9 +138,9 @@ function PropertiesDetailsSection({ property }) {
                         style={{ border: "0px" }}
                         width="100%"
                         height="455"
-                        allowfullscreen=""
+                        allowFullScreen
                         loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade"
+                        referrerPolicy="no-referrer-when-downgrade"
                     ></iframe>
                 </div>
                 <div className="border border-neutral-300"></div>

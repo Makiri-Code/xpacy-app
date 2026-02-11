@@ -40,11 +40,11 @@ export async function getRentProperties() {
   }
 }
 
-export async function getProperties(search) {
+export async function getProperties(search = {}) {
 
   const { purpose, type, minBedrooms, location, minPrice, maxPrice, page } = search;
   try {
-    const response = await fetch(`${url}/property/fetch-properties?purpose=${purpose}&type=${type || ""}&location=${location || ""}&minBedrooms=${minBedrooms || ""}&minPrice=${minPrice || ""}&maxPrice=${maxPrice || ""}&page=${page || 1}`);
+    const response = await fetch(`${url}/property/fetch-properties?purpose=${purpose || ""}&type=${type || ""}&location=${location || ""}&minBedrooms=${minBedrooms || ""}&minPrice=${minPrice || ""}&maxPrice=${maxPrice || ""}&page=${page || 1}`);
     const { properties, pagination } = await response.json();
     return [properties, pagination]
   } catch (error) {
@@ -273,7 +273,7 @@ export async function getAdminServices(token) {
 
 export async function getPropertyOwner(token) {
   try {
-    const response = await fetch(`${url}/admin/property-owner/fetch-propertowners`, {
+    const response = await fetch(`${url}/admin/property-owner/fetch-propertyowners`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token?.value}`,

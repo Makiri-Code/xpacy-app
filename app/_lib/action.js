@@ -58,7 +58,7 @@ export async function handleUserLogin(userData, redirectUrl) {
     name: "token",
     value: data.token,
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     path: "/",
     maxAge: 60 * 60 * 24, // 1 day
@@ -83,7 +83,7 @@ export async function handleAdminLogin(userData, redirectUrl) {
     name: "token",
     value: data.token,
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     path: "/",
     maxAge: 60 * 60, // 1 day
