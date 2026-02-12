@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
-import { getProperties, getBookedServices, getSavedProperties, getUserProfile } from "@/app/_lib/data-services";
+import { getProperties, getBookedServices, getSavedProperties, getUserProfile, getBookingList } from "@/app/_lib/data-services";
 import { FaHome, FaCalendarCheck, FaRegHeart } from "react-icons/fa";
+import PropertyOwnerOverviewTabs from "./PropertyOwnerOverviewTabs";
 
 const PropertyOwnerOverview = async () => {
     const cookieStore = await cookies();
@@ -10,23 +11,40 @@ const PropertyOwnerOverview = async () => {
         propertiesData, 
         bookedServices, 
         savedPropertiesData,
-        user
+        user,
+        bookings
     ] = await Promise.all([
         getProperties(), 
         getBookedServices(token),
         getSavedProperties(token),
-        getUserProfile(token)
+        getUserProfile(token),
+        getBookingList(token)
     ]);
 
     // Filter properties for this owner
     const allProperties = Array.isArray(propertiesData?.[0]) ? propertiesData[0] : [];
     const myProperties = allProperties.filter(p => p.property_owner_id === user?.id);
+    const myPropertyIds = myProperties.map(p => p.id || p._id);
 
     const propertiesCount = myProperties.length;
     const bookedServicesCount = bookedServices?.length || 0;
     const savedPropertiesCount = savedPropertiesData?.pagination?.total || 0;
 
-    const overview = [
+    // Filter derived data for Recent Activity
+    const myServices = Array.isArray(bookedServices) 
+        ? bookedServices.filter(s => myPropertyIds.includes(s.property_id || s.propertyId)).map(s => ({...s, type: 'Service', date: s.createdAt || s.created_at}))
+        : [];
+    
+    const myBookings = Array.isArray(bookings)
+        ? bookings.filter(b => myPropertyIds.includes(b.property_id || b.property?._id)).map(b => ({...b, type: 'Booking', date: b.createdAt || b.created_at}))
+        : [];
+
+    // Combine and sort by date descending
+    const recentActivity = [...myServices, ...myBookings]
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
+
+    const overviewItems = [
         { 
             title: "Properties Listed", 
             count: propertiesCount, 
@@ -54,24 +72,10 @@ const PropertyOwnerOverview = async () => {
     ];
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-            {overview.map((item, index) => (
-                <div key={index} className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition-shadow duration-300">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="text-gray-600 text-sm">{item.title}</p>
-                            <p className="text-2xl font-bold mt-2">{item.count.toLocaleString()}</p>
-                            <p className="text-sm mt-1 text-gray-600">
-                                {item.change}
-                            </p>
-                        </div>
-                        <div className={`p-3 rounded-full ${item.color}`}>
-                            {item.icon}
-                        </div>
-                    </div>
-                </div>
-            ))}
-        </div>
+        <PropertyOwnerOverviewTabs 
+            overviewItems={overviewItems} 
+            recentActivity={recentActivity} 
+        />
     );
 };
 
