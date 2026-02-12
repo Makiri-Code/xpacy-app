@@ -19,7 +19,7 @@ export default async function Page() {
     
     // getProperties returns [properties, meta]
     const allProperties = Array.isArray(propertiesData?.[0]) ? propertiesData[0] : [];
-    const properties = allProperties.filter(p => p.property_owner_id === profile?.id);
+    const properties = allProperties.filter(p => p.property_owner_id == profile?.id);
     const myPropertyIds = properties.map(p => p.id || p._id);
 
     // Filter derived data

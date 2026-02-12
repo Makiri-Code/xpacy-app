@@ -40,7 +40,7 @@ export async function getRentProperties() {
   }
 }
 
-export async function getProperties(search) {
+export async function getProperties(search = {}) {
 
   const { purpose, type, minBedrooms, location, minPrice, maxPrice, page } = search;
   try {
@@ -144,10 +144,10 @@ export async function getUserNotifications(token) {
       }
     });
     const { data } = await response.json();
-    console.log(data)
-    return data
+    return data || [];
   } catch (error) {
     console.error("Error fetching user notifications:", error)
+    return [];
   }
 }
 
@@ -163,9 +163,10 @@ export async function getBookedServices(token) {
       }
     });
     const  {data}  = await response.json();
-    return data
+    return data || [];
   } catch (error) {
     console.error("Error fetching user booked services:", error)
+    return [];
   }
 }
 

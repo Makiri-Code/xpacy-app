@@ -23,7 +23,7 @@ const PropertyOwnerOverview = async () => {
 
     // Filter properties for this owner
     const allProperties = Array.isArray(propertiesData?.[0]) ? propertiesData[0] : [];
-    const myProperties = allProperties.filter(p => p.property_owner_id === user?.id);
+    const myProperties = allProperties.filter(p => p.property_owner_id == user?.id);
     const myPropertyIds = myProperties.map(p => p.id || p._id);
 
     const propertiesCount = myProperties.length;

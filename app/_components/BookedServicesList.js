@@ -8,7 +8,7 @@ export default async function BookedServiceList() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")
     const bookedServices = await getBookedServices(token);
-    const { service_type, address, scheduled_date, service_status, } = bookedServices;
+
 
     if (bookedServices.length <= 0) return <EmptyState message={"Oops!... You have no booked services yet."} cta={"Book A Service"} />
     return (

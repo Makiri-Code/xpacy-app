@@ -13,7 +13,7 @@ export default async function SidebarHeader({role = "user"}) {
     return (
         <div className="py-4 px-6 flex items-center justify-between border-b border-primary-100 shadow-lg relative">
             <DashboardHeading />
-            <MobileNav isSidebar={true} />
+            <MobileNav isSidebar={true} role={role} />
             {role === "user" && (
                 <div className="flex gap-4 items-center relative">
                     <SearchInput />
@@ -31,6 +31,15 @@ export default async function SidebarHeader({role = "user"}) {
                     <div className="w-0.5 h-10 bg-gray-300">
                     </div>
                     <ProfileDisplay role={"admin"} />
+                    <MobileProfileMenu profile={profile} />
+                </div>
+            )}
+            {role === "property-owner" && (
+                <div className="flex gap-4 items-center relative">
+                    <Link href="/dashboard/property-owner/properties/add" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Add New Property</Link>
+                    <div className="w-0.5 h-10 bg-gray-300">
+                    </div>
+                    <ProfileDisplay role={"user"} /> 
                     <MobileProfileMenu profile={profile} />
                 </div>
             )}
