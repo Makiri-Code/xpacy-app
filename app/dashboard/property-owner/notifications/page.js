@@ -20,16 +20,14 @@ export default async function Page() {
             <MobileDashboardHeader showMenu={false}/>
             {/* Large screen only */}
             <div className="px-[38px] lg:flex hidden items-center justify-between font-mono">
-                {/* Mark as read */}
                 <CustomCheckbox label={"Mark as read "} />
-                {/*Show only unread */}
                 <CustomCheckbox label={"Show only unread"} />
                 <div className=" relative flex items-center gap-2 ">
                     <SortBy>
                         <option>Default</option>
                         <option>Last 7 days</option>
-                        <option>Last 30 days</option>
-                        <option>Last 90 days</option>
+                        <option>Last 31 days</option>
+                        <option>Last 365 days</option>
                     </SortBy>
                     <DashboardFilter />
                 </div>
