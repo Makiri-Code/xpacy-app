@@ -31,7 +31,7 @@ const PropertyOwnerOverview = async () => {
             title: "Properties Listed", 
             count: propertiesCount, 
             change: "Active",
-            icon: <FaHome className="text-green-500" size={24} />,
+            icon: <FaHome className="text-gray-500" size={24} />,
             color: "bg-gray-100",
             bgColor: "bg-gray-100"
         },
@@ -39,7 +39,7 @@ const PropertyOwnerOverview = async () => {
             title: "Booked Services", 
             count: bookedServicesCount, 
             change: "Total",
-            icon: <FaCalendarCheck className="text-purple-500" size={24} />,
+            icon: <FaCalendarCheck className="text-gray-500" size={24} />,
             color: "bg-gray-100",
             bgColor: "bg-gray-100"
         },
@@ -47,7 +47,7 @@ const PropertyOwnerOverview = async () => {
             title: "Saved Properties", 
             count: savedPropertiesCount, 
             change: "Favorites",
-            icon: <FaRegHeart className="text-blue-500" size={24} />,
+            icon: <FaRegHeart className="text-gray-500" size={24} />,
             color: "bg-gray-100",
             bgColor: "bg-gray-100"
         }
