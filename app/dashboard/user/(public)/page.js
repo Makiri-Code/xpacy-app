@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-import React from 'react'
-
-const page = () => {
-  return (
-    <div>page</div>
-  )
-}
-
-export default page
-=======
 import DashboardGridItem from "@/app/_components/DashboardGridItems";
 import NotificationList from "@/app/_components/NotificationList";
 import SavedPropCardList from "@/app/_components/SavedProCardList";
@@ -47,4 +36,3 @@ export default async function Page() {
         </div>
     )
 }
->>>>>>> 0269a06 (Fixed bugs and added new features)

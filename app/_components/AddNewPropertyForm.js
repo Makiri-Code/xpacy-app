@@ -188,25 +188,33 @@ const parkingAreaCount = [
         count: "Fit 5 cars",
     },
 ];
-<<<<<<< HEAD
-const AddNewPropertyForm = ({ allOwners, allCities, token, preSelectedOwner, initialData, isEditMode = false }) => {
-    const [activeStep, setActiveStep] = useState(preSelectedOwner ? 2 : 1);
-    const [propertyOwner, setPropertyOwner] = useState(preSelectedOwner || null);
-    const [propertyAmenities, setPropertyAmenities] = useState(initialData?.property_amenities || []);
+const AddNewPropertyForm = ({ 
+    allOwners, 
+    allCities, 
+    token, 
+    // HEAD props
+    preSelectedOwner, 
+    initialData, 
+    isEditMode = false,
+    // Incoming props
+    propertyOwnerInfo = null, 
+    disableSearch, 
+    propertyObj = {} 
+}) => {
+    // Merge props logic
+    const effectiveOwner = preSelectedOwner || propertyOwnerInfo || null;
+    // propertyObj defaults to {} which is truthy, so check if it has keys or just use logical OR if initialData is present
+    const effectiveData = initialData || (Object.keys(propertyObj).length > 0 ? propertyObj : null) || {};
+
+    const [activeStep, setActiveStep] = useState(effectiveOwner ? 2 : 1);
+    const [propertyOwner, setPropertyOwner] = useState(() => effectiveOwner);
+    const [propertyAmenities, setPropertyAmenities] = useState(() => effectiveData?.property_amenities || []);
+    
     // Initialize files if editing (assuming initialData.images handles preview or we skip valid file check)
     // For now we might not pre-fill files as handling remote URLs in file input is complex, user can re-upload
-    const [files, setFiles] = useState([]); 
+    const [files, setFiles] = useState(() => effectiveData?.images || []); 
     const { files: selectedFiles } = useCompressImage(files, setFiles);
-    const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured || false);
-=======
-const AddNewPropertyForm = ({ allOwners, allCities, token, propertyOwnerInfo = null, disableSearch, propertyObj = {} }) => {
-    const [activeStep, setActiveStep] = useState(1);
-    const [propertyOwner, setPropertyOwner] = useState(() => propertyOwnerInfo);
-    const [propertyAmenities, setPropertyAmenities] = useState(() => propertyObj?.property_amenities || []);
-    const [files, setFiles] = useState(() => propertyObj?.images || []);
-    const { files: selectedFiles } = useCompressImage(files, setFiles);
-    const [isFeatured, setIsFeatured] = useState(() => propertyObj?.is_featured || false);
->>>>>>> 0269a06 (Fixed bugs and added new features)
+    const [isFeatured, setIsFeatured] = useState(() => effectiveData?.isFeatured || effectiveData?.is_featured || false);
     const [isPending, setIsPending] = useState(false);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [uploadingProgress, setUploadingProgress] = useState(0);
@@ -220,46 +228,25 @@ const AddNewPropertyForm = ({ allOwners, allCities, token, propertyOwnerInfo = n
             email: propertyOwner?.email,
             phone: propertyOwner?.phone || "",
             owner_address: propertyOwner?.address || "",
-<<<<<<< HEAD
-            // Property defaults from initialData
-            property_name: initialData?.property_name || "",
-            address: initialData?.address || "",
-            state: initialData?.state || "",
-            city: initialData?.city || "",
-            property_type: initialData?.property_type || "",
-            availability_status: initialData?.availability_status || "",
-            property_price: initialData?.property_price || "",
-            property_status: initialData?.property_status || "",
-            description: initialData?.description || "",
-            total_bedrooms: initialData?.total_bedrooms || "",
-            total_bathrooms: initialData?.total_bathrooms || "",
-            total_toilets: initialData?.total_toilets || "",
-            parking_area: initialData?.parking_area || "",
-            property_square_area: initialData?.property_square_area || "",
-            land_area: initialData?.land_area || "",
-            virtual_tour_url: initialData?.virtual_tour_url || "",
-            lat: initialData?.lat || "",
-            long: initialData?.long || "",
-=======
-            property_name: propertyObj?.property_name,
-            address: propertyObj?.address,
-            state: propertyObj?.state,
-            city: propertyObj?.city,
-            property_type: propertyObj?.property_type,
-            availability_status: propertyObj?.availability_status,
-            property_price: propertyObj?.property_price,
-            property_status: propertyObj?.property_status,
-            description: propertyObj?.description,
-            total_bedrooms: propertyObj?.total_bedrooms,
-            total_bathrooms: propertyObj?.total_bathrooms,
-            total_toilets: propertyObj?.total_toilets,
-            parking_area: propertyObj?.parking_area,
-            property_square_area: propertyObj?.property_square_area,
-            land_area: propertyObj?.land_area,
-            virtual_tour_url: propertyObj?.virtual_tour_url,
-            lat: propertyObj?.lat,
-            long: propertyObj?.long,
->>>>>>> 0269a06 (Fixed bugs and added new features)
+            // Property defaults from initialData/propertyObj
+            property_name: effectiveData?.property_name || "",
+            address: effectiveData?.address || "",
+            state: effectiveData?.state || "",
+            city: effectiveData?.city || "",
+            property_type: effectiveData?.property_type || "",
+            availability_status: effectiveData?.availability_status || "",
+            property_price: effectiveData?.property_price || "",
+            property_status: effectiveData?.property_status || "",
+            description: effectiveData?.description || "",
+            total_bedrooms: effectiveData?.total_bedrooms || "",
+            total_bathrooms: effectiveData?.total_bathrooms || "",
+            total_toilets: effectiveData?.total_toilets || "",
+            parking_area: effectiveData?.parking_area || "",
+            property_square_area: effectiveData?.property_square_area || "",
+            land_area: effectiveData?.land_area || "",
+            virtual_tour_url: effectiveData?.virtual_tour_url || "",
+            lat: effectiveData?.lat || "",
+            long: effectiveData?.long || "",
         }
     });
 
@@ -369,13 +356,14 @@ const AddNewPropertyForm = ({ allOwners, allCities, token, propertyOwnerInfo = n
         <div className="flex flex-col gap-12 w-[796px]">
             {/* Header */}
             <header className="flex flex-col items-center justify-center gap-4">
-<<<<<<< HEAD
-                <h2 className="text-3xl font-bold text-primary">{isEditMode ? "Edit Property" : "Add New Property"}</h2>
-                <p className="font-mono">Fill in the correct detailed information for the new property.</p>
-=======
-                <h2 className="text-3xl font-bold text-primary">{pathname.split("/")[2] === "property-details" ? "Property Details" : pathname.split("/")[2] === "edit-property" ? "Edit Property" : "Add New Property"}</h2>
-                {pathname.split("/").includes("property-details", "edit-property") ? null : <p className="font-mono">Fill in the correct detailed information for the new property.</p>}
->>>>>>> 0269a06 (Fixed bugs and added new features)
+                <h2 className="text-3xl font-bold text-primary">
+                    {
+                        pathname.split("/")[2] === "property-details" ? "Property Details" : 
+                        pathname.split("/")[2] === "edit-property" || isEditMode ? "Edit Property" : 
+                        "Add New Property"
+                    }
+                </h2>
+                {pathname.split("/").includes("property-details") || isEditMode ? null : <p className="font-mono">Fill in the correct detailed information for the new property.</p>}
             </header>
             {/* Progress bar */}
             <ProgressBar activeStep={activeStep} setActiveStep={setActiveStep} />
