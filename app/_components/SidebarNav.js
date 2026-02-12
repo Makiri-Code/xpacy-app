@@ -111,6 +111,11 @@ const adminNavList = [
 
 const propertyOwnerNavList = [
     {
+        text: "Go to Homepage",
+        link: "/",
+        icon: <RiHome2Line />
+    },
+    {
         text: "Overview",
         link: "/dashboard/property-owner/overview",
         icon: <RxDashboard />

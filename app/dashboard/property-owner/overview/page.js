@@ -37,7 +37,7 @@ export default async function Page() {
         .slice(0, 5);
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="space-y-6">
             <h1 className="lg:text-4xl text-[28px] text-primary font-bold capitalize">
                 Welcome {profile?.firstname || "Owner"},
             </h1>
