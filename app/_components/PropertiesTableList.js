@@ -4,7 +4,7 @@ import Link from "next/link";
 import { formatCurrency } from "@/app/_lib/utils";
 import EmptyState from "@/app/_components/EmptyState";
 import { Fragment } from "react";
-import { Edit, Trash2, Eye } from "lucide-react";
+import { Edit, Trash2, Eye, Plus } from "lucide-react";
 
 export default function PropertiesTableList({ properties, baseUrl = "/dashboard/property-owner/properties", ctaLink = "/dashboard/property-owner/properties/add" }) {
     if (!properties?.length) return <EmptyState message={"No properties found."} cta={"Add Property"} link={ctaLink} />
@@ -14,7 +14,8 @@ export default function PropertiesTableList({ properties, baseUrl = "/dashboard/
             <header className="flex items-center justify-between relative">
                 <h2 className="text-base lg:text-lg font-bold text-gray-800">Properties Overview</h2>
                 <div className="flex items-center gap-2">
-                    <Link href={ctaLink} className="bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary/90 transition-colors">
+                    <Link href={ctaLink} className="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2">
+                        <Plus size={16} />
                         Add Property
                     </Link>
                 </div>
@@ -68,10 +69,10 @@ export default function PropertiesTableList({ properties, baseUrl = "/dashboard/
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-center gap-2">
-                                    <Link href={`${baseUrl}/${property.id || property._id}/edit`} className="p-1.5 hover:bg-gray-100 rounded-full text-blue-600 transition-colors" title="Edit">
+                                    <Link href={`${baseUrl}/${property.id || property._id}/edit`} className="p-2 bg-gray-50 hover:bg-primary hover:text-white rounded-full text-gray-500 transition-colors" title="Edit">
                                         <Edit size={16} />
                                     </Link>
-                                    <button className="p-1.5 hover:bg-gray-100 rounded-full text-red-600 transition-colors" title="Delete">
+                                    <button className="p-2 bg-gray-50 hover:bg-red-600 hover:text-white rounded-full text-gray-500 transition-colors" title="Delete">
                                         <Trash2 size={16} />
                                     </button>
                                 </div>
@@ -109,10 +110,10 @@ export default function PropertiesTableList({ properties, baseUrl = "/dashboard/
                                         {formatCurrency(property.property_price)}
                                     </div>
                                     <div className="flex gap-2">
-                                        <Link href={`${baseUrl}/${property.id || property._id}/edit`} className="p-2 hover:bg-gray-100 rounded-full text-blue-600">
+                                        <Link href={`${baseUrl}/${property.id || property._id}/edit`} className="p-2 bg-gray-50 hover:bg-primary hover:text-white rounded-full text-gray-500 transition-colors">
                                             <Edit size={18} />
                                         </Link>
-                                        <button className="p-2 hover:bg-gray-100 rounded-full text-red-600">
+                                        <button className="p-2 bg-gray-50 hover:bg-red-600 hover:text-white rounded-full text-gray-500 transition-colors">
                                             <Trash2 size={18} />
                                         </button>
                                     </div>

@@ -4,6 +4,7 @@ import PropertyOwnerOverview from "@/app/_components/PropertyOwnerOverview";
 import { getBookingList, getBookedServices, getProperties, getUserProfile } from "@/app/_lib/data-services";
 import DashboardGridItem from "@/app/_components/DashboardGridItems";
 import PropertiesTableList from "@/app/_components/PropertiesTableList";
+import { FaCalendarCheck, FaHome } from "react-icons/fa";
 
 export default async function Page() {
     const cookieStore = await cookies();
@@ -53,21 +54,37 @@ export default async function Page() {
                     
                     <DashboardGridItem title={"Recent Activity"}>
                         {recentActivity.length > 0 ? (
-                            <div className="space-y-4">
+                            <div className="flex flex-col">
                                 {recentActivity.map((activity, i) => (
-                                    <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                        <div>
-                                            <p className="font-semibold text-sm">{activity.type === 'Booking' ? 'New Booking' : 'Service Request'}</p>
-                                            <p className="text-xs text-gray-500">{new Date(activity.date).toLocaleDateString()}</p>
+                                    <div key={i} className="flex items-center justify-between py-4 border-b border-gray-50 last:border-none hover:bg-gray-50/50 transition-colors px-2 -mx-2 rounded-md">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-2 rounded-full bg-gray-100 text-gray-500">
+                                                 {activity.type === 'Booking' ? <FaCalendarCheck size={16} /> : <FaHome size={16} />}
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-sm text-gray-800">{activity.type === 'Booking' ? 'New Booking' : 'Service Request'}</p>
+                                                <p className="text-xs text-gray-500">{activity.property_name || activity.property?.property_name || "Unknown Property"}</p>
+                                            </div>
                                         </div>
-                                        <span className={`text-xs px-2 py-1 rounded-full ${activity.type === 'Booking' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
-                                            {activity.type}
-                                        </span>
+                                        <div className="text-right">
+                                            <p className="text-xs font-medium text-gray-900">
+                                                {new Date(activity.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                            </p>
+                                            <p className={`text-[10px] font-medium mt-0.5 capitalize ${
+                                                (activity.status || activity.service_status) === 'pending' ? 'text-orange-600' :
+                                                (activity.status || activity.service_status) === 'confirmed' ? 'text-green-600' : 
+                                                'text-gray-500'
+                                            }`}>
+                                                {activity.status || activity.service_status || 'Pending'}
+                                            </p>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-gray-500 text-sm">No recent activity on your properties.</p>
+                            <div className="h-40 flex flex-col items-center justify-center text-gray-500">
+                                <p>No recent activity</p>
+                            </div>
                         )}
                     </DashboardGridItem>
                 </div>
