@@ -109,9 +109,59 @@ const adminNavList = [
     }
 ]
 
+const propertyOwnerNavList = [
+    {
+        text: "Go to Homepage",
+        link: "/",
+        icon: <RiHome2Line />
+    },
+    {
+        text: "Overview",
+        link: "/dashboard/property-owner/overview",
+        icon: <RxDashboard />
+    },
+    {
+        text: "Notifications",
+        link: "/dashboard/property-owner/notifications",
+        icon: <FiBell />
+    },
+    {
+        text: "Properties",
+        link: "/dashboard/property-owner/properties",
+        icon: <BiBuildingHouse />
+    },
+    {
+        text: "Services",
+        link: "/dashboard/property-owner/services",
+        icon: <LuMessageCircleQuestion /> 
+    },
+    {
+        text: "Users",
+        link: "/dashboard/property-owner/users",
+        icon: <RiUserSettingsLine />
+    },
+    {
+        text: "Payments",
+        link: "/dashboard/property-owner/payments",
+        icon: <IoCardOutline />
+    },
+    {
+        text: "Reports",
+        link: "/dashboard/property-owner/reports",
+        icon: <IoCalendarOutline /> 
+    },
+    {
+        text: "Settings",
+        link: "/dashboard/property-owner/settings",
+        icon: <RiUserSettingsLine />
+    }
+]
+
 export default function SidebarNav({ role = "user" }) {
     let navList = [];
-    role === "admin" ? navList = adminNavList : navList = userNavList;
+    if (role === "admin") navList = adminNavList;
+    else if (role === "property-owner") navList = propertyOwnerNavList;
+    else navList = userNavList;
     const pathname = usePathname();
     return (
         <ul className="flex flex-col gap-4 h-full">

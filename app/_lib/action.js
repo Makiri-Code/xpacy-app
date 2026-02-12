@@ -64,6 +64,7 @@ export async function handleUserLogin(userData, redirectUrl) {
     maxAge: 60 * 60 * 24, // 1 day
   });
   if (data.role === "User") redirect(redirectUrl)
+  if (data.role === "PropertyOwner" || data.role === "property-owner") redirect("/dashboard/property-owner/overview")
   return { success: true, message: data.message }
 };
 
