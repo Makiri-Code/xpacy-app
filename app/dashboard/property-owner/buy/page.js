@@ -1,7 +1,7 @@
-import AppHeader from "../_components/AppHeader";
-import Footer from "../_components/Footer";
-import PropertyHeader from "../_components/PropertyHeader";
-import PropertyLayout from "../_components/PropertyLayout";
+import AppHeader from "@/app/_components/AppHeader";
+import Footer from "@/app/_components/Footer";
+import PropertyHeader from "@/app/_components/PropertyHeader";
+import PropertyLayout from "@/app/_components/PropertyLayout";
 export default async function Page({searchParams}) {
   let search = await searchParams;
   search = {
