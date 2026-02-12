@@ -30,7 +30,7 @@ export default async function SidebarHeader({role = "user"}) {
                     <Link href="/admin/add-new-property" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Add New Property</Link>
                     <div className="w-0.5 h-10 bg-gray-300">
                     </div>
-                    <ProfileDisplay />
+                    <ProfileDisplay role={"admin"} />
                     <MobileProfileMenu profile={profile} />
                 </div>
             )}

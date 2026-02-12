@@ -1,5 +1,4 @@
 import InvoiceContainer from "@/app/_components/InvoiceContainer";
-import InvoiceBtn from "@/app/_components/InvoiceBtns";
 import InvoiceNav from "@/app/_components/InvoiceNav";
 import { getInvoice } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";

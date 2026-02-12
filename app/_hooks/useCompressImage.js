@@ -1,44 +1,100 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import imageCompression from "browser-image-compression";
 
-export const useCompressImage = (files, setFiles) => {
-    const [chosenFile, setChosenFile] = useState(null);
+const SERVER_BASE = "https://app.xpacy.com/src/upload/properties";
 
-    const compressImage = useCallback(async (acceptedFiles) => {
-        const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1024,
-            useWebWorker: true,
-        };
+const normalizeServerFile = (file) => ({
+  id: crypto.randomUUID(),
+  name: file,
+  type: file.endsWith(".mp4") ? "video/mp4" : "image/jpeg",
+  size: 0,
+  url: `${SERVER_BASE}/${file}`,
+  isRemote: true,
+});
 
-        try {
-            const compressedFiles = await Promise.all(
-                acceptedFiles.map((file) => imageCompression(file, options))
-            );
+const normalizeLocalFile = (file) => ({
+  id: crypto.randomUUID(),
+  name: file.name,
+  type: file.type,
+  size: file.size,
+  url: URL.createObjectURL(file),
+  isRemote: false,
+  raw: file,
+});
 
-            // Create previews and prepare new file objects
-            const newFilesWithPreviews = compressedFiles.map((file) =>
-                Object.assign(file, {
-                    preview: URL.createObjectURL(file)
-                })
-            );
+export const useCompressImage = (initialFiles = [], setParentFiles) => {
+  const [files, setFiles] = useState([]);
+  const [chosenFile, setChosenFile] = useState(null);
 
-            setFiles((prevFiles) => {
-                // Filter out duplicates based on name
-                const uniqueNewFiles = newFilesWithPreviews.filter(
-                    (newFile) => !prevFiles.some((f) => f.name === newFile.name)
-                );
-                return [...prevFiles, ...uniqueNewFiles];
-            });
+  // Normalize server files on mount
+  useEffect(() => {
+    if (initialFiles?.length) {
+      const normalized = initialFiles.map(normalizeServerFile);
+      setFiles(normalized);
+      setChosenFile(normalized[0]);
+    }
+  }, [initialFiles]);
 
-            // Set the first file from the current batch as the chosen file
-            if (newFilesWithPreviews.length > 0) {
-                setChosenFile(newFilesWithPreviews[0] || null);
-            }
+  const compressImage = useCallback(async (acceptedFiles) => {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1024,
+      useWebWorker: true,
+    };
 
-        } catch (error) {
-            console.error("Image compression error:", error);
-        }
-    }, []); // Removed 'files' dependency to prevent unnecessary recreations
-    return { compressImage, files, setFiles, chosenFile, setChosenFile };
+    try {
+      const compressed = await Promise.all(
+        acceptedFiles.map((file) =>
+          file.type.startsWith("image")
+            ? imageCompression(file, options)
+            : file
+        )
+      );
+
+      const normalized = compressed.map(normalizeLocalFile);
+
+      setFiles((prev) => {
+        const unique = normalized.filter(
+          (nf) => !prev.some((pf) => pf.name === nf.name)
+        );
+        const merged = [...prev, ...unique];
+
+        setParentFiles?.(
+          merged
+            .filter((f) => !f.isRemote)
+            .map((f) => f.raw)
+        );
+
+        return merged;
+      });
+
+      if (normalized.length) {
+        setChosenFile(normalized[0]);
+      }
+    } catch (err) {
+      console.error("Compression error:", err);
+    }
+  }, []);
+
+  const removeFile = (file) => {
+    setFiles((prev) => {
+      const next = prev.filter((f) => f.id !== file.id);
+
+    //   setParentFiles?.(
+    //     next.filter((f) => !f.isRemote).map((f) => f.raw)
+    //   );
+
+      setChosenFile(next[0] || null);
+      return next;
+    });
+  };
+
+  return {
+    compressImage,
+    files,
+    setFiles,
+    chosenFile,
+    setChosenFile,
+    removeFile,
+  };
 };

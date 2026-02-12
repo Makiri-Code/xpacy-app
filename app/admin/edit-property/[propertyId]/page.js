@@ -1,15 +1,19 @@
 import AddNewPropertyForm from "@/app/_components/AddNewPropertyForm";
 import BackBtn from "@/app/_components/BackBtn";
 import Logo from "@/app/_components/Logo";
-import { getCities, getPropertyOwner } from "@/app/_lib/data-services";
+import { getCities, getProperty, getPropertyOwnerById } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
 
 
-export default async function Page() {
+
+export default async function Page({ params }) {
+    const param = await params;
     const cookieStore = await cookies();
     const token = cookieStore.get("token")
-    const allOwners = await getPropertyOwner(token);
+    const property = await getProperty(param.propertyId);
+    const propertyOwner = await getPropertyOwnerById(token, property?.property_owner_id);
     const allCities = await getCities();
+
     return (
         <div className="flex-1 flex flex-col gap-4.5">
             {/* Navigation */}
@@ -21,7 +25,14 @@ export default async function Page() {
             </nav>
             {/* Form */}
             <div className="flex flex-col items-center justify-center">
-                <AddNewPropertyForm allOwners={allOwners} allCities={allCities} token={token} />
+                <AddNewPropertyForm
+                    allOwners={null}
+                    allCities={allCities}
+                    token={token}
+                    propertyOwnerInfo={propertyOwner}
+                    disableSearch={true}
+                    propertyObj={property}
+                />
             </div>
         </div>
     )

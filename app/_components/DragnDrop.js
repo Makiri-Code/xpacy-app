@@ -2,186 +2,145 @@
 
 import { IoCheckmark, IoCloudUploadOutline } from "react-icons/io5";
 import { useDropzone } from "react-dropzone";
-
-import { useEffect, useState } from "react";
-
 import { BiPlus } from "react-icons/bi";
 import { LiaFileVideoSolid, LiaFileImageSolid } from "react-icons/lia";
 import { PiFloppyDiskThin } from "react-icons/pi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useCompressImage } from "../_hooks/useCompressImage";
 
-export default function DragnDrop({accept, maxFiles, files, setFiles}) {
-  const { compressImage, files: selectedFiles, setFiles: setSelectedFiles, chosenFile, setChosenFile } = useCompressImage(files, setFiles);
+export default function DragnDrop({ accept, maxFiles, files, setFiles }) {
+  const {
+    compressImage,
+    files: selectedFiles,
+    chosenFile,
+    setChosenFile,
+    removeFile,
+  } = useCompressImage(files, setFiles);
 
-  const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     noKeyboard: true,
     noClick: true,
     maxFiles,
     accept,
-    onDrop: (acceptedFiles) => {
-      compressImage(acceptedFiles);
-    },
-    // onDrop: (acceptedFiles) => {
-    //   setSelectedFiles((prev) => {
-    //     const newFiles = acceptedFiles.map((file) =>
-    //       Object.assign(file, { preview: URL.createObjectURL(file) })
-    //     );
-    //     return [...prev, ...newFiles];
-    //   });
-    //   setChosenFile(
-    //     acceptedFiles.map((file) =>
-    //       Object.assign(file, { preview: URL.createObjectURL(file) })
-    //     )[0]
-    //   );
-    // },
+    onDrop: compressImage,
   });
-  // useEffect(() => {
-  //   // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-  //   return () =>{
-  //     selectedFiles.forEach((file) => URL.revokeObjectURL(file.preview));
-  //   }
-  // }, [selectedFiles]);
-  const handleSelectChosen = (file) => {
-    setChosenFile(file);
-  };
-  const handleRemoveFile = (file) => {
-    setSelectedFiles((prev) => prev.filter((prevFile) => prevFile.name !== file.name))
-  }
-  useEffect(() => {
-    setChosenFile(selectedFiles[0])
-  }, [selectedFiles])
+
   return (
     <>
       {selectedFiles.length ? (
         <div className="w-full h-full px-6 py-4 flex flex-col gap-4 border border-gray-200 rounded-lg font-mono">
+
+          {/* Main preview */}
           {chosenFile && (
-            <div className="w-full h-[500px] relative">
-              {chosenFile?.type?.startsWith("image") && (
+            <div className="w-full h-[500px]">
+              {chosenFile.type.startsWith("image") ? (
                 <img
+                  src={chosenFile.url}
                   className="object-contain w-full h-full rounded-lg"
-                  src={chosenFile.preview}
-                  alt="upload-img"
                 />
-              )}
-              {chosenFile.type.startsWith("video") && (
+              ) : (
                 <video
-                  src={chosenFile.preview}
+                  src={chosenFile.url}
                   controls
-                  muted
-                  className="w-full h-full "
+                  className="w-full h-full rounded-lg"
                 />
               )}
             </div>
           )}
-          {/* files list and add more btn */}
-          <div className="p-1 flex items-center gap-2 font-mono">
-            <div className="flex items-center gap-2">
-              {selectedFiles.map((file, index) => (
-                <div
-                  key={index}
-                  className={`w-20 h-20 relative rounded-lg ${
-                    chosenFile?.name === file?.name &&
-                    "border-2 border-[#E63855]"
-                  }`}
-                  onClick={() => handleSelectChosen(file)}
-                >
-                  {file.type.startsWith("image") && (
-                    <img
-                      src={file.preview}
-                      className="w-full h-full object-cover "
-                    />
-                  )}
-                  {file.type.startsWith("video") && (
-                    <video src={file.preview} className="h-full w-full" />
-                  )}
-                  <div className="absolute top-1 left-1 w-5 h-5 flex items-center justify-center rounded-full bg-gray-200 z-20 text-gray-600">
-                    {index + 1}
-                  </div>
-                  {chosenFile?.name === file?.name && (
-                    <div className="absolute bottom-1 right-1 w-5 h-5 flex items-center justify-center rounded-full bg-[#E63855] z-30 text-white">
-                      <IoCheckmark />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            {/* Add more */}
-            {maxFiles > 1 && (<div {...getRootProps}>
-              <input {...getInputProps()} />
-              <button
-                type="button"
-                className="w-20 h-20 border-2 font-mono border-dashed border-gray-300 rounded-lg flex flex-col gap-1 items-center justify-center p-0.5 text-sm cursor-pointer text-gray-600"
-                onClick={open}
+
+          {/* Thumbnails */}
+          <div className="flex items-center gap-2">
+            {selectedFiles.map((file, index) => (
+              <div
+                key={file.id}
+                onClick={() => setChosenFile(file)}
+                className={`w-20 h-20 relative rounded-lg cursor-pointer ${
+                  chosenFile?.id === file.id && "border-2 border-[#E63855]"
+                }`}
               >
-                <span className="text-2xl">
-                  <BiPlus />
-                </span>
-                <span>Add more</span>
-              </button>
-            </div>)}
+                {file.type.startsWith("image") ? (
+                  <img
+                    src={file.url}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <video
+                    src={file.url}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                )}
+
+                <div className="absolute top-1 left-1 w-5 h-5 flex items-center justify-center rounded-full bg-gray-200 text-xs">
+                  {index + 1}
+                </div>
+
+                {chosenFile?.id === file.id && (
+                  <div className="absolute bottom-1 right-1 w-5 h-5 flex items-center justify-center rounded-full bg-[#E63855] text-white">
+                    <IoCheckmark />
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {maxFiles > 1 && (
+              <div {...getRootProps()}>
+                <input {...getInputProps()} />
+                <button
+                  type="button"
+                  onClick={open}
+                  className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-lg flex flex-col gap-1 items-center justify-center text-sm text-gray-600"
+                >
+                  <BiPlus className="text-xl" />
+                  Add more
+                </button>
+              </div>
+            )}
           </div>
-          {/* File description */}
+
+          {/* File info */}
           {chosenFile && (
-            <div className="flex items-center gap-2 font-mono">
-              {/* Type of file */}
-              <div className="flex gap-1 items-center text-gray-500 text-sm">
-                {chosenFile.type.startsWith("video") && (
-                  <>
-                    <span className="text-[20px]">
-                      <LiaFileVideoSolid />
-                    </span>
-                    <span>{chosenFile.type}</span>
-                  </>
+            <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="flex items-center gap-1">
+                {chosenFile.type.startsWith("image") ? (
+                  <LiaFileImageSolid />
+                ) : (
+                  <LiaFileVideoSolid />
                 )}
-                {chosenFile.type.startsWith("image") && (
-                  <>
-                    <span className="text-[20px]">
-                      <LiaFileImageSolid />
-                    </span>
-                    <span>{chosenFile.type}</span>
-                  </>
-                )}
+                {chosenFile.type}
               </div>
-              {/* Size of file */}
-              <div className="text-gray-200 text-sm">.</div>
-              <div className="flex gap-1 items-center text-gray-500 text-sm">
-                <span className="text-[20px]">
+
+              {!chosenFile.isRemote && (
+                <div className="flex items-center gap-1">
                   <PiFloppyDiskThin />
-                </span>
-                <span>{Math.round(chosenFile.size / 1000000)}MB</span>
-              </div>
+                  {Math.round(chosenFile.size / 1_000_000)}MB
+                </div>
+              )}
             </div>
           )}
-          {/* Remove file  */}
-          { chosenFile &&
-            <div className="flex items-center gap-1.5 text-[#E03131] cursor-pointer" onClick={() => handleRemoveFile(chosenFile)}>
-              <span className="text-[20px]"><RiDeleteBin6Line/></span>
+
+          {/* Remove */}
+          {chosenFile && (
+            <div
+              className="flex items-center gap-2 text-[#E03131] cursor-pointer"
+              onClick={() => removeFile(chosenFile)}
+            >
+              <RiDeleteBin6Line />
               <span className="text-sm font-medium">Remove</span>
             </div>
-          }
+          )}
         </div>
       ) : (
-        <div className="w-full h-full  border border-gray-200 flex items-center justify-center font-mono rounded-2xl">
-          <div
-            {...getRootProps({
-              className:
-                "flex flex-col items-center justify-center gap-4  px-6 py-4",
-            })}
-          >
+        <div className="w-full h-full border border-gray-200 flex items-center justify-center font-mono rounded-2xl">
+          <div {...getRootProps()} className="flex flex-col items-center gap-4">
             <input {...getInputProps()} />
-            <span className="text-[40px]">
-              <IoCloudUploadOutline />
-            </span>
-            <div className="space-x-2">
+            <IoCloudUploadOutline className="text-[40px]" />
+            <div className="text-center space-y-1">
               <button
-                className="text-primary font-bold text-lg cursor-pointer"
-                type="button"
                 onClick={open}
+                className="text-primary font-bold text-lg"
               >
                 Click to upload
               </button>
-              <span className="text-gray-500 text-sm">or drag and drop</span>
               <p className="text-gray-500 text-sm">
                 PNG, JPG, GIF, MP4, MOV up to 100MB
               </p>
@@ -192,4 +151,3 @@ export default function DragnDrop({accept, maxFiles, files, setFiles}) {
     </>
   );
 }
- 

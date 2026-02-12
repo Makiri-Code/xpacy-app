@@ -15,11 +15,12 @@ export const CustomPaper = (props) => {
     );
 };
 
-const SearchPropertyOwner = ({ allOwners, propertyOwner, setPropertyOwner, }) => {
+const SearchPropertyOwner = ({ allOwners, propertyOwner, setPropertyOwner, disabled=false }) => {
   return (
     <div className="flex flex-col gap-2 font-mono">
                     <span className="text-sm">Search for property owner’s account</span>
                     <Autocomplete
+                        disabled={disabled}
                         sx={{
                             width: "100%",
                             "& .MuiOutlinedInput-notchedOutline": {

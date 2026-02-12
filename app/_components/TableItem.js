@@ -5,6 +5,7 @@ export default function TableItem({ service_type, address, scheduled_date, servi
         "pending": "bg-[#FBC0BC] text-[#C4170B] ",
         "in-progress": "bg-[#FFF8BE] text-[#9D7B40] ",
         "completed": "bg-[#C3E5C4] text-[#357B38] ",
+        "active": "bg-[#C3E5C4] text-[#357B38] ",
 
     }
     return (

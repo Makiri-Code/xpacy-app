@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { progress } from "../_lib/utils";
 import UploadingFileModal from "./UploadingFileModal";
 import { useCompressImage } from "../_hooks/useCompressImage";
+import { usePathname } from "next/navigation";
 
 
 // options for property type
@@ -187,6 +188,7 @@ const parkingAreaCount = [
         count: "Fit 5 cars",
     },
 ];
+<<<<<<< HEAD
 const AddNewPropertyForm = ({ allOwners, allCities, token, preSelectedOwner, initialData, isEditMode = false }) => {
     const [activeStep, setActiveStep] = useState(preSelectedOwner ? 2 : 1);
     const [propertyOwner, setPropertyOwner] = useState(preSelectedOwner || null);
@@ -196,11 +198,21 @@ const AddNewPropertyForm = ({ allOwners, allCities, token, preSelectedOwner, ini
     const [files, setFiles] = useState([]); 
     const { files: selectedFiles } = useCompressImage(files, setFiles);
     const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured || false);
+=======
+const AddNewPropertyForm = ({ allOwners, allCities, token, propertyOwnerInfo = null, disableSearch, propertyObj = {} }) => {
+    const [activeStep, setActiveStep] = useState(1);
+    const [propertyOwner, setPropertyOwner] = useState(() => propertyOwnerInfo);
+    const [propertyAmenities, setPropertyAmenities] = useState(() => propertyObj?.property_amenities || []);
+    const [files, setFiles] = useState(() => propertyObj?.images || []);
+    const { files: selectedFiles } = useCompressImage(files, setFiles);
+    const [isFeatured, setIsFeatured] = useState(() => propertyObj?.is_featured || false);
+>>>>>>> 0269a06 (Fixed bugs and added new features)
     const [isPending, setIsPending] = useState(false);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [uploadingProgress, setUploadingProgress] = useState(0);
     const [estimatedTime, setEstimatedTime] = useState(0);
     const controller = new AbortController();
+    console.log(propertyObj)
     const { register, handleSubmit, formState: { errors }, reset, getValues, setValue } = useForm({
         defaultValues: {
             firstname: propertyOwner?.first_name,
@@ -208,6 +220,7 @@ const AddNewPropertyForm = ({ allOwners, allCities, token, preSelectedOwner, ini
             email: propertyOwner?.email,
             phone: propertyOwner?.phone || "",
             owner_address: propertyOwner?.address || "",
+<<<<<<< HEAD
             // Property defaults from initialData
             property_name: initialData?.property_name || "",
             address: initialData?.address || "",
@@ -227,6 +240,26 @@ const AddNewPropertyForm = ({ allOwners, allCities, token, preSelectedOwner, ini
             virtual_tour_url: initialData?.virtual_tour_url || "",
             lat: initialData?.lat || "",
             long: initialData?.long || "",
+=======
+            property_name: propertyObj?.property_name,
+            address: propertyObj?.address,
+            state: propertyObj?.state,
+            city: propertyObj?.city,
+            property_type: propertyObj?.property_type,
+            availability_status: propertyObj?.availability_status,
+            property_price: propertyObj?.property_price,
+            property_status: propertyObj?.property_status,
+            description: propertyObj?.description,
+            total_bedrooms: propertyObj?.total_bedrooms,
+            total_bathrooms: propertyObj?.total_bathrooms,
+            total_toilets: propertyObj?.total_toilets,
+            parking_area: propertyObj?.parking_area,
+            property_square_area: propertyObj?.property_square_area,
+            land_area: propertyObj?.land_area,
+            virtual_tour_url: propertyObj?.virtual_tour_url,
+            lat: propertyObj?.lat,
+            long: propertyObj?.long,
+>>>>>>> 0269a06 (Fixed bugs and added new features)
         }
     });
 
@@ -304,7 +337,7 @@ const AddNewPropertyForm = ({ allOwners, allCities, token, preSelectedOwner, ini
                 onUploadProgress: (progressEvent) => progress(progressEvent, setIsOpenModal, setUploadingProgress, setEstimatedTime, startTime)
             });
             if (controller.signal.aborted) throw new Error("Upload cancelled")
-            
+
             return response.data;
         } catch (error) {
             console.log("Error submitting form:", error);
@@ -328,12 +361,21 @@ const AddNewPropertyForm = ({ allOwners, allCities, token, preSelectedOwner, ini
             selectedFiles.forEach((file) => URL.revokeObjectURL(file.preview));
         }
     }, []);
+
+    const pathname = usePathname();
+    console.log(pathname.split("/")[2])
+
     return (
         <div className="flex flex-col gap-12 w-[796px]">
             {/* Header */}
             <header className="flex flex-col items-center justify-center gap-4">
+<<<<<<< HEAD
                 <h2 className="text-3xl font-bold text-primary">{isEditMode ? "Edit Property" : "Add New Property"}</h2>
                 <p className="font-mono">Fill in the correct detailed information for the new property.</p>
+=======
+                <h2 className="text-3xl font-bold text-primary">{pathname.split("/")[2] === "property-details" ? "Property Details" : pathname.split("/")[2] === "edit-property" ? "Edit Property" : "Add New Property"}</h2>
+                {pathname.split("/").includes("property-details", "edit-property") ? null : <p className="font-mono">Fill in the correct detailed information for the new property.</p>}
+>>>>>>> 0269a06 (Fixed bugs and added new features)
             </header>
             {/* Progress bar */}
             <ProgressBar activeStep={activeStep} setActiveStep={setActiveStep} />
@@ -343,7 +385,7 @@ const AddNewPropertyForm = ({ allOwners, allCities, token, preSelectedOwner, ini
                 {activeStep === 1 && (
                     <>
                         <h3 className="text-lg">Owner Information</h3>
-                        <SearchPropertyOwner propertyOwner={propertyOwner} setPropertyOwner={setPropertyOwner} allOwners={allOwners} />
+                        <SearchPropertyOwner disabled={disableSearch} propertyOwner={propertyOwner} setPropertyOwner={setPropertyOwner} allOwners={allOwners} />
                         <div className="flex flex-col gap-6">
                             <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
                                 <FormInput label={"First Name"} id={"firstname"} >
@@ -548,7 +590,17 @@ const AddNewPropertyForm = ({ allOwners, allCities, token, preSelectedOwner, ini
                 {activeStep === 4 && (
                     <>
                         <h3 className="text-lg">Media</h3>
-                        <DragnDrop files={files} setFiles={setFiles} maxFiles={9} />
+                        {pathname.split("/")[2] === "property-details" ?
+                            <>
+                                <p className="font-mono">Photos</p>
+                                <div className="grid grid-cols-3 gap-x-6 gap-y-12">
+
+                                    {files.map((file, index) => (
+                                        <img key={index} src={`https://app.xpacy.com/src/upload/properties/${file}`} alt={`Property Image ${index + 1}`} className="object-cover rounded-lg" />
+                                    ))}
+                                </div>
+                            </> :
+                            <DragnDrop files={files} setFiles={setFiles} maxFiles={9} />}
                         <FormInput label={"Property Video Tour (Optional)"} id={"property_video_tour"} >
                             <input  {...register("virtual_tour_url")} type={"text"} name={"virtual_tour_url"} id={"virtual_tour_url"} placeholder={"Enter your property video tour link"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.virtual_tour_url ? "border-error" : "border-primary-200"}`} />
                             {errors.virtual_tour_url && <span className="-mt-2 text-xs text-error">{errors.virtual_tour_url.message}</span>}
@@ -589,10 +641,15 @@ const AddNewPropertyForm = ({ allOwners, allCities, token, preSelectedOwner, ini
                             <span><FaAngleRight /></span>
                         </div>
                     ) : (
-                        <button disabled={isPending} type="submit" className=" px-4 py-2 bg-primary-200 font-mono text-primary rounded-lg hover:bg-primary-200/80 cursor-pointer transition flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50">
-                            <span>Finish</span>
-                            {isPending && <span><SpinnerMini /></span>}
-                        </button>
+                        <>
+                            {pathname.split("/")[2] === "property-details" ? null : (
+                                <button disabled={isPending} type="submit" className=" px-4 py-2 bg-primary-200 font-mono text-primary rounded-lg hover:bg-primary-200/80 cursor-pointer transition flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                    <span>Finish</span>
+                                    {isPending && <span><SpinnerMini /></span>}
+                                </button>
+                            )}
+                        </>
+
                     )}
                 </div>
             </form>
