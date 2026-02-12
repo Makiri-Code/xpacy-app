@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatCurrency } from "@/app/_lib/utils";
 import EmptyState from "@/app/_components/EmptyState";
-import { MapPin, Edit, Trash2, Plus, Bed, Bath } from "lucide-react";
+import { FaMapMarkerAlt, FaEdit, FaTrashAlt, FaPlus, FaBed, FaBath } from "react-icons/fa";
 
 export default function PropertiesTableList({ properties, baseUrl = "/dashboard/property-owner/properties", ctaLink = "/dashboard/property-owner/properties/add" }) {
     if (!properties?.length) return <EmptyState message={"No properties found."} cta={"Add Property"} link={ctaLink} />
@@ -12,7 +12,7 @@ export default function PropertiesTableList({ properties, baseUrl = "/dashboard/
             <header className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-gray-800">My Properties</h2>
                 <Link href={ctaLink} className="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-sm">
-                    <Plus size={18} />
+                    <FaPlus size={18} />
                     Add Property
                 </Link>
             </header>
@@ -48,25 +48,23 @@ export default function PropertiesTableList({ properties, baseUrl = "/dashboard/
 
                         {/* Content Section */}
                         <div className="p-5 flex flex-col grow relative">
-                             
-
                             <div className="mb-2">
                                 <h3 className="font-bold text-lg text-gray-900 line-clamp-1" title={property.property_name}>
                                     {property.property_name}
                                 </h3>
                                 <div className="flex items-center text-gray-500 text-sm mt-1">
-                                    <MapPin size={16} className="mr-1 shrink-0" />
+                                    <FaMapMarkerAlt size={16} className="mr-1 shrink-0" />
                                     <span className="truncate">{property.city}, {property.state}</span>
                                 </div>
                             </div>
                             
                             <div className="flex items-center gap-6 mb-4 text-sm text-gray-600 mt-2">
                                 <div className="flex items-center gap-2">
-                                    <Bed size={18} className="text-gray-400" />
+                                    <FaBed size={18} className="text-gray-400" />
                                     <span>{property.total_bedrooms || 0} Beds</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Bath size={18} className="text-gray-400" />
+                                    <FaBath size={18} className="text-gray-400" />
                                     <span>{property.total_bathrooms || 0} Baths</span>
                                 </div>
                             </div>
@@ -84,13 +82,13 @@ export default function PropertiesTableList({ properties, baseUrl = "/dashboard/
                                             href={`${baseUrl}/${property.id || property._id}/edit`} 
                                             className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-primary hover:text-white text-gray-600 rounded-md transition-colors text-xs font-semibold border border-gray-200"
                                         >
-                                            <Edit size={14} />
+                                            <FaEdit size={14} />
                                             Edit
                                         </Link>
                                         <button 
                                             className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-red-600 hover:text-white text-gray-600 rounded-md transition-colors text-xs font-semibold border border-gray-200"
                                         >
-                                            <Trash2 size={14} />
+                                            <FaTrashAlt size={14} />
                                             Delete
                                         </button>
                                     </div>
