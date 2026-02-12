@@ -9,7 +9,7 @@ import SidebarNav from "./SidebarNav";
 import { useCloseModal } from "../_hooks/useCloseModal";
 
 
-export default function MobileNav({ children, isSidebar = false }) {
+export default function MobileNav({ children, isSidebar = false, role = "user" }) {
 
     return (
         <NavMenu>
@@ -20,7 +20,7 @@ export default function MobileNav({ children, isSidebar = false }) {
                 {
                     isSidebar ?
                         (
-                            <MobileSideBarWindow/>
+                            <MobileSideBarWindow role={role} />
                         ) :
                         (
                             <MainAppWindow>
@@ -76,10 +76,10 @@ const MainAppWindow = ({ children }) => {
 }
 
 
-const MobileSideBarWindow = () => {
+const MobileSideBarWindow = ({ role }) => {
     return (
         <div className="max-h-max  bg-primary-900 flex flex-col py-8 px-6 w-max items-start gap-8 overflow-y-auto lg:hidden">
-            <SidebarNav />
+            <SidebarNav role={role} />
         </div>
     )
 }

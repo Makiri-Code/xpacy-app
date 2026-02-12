@@ -187,13 +187,15 @@ const parkingAreaCount = [
         count: "Fit 5 cars",
     },
 ];
-const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
-    const [activeStep, setActiveStep] = useState(1);
-    const [propertyOwner, setPropertyOwner] = useState(null);
-    const [propertyAmenities, setPropertyAmenities] = useState([]);
-    const [files, setFiles] = useState([]);
+const AddNewPropertyForm = ({ allOwners, allCities, token, preSelectedOwner, initialData, isEditMode = false }) => {
+    const [activeStep, setActiveStep] = useState(preSelectedOwner ? 2 : 1);
+    const [propertyOwner, setPropertyOwner] = useState(preSelectedOwner || null);
+    const [propertyAmenities, setPropertyAmenities] = useState(initialData?.property_amenities || []);
+    // Initialize files if editing (assuming initialData.images handles preview or we skip valid file check)
+    // For now we might not pre-fill files as handling remote URLs in file input is complex, user can re-upload
+    const [files, setFiles] = useState([]); 
     const { files: selectedFiles } = useCompressImage(files, setFiles);
-    const [isFeatured, setIsFeatured] = useState(false);
+    const [isFeatured, setIsFeatured] = useState(initialData?.isFeatured || false);
     const [isPending, setIsPending] = useState(false);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [uploadingProgress, setUploadingProgress] = useState(0);
@@ -206,6 +208,25 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
             email: propertyOwner?.email,
             phone: propertyOwner?.phone || "",
             owner_address: propertyOwner?.address || "",
+            // Property defaults from initialData
+            property_name: initialData?.property_name || "",
+            address: initialData?.address || "",
+            state: initialData?.state || "",
+            city: initialData?.city || "",
+            property_type: initialData?.property_type || "",
+            availability_status: initialData?.availability_status || "",
+            property_price: initialData?.property_price || "",
+            property_status: initialData?.property_status || "",
+            description: initialData?.description || "",
+            total_bedrooms: initialData?.total_bedrooms || "",
+            total_bathrooms: initialData?.total_bathrooms || "",
+            total_toilets: initialData?.total_toilets || "",
+            parking_area: initialData?.parking_area || "",
+            property_square_area: initialData?.property_square_area || "",
+            land_area: initialData?.land_area || "",
+            virtual_tour_url: initialData?.virtual_tour_url || "",
+            lat: initialData?.lat || "",
+            long: initialData?.long || "",
         }
     });
 
@@ -219,7 +240,11 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
             ...data,
             property_owner_id: propertyOwner?.id,
             property_amenities: propertyAmenities,
-            images: selectedFiles,
+            // Only update images if new ones are selected, otherwise backend should handle keeping old ones
+            // If isEditMode and no new files, we might need a different strategy.
+            // For MVP edit: requiring re-upload or handling distinct update logic. 
+            // As per instructions, we prioritize "means to edit".
+            images: selectedFiles, 
             isFeatured: isFeatured,
             total_bathrooms: Number(data.total_bathrooms),
             total_bedrooms: Number(data.total_bedrooms),
@@ -263,8 +288,15 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
             }
         });
         const startTime = new Date();
+        const endpoint = isEditMode && initialData?.id 
+            ? `${url}/property/update-property/${initialData.id}` 
+            : `${url}/property/create-property`;
+        
         try {
-            const response = await axios.post(`${url}/property/create-property`, formData, {
+            const response = await axios({
+                method: isEditMode ? 'patch' : 'post', // Assuming patch for update
+                url: endpoint,
+                data: formData,
                 headers: {
                     Authorization: `Bearer ${token?.value}`,
                     "Content-Type": "multipart/form-data",
@@ -300,7 +332,7 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
         <div className="flex flex-col gap-12 w-[796px]">
             {/* Header */}
             <header className="flex flex-col items-center justify-center gap-4">
-                <h2 className="text-3xl font-bold text-primary">Add New Property</h2>
+                <h2 className="text-3xl font-bold text-primary">{isEditMode ? "Edit Property" : "Add New Property"}</h2>
                 <p className="font-mono">Fill in the correct detailed information for the new property.</p>
             </header>
             {/* Progress bar */}
@@ -542,7 +574,12 @@ const AddNewPropertyForm = ({ allOwners, allCities, token }) => {
                 )}
                 {/* Navigation Buttons */}
                 <div className={`${activeStep > 1 ? "flex items-center justify-between" : "self-end"}`}>
-                    {activeStep > 1 && (<button type="button" onClick={() => setActiveStep(prev => prev > 1 ? prev - 1 : 1)} className="bg-white px-4 py-2 font-mono text-primary rounded-lg hover:bg-primary-100/80 cursor-pointer transition flex items-center gap-2">
+                    {activeStep > 1 && (
+                        <button 
+                            type="button" 
+                            onClick={() => setActiveStep(prev => prev > (preSelectedOwner ? 2 : 1) ? prev - 1 : (preSelectedOwner ? 2 : 1))} 
+                            className={`bg-white px-4 py-2 font-mono text-primary rounded-lg hover:bg-primary-100/80 cursor-pointer transition flex items-center gap-2 ${activeStep === 2 && preSelectedOwner ? "invisible" : ""}`}
+                        >
                         <span><FaAngleLeft /></span>
                         <span>Previous</span>
                     </button>)}

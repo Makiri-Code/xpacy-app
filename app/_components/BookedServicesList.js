@@ -4,13 +4,18 @@ import TableItem from "./TableItem";
 import { cookies } from "next/headers";
 import EmptyState from "./EmptyState";
 
-export default async function BookedServiceList() {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token")
-    const bookedServices = await getBookedServices(token);
-    const { service_type, address, scheduled_date, service_status, } = bookedServices;
+export default async function BookedServiceList({ services }) {
+    let bookedServices = services;
+    
+    if (!bookedServices) {
+        const cookieStore = await cookies();
+        const token = cookieStore.get("token")
+        bookedServices = await getBookedServices(token);
+    }
+    
+    // const { service_type, address, scheduled_date, service_status, } = bookedServices;
 
-    if (bookedServices.length <= 0) return <EmptyState message={"Oops!... You have no booked services yet."} cta={"Book A Service"} />
+    if (!bookedServices || bookedServices.length <= 0) return <EmptyState message={"Oops!... You have no booked services yet."} cta={"Book A Service"} />
     return (
         <>
             <table className="table-auto lg:table font-mono hidden">

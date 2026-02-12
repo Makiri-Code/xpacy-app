@@ -2,7 +2,7 @@ import BookedServiceList from "./BookedServicesList";
 import UserFilterMenu from "./UserFilterMenu";
 
 
-export default async function ServicesTableList(){
+export default async function ServicesTableList({ services }) {
 
     return (
          <div className="flex flex-col p-6 gap-6 border border-primary-200 bg-white rounded-lg">
@@ -22,7 +22,7 @@ export default async function ServicesTableList(){
                     <UserFilterMenu />
                 </div>
             </header>
-            <BookedServiceList/>
+            <BookedServiceList services={services} />
         </div>
     )
 }
