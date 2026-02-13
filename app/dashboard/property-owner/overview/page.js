@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { getBookingList, getBookedServices, getProperties, getUserProfile, getUserNotifications } from "@/app/_lib/data-services";
+import { getBookingList, getBookedServices, getProperties, getPropertyOwnerProfile, getUserNotifications } from "@/app/_lib/data-services";
 import PropertiesOverviewWrapper from "@/app/_components/PropertiesOverviewWrapper";
 import ServicesOverviewWrapper from "@/app/_components/ServicesOverviewWrapper";
 import PaymentsOverviewWrapper from "@/app/_components/PaymentsOverviewWrapper";
@@ -12,7 +12,7 @@ export default async function Page() {
     
     // Fetch data in parallel using Promise.allSettled to prevent one failure from breaking the page
     const results = await Promise.allSettled([
-        getUserProfile(token),
+        getPropertyOwnerProfile(token),
         getProperties(),
         getBookedServices(token),
         getBookingList(token),
@@ -42,7 +42,7 @@ export default async function Page() {
     return (
         <div className="space-y-8 p-4">
             <h1 className="lg:text-4xl text-[28px] text-primary font-bold capitalize">
-                Welcome {profile?.firstname || "Owner"},
+                Welcome {profile?.first_name || profile?.firstname || profile?.name || profile?.full_name || "Owner"},
             </h1>
             
             <div className="flex flex-col gap-8">

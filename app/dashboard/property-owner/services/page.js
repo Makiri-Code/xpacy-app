@@ -1,17 +1,17 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
-import ServicesTableList from "@/app/_components/ServicesTableList";
+import PropertyOwnerServicesTable from "@/app/_components/PropertyOwnerServicesTable";
 import ServicesOverviewWrapper from "@/app/_components/ServicesOverviewWrapper";
 import { getUserProfile, getProperties, getBookedServices } from "@/app/_lib/data-services";
 import { MdAdd } from "react-icons/md";
 
-export default async function Page() {
+export default async function Page({ searchParams }) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
   const [user, propertiesData, services] = await Promise.all([
       getUserProfile(token),
       getProperties(),
-      getBookedServices(token) // Assuming this returns all services for now, or user-specific
+      getBookedServices(token) 
   ]);
 
   const allProperties = Array.isArray(propertiesData?.[0]) ? propertiesData[0] : [];
@@ -19,19 +19,32 @@ export default async function Page() {
   const myPropertyIds = myProperties.map(p => p.id || p._id);
 
   // Filter services that are linked to my properties
-  // Note: We are assuming service object has property_id or similar field. 
-  // If getBookedServices returns "my bookings", this logic finds "bookings on my properties" ONLY IF the API returns ALL bookings.
-  // Since we don't have a specific "getServicesForOwner", we rely on this or empty if API is strict to "my bookings as consumer".
-  const myServices = Array.isArray(services) 
+  let myServices = Array.isArray(services) 
     ? services.filter(service => myPropertyIds.includes(service.property_id || service.propertyId)) 
     : [];
+
+    // Pagination (mock for now as API support is unclear from context, using similar logic to properties)
+    const page = Number(searchParams?.page) || 1;
+    const limit = 10;
+    const total = myServices.length;
+    const totalPages = Math.ceil(total / limit);
+    
+    // Slice for local pagination if API doesn't paginated
+    const paginatedServices = myServices.slice((page - 1) * limit, page * limit);
+
+    const pagination = {
+        page,
+        limit,
+        totalPages,
+        total
+    };
 
   return (
     <div className="space-y-6 p-4">
 
       <h2 className="text-xl font-bold text-gray-900">Service Overview</h2>
         <ServicesOverviewWrapper services={myServices} />
-        <ServicesTableList services={myServices} />
+        <PropertyOwnerServicesTable services={paginatedServices} pagination={pagination} />
         
     </div>
   );

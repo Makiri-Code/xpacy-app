@@ -34,7 +34,7 @@ export default async function ProfileDisplay({role = "user"}) {
                 </Link>
                 <div className="border border-primary-200"></div>
                 {/* Profile settings */}
-                <Link href={role.toLowerCase() === "admin" ? "/dashboard/admin/profile-settings" : "/dashboard/user/profile-settings"} className="p-1  flex items-center gap-4 text-gray-500 font-mono hover:text-gray-800 ">
+                <Link href={role.toLowerCase() === "admin" ? "/dashboard/admin/profile-settings" : role.toLowerCase() === "property-owner" ? "/dashboard/property-owner/profile-settings" : "/dashboard/user/profile-settings"} className="p-1  flex items-center gap-4 text-gray-500 font-mono hover:text-gray-800 ">
                     <span className="text-lg"><RiUserSettingsLine /></span>
                     <span>Profile settings</span>
                 </Link>

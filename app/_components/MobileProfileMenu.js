@@ -36,7 +36,7 @@ export default function MobileProfileMenu({ profile }) {
                     </Link>
                     <div className="border border-primary-200"></div>
                     {/* Profile settings */}
-                    <Link href={"/dashboard/user/profile-settings"} className="p-1  flex items-center gap-4 text-gray-500 font-mono hover:text-gray-800 ">
+                    <Link href={typeof window !== 'undefined' && window.location.pathname.includes("/dashboard/property-owner") ? "/dashboard/property-owner/profile-settings" : "/dashboard/user/profile-settings"} className="p-1  flex items-center gap-4 text-gray-500 font-mono hover:text-gray-800 ">
                         <span className="text-lg"><RiUserSettingsLine /></span>
                         <span>Profile settings</span>
                     </Link>

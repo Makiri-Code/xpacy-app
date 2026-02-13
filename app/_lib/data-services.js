@@ -117,6 +117,25 @@ export async function getUserProfile(token) {
   }
 }
 
+export async function getPropertyOwnerProfile(token) {
+  try {
+    const response = await fetch(`${url}/property-owner/fetch-profile`, {
+       next: {
+        tags: ['property-owner-profile']
+      },
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-type": "application/json",
+      },
+    });
+    const data = await response.json();
+    return data.user || data.propertyOwner || data; 
+  } catch (error) {
+    console.error("Error fetching property owner profile:", error)
+  }
+}
+
 
 
 export async function getSavedProperties(token) {

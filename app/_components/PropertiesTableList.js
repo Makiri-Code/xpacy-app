@@ -5,7 +5,7 @@ import { FaMapMarkerAlt, FaList } from "react-icons/fa";
 import Image from "next/image";
 import { format } from "date-fns";
 import StatusChips from "./StatusChips";
-import OwnerOptionsMenu from "./OwnerOptionsMenu";
+import PropertyOptionsMenu from "./PropertyOptionsMenu";
 import Pagination from "./Pagination";
 import SearchInput from "./SearchInput";
 import DashboardFilter from "./DashboardFilter";
@@ -124,7 +124,7 @@ export default function PropertiesTableList({ properties, bookings = [], paginat
                                     </div>
                                     
                                     <div className="p-4 flex items-center justify-center relative">
-                                        <OwnerOptionsMenu id={property.id || property._id} />
+                                        <PropertyOptionsMenu id={property.id || property._id} />
                                     </div>
                                 </div>
                             )
