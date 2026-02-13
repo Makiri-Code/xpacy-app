@@ -93,6 +93,31 @@ export async function handleAdminLogin(userData, redirectUrl) {
   return { success: true, message: data.message }
 };
 
+export async function handlePropertyOwnerLogin(userData, redirectUrl) {
+  const response = await fetch(`${URL}/property-owner/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ...userData }),
+  });
+  const data = await response.json();
+  if (!response.ok) return { success: false, message: data.message }
+
+  const cookieStore = await cookies();
+  cookieStore.set({
+    name: "token",
+    value: data.token,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    maxAge: 60 * 60, // 1 day
+  });
+  if (data.role === "Admin" || data.role === "PropertyOwner" || data.role === "property-owner") redirect(redirectUrl)
+  return { success: true, message: data.message }
+};
+
 
 export async function handleSignup(userData, referralCode) {
   const response = await fetch(`${URL}/user/register?referralCode=${referralCode}`, {

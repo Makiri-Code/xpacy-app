@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import {  handleUserLogin, handleAdminLogin } from "../_lib/action";
+import {  handleUserLogin, handleAdminLogin, handlePropertyOwnerLogin } from "../_lib/action";
 import FormInput from "./FormInput";
 import Logo from "./Logo";
 import SpinnerMini from "./SpinnerMini";
@@ -34,7 +34,7 @@ export default function LoginForm({role}) {
          }
          if(role === "property-owner"){ 
             startTransition(async () => {
-                const response = await handleAdminLogin(data, "/dashboard/property-owner");
+                const response = await handlePropertyOwnerLogin(data, "/dashboard/property-owner");
                 if (response.success) toast.success(response.message);
                 if (!response.success) toast.error(response.message);
                 reset();
@@ -50,6 +50,9 @@ export default function LoginForm({role}) {
                 <div className="space-y-11">
                     <div className="space-y-2 text-center">
                         <h1 className="text-4xl text-primary font-bold">Welcome back!</h1>
+                        <h2 className="text-xl font-mono text-gray-500 font-semibold uppercase">
+                            {role === 'property-owner' ? 'Property Owner' : role === 'admin' ? 'Admin' : 'User'} Login
+                        </h2>
                         <p className="text-base text-black font-mono">Enter your email address and password to log in.</p>
                     </div>
                     <form className="space-y-6 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
@@ -73,7 +76,7 @@ export default function LoginForm({role}) {
                                 <input type="checkbox" id="checkbox" className="w-6 h-6" />
                                 <label htmlFor="checkbox" className="text-base text-black">Remember me</label>
                             </div>
-                            <Link href="#" className="font-mono text-base text-primary">Forgot Password?</Link>
+                            <Link href="/auth/forgot-password" className="font-mono text-base text-primary">Forgot Password?</Link>
                         </div>
                         <button type="submit" disabled={pending} className="bg-primary text-white  cursor-pointer  px-5 py-3 font-semibold flex space-x-2.5 font-mono items-center justify-center rounded-md hover:shadow-md disabled:bg-gray-300 disabled:cursor-not-allowed"> <span>Log In</span> <span>{pending && <SpinnerMini />}</span> </button>
                     </form>
