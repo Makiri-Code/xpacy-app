@@ -42,9 +42,14 @@ export async function getRentProperties() {
 
 export async function getProperties(search = {}) {
 
-  const { purpose, type, minBedrooms, location, minPrice, maxPrice, page, property_owner_id } = search;
+  const { purpose, type, minBedrooms, location, minPrice, maxPrice, page, property_owner_id, status } = search;
+  const apiUrl = `${url}/property/fetch-properties?purpose=${purpose || ""}&type=${type || ""}&location=${location || ""}&minBedrooms=${minBedrooms || ""}&minPrice=${minPrice || ""}&maxPrice=${maxPrice || ""}&page=${page || 1}&property_owner_id=${property_owner_id || ""}&property_status=${status || ""}`;
+  
+  console.log("getProperties Search Params:", search);
+  console.log("getProperties API URL:", apiUrl);
+
   try {
-    const response = await fetch(`${url}/property/fetch-properties?purpose=${purpose || ""}&type=${type || ""}&location=${location || ""}&minBedrooms=${minBedrooms || ""}&minPrice=${minPrice || ""}&maxPrice=${maxPrice || ""}&page=${page || 1}&property_owner_id=${property_owner_id || ""}`);
+    const response = await fetch(apiUrl);
     const { properties, pagination } = await response.json();
     return [properties, pagination]
   } catch (error) {

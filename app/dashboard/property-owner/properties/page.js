@@ -1,64 +1,72 @@
-import Link from "next/link";
-import { getProperties, getUserProfile, getBookingList } from "@/app/_lib/data-services";
-import PropertiesTableList from "@/app/_components/PropertiesTableList";
 import { cookies } from "next/headers";
-import DashboardFilter from "@/app/_components/DashboardFilter";
+import Link from "next/link";
+import PropertiesTableList from "@/app/_components/PropertiesTableList";
+import { getBookingList, getProperties, getUserProfile, getBookedServices } from "@/app/_lib/data-services";
 import PropertiesSummary from "@/app/_components/PropertiesSummary";
 import { MdAdd } from "react-icons/md";
 import SearchInput from "@/app/_components/SearchInput";
+import ExportButton from "@/app/_components/ExportButton";
+import DateFilter from "@/app/_components/DateFilter";
+import { checkDateInRange } from "@/app/_lib/utils";
 
 export default async function Page({searchParams}) {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
     
-    // Fetch user profile first to get ID
-    const profile = await getUserProfile(token);
-    
-    // Construct search params with owner ID
-    const search = { ...await searchParams, property_owner_id: profile?.id };
-
-    // Fetch properties and bookings in parallel
-    const [[propertiesData, paginationData], bookings_] = await Promise.all([
-        getProperties(search),
-        getBookingList(token)
+    // Fetch data
+    const [user, propertiesData, bookings, services] = await Promise.all([
+        getUserProfile(token),
+        getProperties(),
+        getBookingList(token),
+        getBookedServices(token)
     ]);
-    const bookings = Array.isArray(bookings_) ? bookings_ : [];
-    const properties = Array.isArray(propertiesData) ? propertiesData : [];
+
+    const allProperties = Array.isArray(propertiesData?.[0]) ? propertiesData[0] : [];
     
-    // No client-side filtering needed for properties unless API fails to filter
-    const propertiesByOwner = properties // For summary, we can use the fetched list directly if API filters correctly
+    // 1. Filter by Owner
+    let properties = allProperties.filter(property => property.property_owner_id === user?.id);
+
+    // 2. Filter by Date Range (if present in URL)
+    const filterRange = (await searchParams)?.range;
+    if (filterRange && filterRange !== 'all_time') {
+        properties = properties.filter(p => {
+            const dateStr = p.createdAt || p.created_at || p.date_added; 
+            return checkDateInRange(dateStr, filterRange);
+        });
+    }
     
-    // Pagination from API
-    const pagination = paginationData || { 
-        page: Number(search.page) || 1, 
-        limit: 10, 
-        totalPages: Math.ceil(properties.length / 10) || 1, 
-        total: properties.length 
+    // Pagination data from API (if available) or manual
+    const pagination = propertiesData?.[1] || {
+        page: 1,
+        limit: 10,
+        totalPages: Math.ceil(properties.length / 10),
+        total: properties.length
     };
 
     return (
         <div className="space-y-6 p-4">
-            <h2 className="text-xl font-bold text-gray-900"> Property Summary</h2>
-            <PropertiesSummary properties={properties} />
-            <div className="flex justify-end gap-4">
-                <SearchInput />
-
-                <DashboardFilter />
+            <div className="flex justify-end gap-2">
+                <DateFilter />
+                <ExportButton data={properties} filename="property_summary" />
             </div>
+            <PropertiesSummary properties={properties} />
+           
             <PropertiesTableList 
                 properties={properties} 
-                bookings={bookings} 
-                pagination={pagination} 
+                bookings={Array.isArray(bookings) ? bookings : []}
+                services={Array.isArray(services) ? services : []}
+                pagination={pagination}
+                recent={false} 
             />
             <div className="flex justify-start mt-8 pb-8">
                 <Link 
                     href="/dashboard/property-owner/properties/add" 
-                    className="flex items-center gap-2 text-primary px-6 py-3 rounded-lg font-bold hover:bg-primary-600 transition-colors "
+                    className="flex items-center gap-2 "
                 >
-                    <MdAdd className="text-xl"/>
-                    Request New Property Listing
+                    <MdAdd className="text-2xl" />
+                    <span className="font-semibold">Request New Property Listing</span>
                 </Link>
             </div>
         </div>
-    )
-}
+    );
+};

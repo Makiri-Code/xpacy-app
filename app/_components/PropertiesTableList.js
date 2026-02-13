@@ -8,6 +8,7 @@ import StatusChips from "./StatusChips";
 import OwnerOptionsMenu from "./OwnerOptionsMenu";
 import Pagination from "./Pagination";
 import SearchInput from "./SearchInput";
+import DashboardFilter from "./DashboardFilter";
 
 const tableHeadings = [
     { heading: "Property" },
@@ -35,13 +36,17 @@ export default function PropertiesTableList({ properties, bookings = [], paginat
     return (
         <div className="flex flex-col gap-6 p-6 border-[1.5px] border-primary-200 rounded-lg">
             <header className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-primary-700 flex items-center gap-2"><FaList className="text-primary" /> My Properties</h2>
+                <h2 className="text-xl font-bold text-primary-700 flex items-center gap-2">Property Overview</h2>
                 {recent ? (
                     <Link href={baseUrl} className="text-sm text-primary hover:underline font-medium">
                         View All
                     </Link>
-                ) : (
-                    <SearchInput />
+                ) : (   
+                    <div className="flex justify-end gap-4">
+                        <SearchInput />
+
+                        <DashboardFilter />
+                    </div>
                 )}
             </header>
 

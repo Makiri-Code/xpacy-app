@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 import { getBookingList, getBookedServices, getProperties, getUserProfile, getUserNotifications } from "@/app/_lib/data-services";
-import PropertiesSummary from "@/app/_components/PropertiesSummary";
-import ServicesSummary from "@/app/_components/ServicesSummary";
-import PaymentsSummary from "@/app/_components/PaymentsSummary";
+import PropertiesOverviewWrapper from "@/app/_components/PropertiesOverviewWrapper";
+import ServicesOverviewWrapper from "@/app/_components/ServicesOverviewWrapper";
+import PaymentsOverviewWrapper from "@/app/_components/PaymentsOverviewWrapper";
 import NotificationsSummary from "@/app/_components/NotificationsSummary";
 import PropertiesTableList from "@/app/_components/PropertiesTableList";
 
@@ -47,15 +47,15 @@ export default async function Page() {
             
             <div className="flex flex-col gap-8">
                 <section>
-                    <PropertiesSummary properties={properties} />
+                    <PropertiesOverviewWrapper properties={properties} showFilters={false} />
                 </section>
                 
                 <section>
-                    <ServicesSummary services={myServices} />
+                    <ServicesOverviewWrapper services={myServices} showFilters={false} />
                 </section>
                 
                 <section>
-                    <PaymentsSummary bookings={myBookings} />
+                    <PaymentsOverviewWrapper bookings={myBookings} showFilters={false} />
                 </section>
                 
                 <section>

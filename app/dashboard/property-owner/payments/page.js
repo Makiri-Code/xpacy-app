@@ -1,7 +1,7 @@
 
 import { getBookingList, getProperties, getUserProfile } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
-import PaymentsSummary from "@/app/_components/PaymentsSummary";
+import PaymentsOverviewWrapper from "@/app/_components/PaymentsOverviewWrapper";
 import PaymentsTableList from "@/app/_components/PaymentsTableList";
 
 export default async function Page() {
@@ -25,8 +25,9 @@ export default async function Page() {
 
     return (
         <div className="space-y-6 p-6">
+
              <h2 className="text-xl font-bold text-gray-900">Payment Overview</h2>
-            <PaymentsSummary bookings={myBookings} />
+            <PaymentsOverviewWrapper bookings={myBookings} />
             <PaymentsTableList bookings={myBookings} />
         </div>
     )

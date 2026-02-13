@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 import ServicesTableList from "@/app/_components/ServicesTableList";
-import ServicesSummary from "@/app/_components/ServicesSummary";
+import ServicesOverviewWrapper from "@/app/_components/ServicesOverviewWrapper";
 import { getUserProfile, getProperties, getBookedServices } from "@/app/_lib/data-services";
 import { MdAdd } from "react-icons/md";
 
@@ -28,8 +28,9 @@ export default async function Page() {
 
   return (
     <div className="space-y-6 p-4">
+
       <h2 className="text-xl font-bold text-gray-900">Service Overview</h2>
-        <ServicesSummary services={myServices} />
+        <ServicesOverviewWrapper services={myServices} />
         <ServicesTableList services={myServices} />
         
     </div>
