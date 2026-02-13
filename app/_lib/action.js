@@ -114,7 +114,7 @@ export async function handlePropertyOwnerLogin(userData, redirectUrl) {
     path: "/",
     maxAge: 60 * 60, // 1 day
   });
-  if (data.role === "Admin" || data.role === "PropertyOwner" || data.role === "property-owner") redirect(redirectUrl)
+  if (data.role === "PropertyOwner" || data.role === "property-owner") redirect(redirectUrl)
   return { success: true, message: data.message }
 };
 
