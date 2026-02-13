@@ -1,6 +1,10 @@
 import { cookies } from "next/headers";
+import Link from "next/link";
 import ServicesTableList from "@/app/_components/ServicesTableList";
+import ServicesSummary from "@/app/_components/ServicesSummary";
 import { getUserProfile, getProperties, getBookedServices } from "@/app/_lib/data-services";
+import { MdAdd } from "react-icons/md";
+
 export default async function Page() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
@@ -23,9 +27,11 @@ export default async function Page() {
     : [];
 
   return (
-    <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-800">Booked Services</h1>
+    <div className="space-y-6 p-4">
+      <h2 className="text-xl font-bold text-gray-900">Service Overview</h2>
+        <ServicesSummary services={myServices} />
         <ServicesTableList services={myServices} />
+        
     </div>
   );
 };

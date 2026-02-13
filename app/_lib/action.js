@@ -89,7 +89,7 @@ export async function handleAdminLogin(userData, redirectUrl) {
     path: "/",
     maxAge: 60 * 60, // 1 day
   });
-  if (data.role === "Admin") redirect(redirectUrl)
+  if (data.role === "Admin" || data.role === "PropertyOwner" || data.role === "property-owner") redirect(redirectUrl)
   return { success: true, message: data.message }
 };
 

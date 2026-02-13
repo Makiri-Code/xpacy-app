@@ -8,7 +8,7 @@ import { getAdminProfile, getUserProfile } from "../_lib/data-services";
 import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { cookies } from "next/headers";
 import { handleLogOut } from "../_lib/action";
-export default async function ProfileDisplay({role}) {
+export default async function ProfileDisplay({role = "user"}) {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")
     const profile = role?.toLowerCase() === "admin" ? await getAdminProfile(token) : await getUserProfile(token);

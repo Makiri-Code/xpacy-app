@@ -1,20 +1,22 @@
 import { cookies } from "next/headers";
-import Link from "next/link";
 import PropertyOwnerOverview from "@/app/_components/PropertyOwnerOverview";
-import { getBookingList, getBookedServices, getProperties, getUserProfile } from "@/app/_lib/data-services";
-import DashboardGridItem from "@/app/_components/DashboardGridItems";
-import PropertiesTableList from "@/app/_components/PropertiesTableList";
+import { getBookingList, getBookedServices, getProperties, getUserProfile, getUserNotifications } from "@/app/_lib/data-services";
+import PropertiesSummary from "@/app/_components/PropertiesSummary";
+import ServicesSummary from "@/app/_components/ServicesSummary";
+import PaymentsSummary from "@/app/_components/PaymentsSummary";
+import NotificationsSummary from "@/app/_components/NotificationsSummary";
 
 export default async function Page() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
     
     // Fetch data in parallel
-    const [profile, propertiesData, services, bookings] = await Promise.all([
+    const [profile, propertiesData, services, bookings, notifications] = await Promise.all([
         getUserProfile(token),
         getProperties(),
         getBookedServices(token),
-        getBookingList(token)
+        getBookingList(token),
+        getUserNotifications(token)
     ]);
     
     // getProperties returns [properties, meta]
@@ -24,33 +26,35 @@ export default async function Page() {
 
     // Filter derived data
     const myServices = Array.isArray(services) 
-        ? services.filter(s => myPropertyIds.includes(s.property_id || s.propertyId)).map(s => ({...s, type: 'Service', date: s.createdAt || s.created_at}))
+        ? services.filter(s => myPropertyIds.includes(s.property_id || s.propertyId))
         : [];
     
     const myBookings = Array.isArray(bookings)
-        ? bookings.filter(b => myPropertyIds.includes(b.property_id || b.property?._id)).map(b => ({...b, type: 'Booking', date: b.createdAt || b.created_at}))
+        ? bookings.filter(b => myPropertyIds.includes(b.property_id || b.property?._id))
         : [];
 
-    // Combine and sort by date descending
-    const recentActivity = [...myServices, ...myBookings]
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .slice(0, 5);
-
     return (
-        <div className="space-y-6">
+        <div className="space-y-8 p-4">
             <h1 className="lg:text-4xl text-[28px] text-primary font-bold capitalize">
                 Welcome {profile?.firstname || "Owner"},
             </h1>
-            <div className="flex flex-col gap-12">
-                <DashboardGridItem title={"Quick Overview"}>
-                    <PropertyOwnerOverview />
-                </DashboardGridItem>
+            
+            <div className="flex flex-col gap-8">
+                <section>
+                    <PropertiesSummary properties={properties} />
+                </section>
                 
-                <div className="grid grid-cols-1 gap-8">
-                     <DashboardGridItem title={"Property List"} viewAllLink={"/dashboard/property-owner/properties"}>
-                        <PropertiesTableList properties={properties.slice(0, 5)} />
-                    </DashboardGridItem>
-                </div>
+                <section>
+                    <ServicesSummary services={myServices} />
+                </section>
+                
+                <section>
+                    <PaymentsSummary bookings={myBookings} />
+                </section>
+                
+                <section>
+                    <NotificationsSummary notifications={Array.isArray(notifications) ? notifications : []} />
+                </section>
             </div>
         </div>
     );

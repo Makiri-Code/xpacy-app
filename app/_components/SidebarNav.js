@@ -116,8 +116,8 @@ const propertyOwnerNavList = [
         icon: <RiHome2Line />
     },
     {
-        text: "Overview",
-        link: "/dashboard/property-owner/overview",
+        text: "Dashboard",
+        link: "/dashboard/property-owner",
         icon: <RxDashboard />
     },
     {
@@ -126,19 +126,14 @@ const propertyOwnerNavList = [
         icon: <FiBell />
     },
     {
-        text: "Properties",
+        text: "My Properties",
         link: "/dashboard/property-owner/properties",
         icon: <BiBuildingHouse />
     },
     {
-        text: "Services",
+        text: "Services Requests",
         link: "/dashboard/property-owner/services",
-        icon: <LuMessageCircleQuestion /> // Placeholder or find better icon
-    },
-    {
-        text: "Users",
-        link: "/dashboard/property-owner/users",
-        icon: <RiUserSettingsLine />
+        icon: <IoCalendarOutline />
     },
     {
         text: "Payments",
@@ -146,14 +141,14 @@ const propertyOwnerNavList = [
         icon: <IoCardOutline />
     },
     {
-        text: "Reports",
-        link: "/dashboard/property-owner/reports",
-        icon: <IoCalendarOutline /> // Placeholder
+        text: "Profile Settings",
+        link: "/dashboard/user/profile-settings",
+        icon: <RiUserSettingsLine />
     },
     {
-        text: "Settings",
-        link: "/dashboard/property-owner/settings",
-        icon: <RiUserSettingsLine />
+        text: "Help/Support",
+        link: "/dashboard/user/support",
+        icon: <LuMessageCircleQuestion />
     }
 ]
 

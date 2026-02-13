@@ -32,6 +32,14 @@ export default function LoginForm({role}) {
                 reset();
             })
          }
+         if(role === "property-owner"){ 
+            startTransition(async () => {
+                const response = await handleAdminLogin(data, "/dashboard/property-owner");
+                if (response.success) toast.success(response.message);
+                if (!response.success) toast.error(response.message);
+                reset();
+            })
+         }
     }
     return (
         <div className=" flex-1 py-16 flex justify-center px-6">

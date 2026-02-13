@@ -9,7 +9,8 @@ export default function Layout({children}){
             <div className="row-span-full max-h-max bg-primary-900 lg:flex flex-col p-6 items-center gap-8 overflow-y-auto hidden">
                 <SidebarLogo/>
                 <SidebarNav role={"property-owner"} />
-                <MobileNav/>
+                <ReferralSidebarNav/>
+                <MobileNav role={"property-owner"} />
             </div>
             <SidebarHeader role={"property-owner"} />
             <main className=" overflow-y-auto lg:row-[2/3] lg:col-[2/-2]">

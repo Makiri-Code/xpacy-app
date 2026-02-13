@@ -1,7 +1,8 @@
 
 import { getBookingList, getProperties, getUserProfile } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
-import BookingsTableList from "@/app/_components/BookingsTableList";
+import PaymentsSummary from "@/app/_components/PaymentsSummary";
+import PaymentsTableList from "@/app/_components/PaymentsTableList";
 
 export default async function Page() {
     const cookieStore = await cookies();
@@ -24,10 +25,9 @@ export default async function Page() {
 
     return (
         <div className="space-y-6 p-6">
-            <h1 className="text-2xl font-bold text-gray-800">Payment History</h1>
-            <div className="border border-primary-200 rounded-lg overflow-hidden">
-                <BookingsTableList bookings={myBookings} />
-            </div>
+             <h2 className="text-xl font-bold text-gray-900">Payment Overview</h2>
+            <PaymentsSummary bookings={myBookings} />
+            <PaymentsTableList bookings={myBookings} />
         </div>
     )
 }

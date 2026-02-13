@@ -1,4 +1,4 @@
-import imageCompression from "browser-image-compression";
+
 export const URL = process.env.BACKEND_URL;
 export const formatCurrency = (value) =>
   new Intl.NumberFormat("en-NG", {
