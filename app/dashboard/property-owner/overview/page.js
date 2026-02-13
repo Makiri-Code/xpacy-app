@@ -4,6 +4,7 @@ import PropertiesSummary from "@/app/_components/PropertiesSummary";
 import ServicesSummary from "@/app/_components/ServicesSummary";
 import PaymentsSummary from "@/app/_components/PaymentsSummary";
 import NotificationsSummary from "@/app/_components/NotificationsSummary";
+import PropertiesTableList from "@/app/_components/PropertiesTableList";
 
 export default async function Page() {
     const cookieStore = await cookies();
@@ -60,6 +61,9 @@ export default async function Page() {
                 <section>
                     <NotificationsSummary notifications={Array.isArray(notifications) ? notifications : []} />
                 </section>
+                <section>
+                    <PropertiesTableList properties={properties} recent={true} />
+                </section>  
             </div>
         </div>
     );

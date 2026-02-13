@@ -1,3 +1,4 @@
+import { BiBuilding } from "react-icons/bi";
 import { FaHome, FaCheckCircle, FaTools, FaTag, FaHandshake } from "react-icons/fa";
 
 export default function PropertiesSummary({ properties }) {
@@ -44,22 +45,24 @@ export default function PropertiesSummary({ properties }) {
     ];
 
     return (
-        <div className="flex flex-col gap-4 p-4 shadow-sm rounded-lg">
-            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between p-4">
-                <div className="flex flex-col gap-3">
-                    <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">Properties Owned</h3>
-                    <p className="text-3xl font-bold text-gray-900">{properties.length}</p>
+        <div className="p-6 flex flex-col gap-4 border border-primary-200 rounded-lg">
+            {/* Main Hero Card */}
+            <div className="flex flex-col border border-primary-200 rounded-lg px-6 py-7 relative overflow-hidden">
+                <div className="flex gap-2 items-center lg:w-[256px] w-full" >
+                    <span className="w-12 h-12 text-primary bg-primary-100 rounded-full flex items-center justify-center text-2xl "><BiBuilding /></span>
+                    <span className="font-mono text-primary-900 uppercase">Properties Owned</span>
                 </div>
-               
+                <p className="text-center font-bold text-2xl font-mono w-[256px]">{properties.length}</p>
+                <div className="w-[220px] h-[220px] rounded-full absolute lg:-right-[7%] -right-[70%] lg:-top-1 -top-10 bg-[#477899] z-10"></div>
+                <div className="w-[220px] h-[220px] rounded-full absolute lg:right-[4%] -right-[65%] top-2 bg-[#73A0BE]"></div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
+
+            {/* Grid Items */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                 {summaryItems.map((item, index) => (
-                    <div key={index} className={`p-4 rounded-xl  flex flex-col gap-3 shadow-sm hover:shadow-md transition-shadow bg-white`}>
-                        <div className="flex items-center justify-between text-center">
-                            <span className="text-sm font-medium text-gray-600">{item.title}</span>
-                        </div>
-                        <span className="text-2xl font-bold text-gray-800">{item.count}</span>
+                    <div key={index} className="flex flex-col items-center justify-center p-6 rounded-lg shadow-lg bg-white border border-primary-100 w-full">
+                        <p className="font-mono text-[#477899] text-base text-center">{item.title}</p>
+                        <p className="text-center font-bold text-lg font-mono">{item.count}</p>
                     </div>
                 ))}
             </div>

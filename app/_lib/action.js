@@ -54,9 +54,7 @@ export async function handleUserLogin(userData, redirectUrl) {
   if (!response.ok) return { success: false, message: data.message }
 
   const cookieStore = await cookies();
-  cookieStore.set({
-    name: "token",
-    value: data.token,
+  cookieStore.set("token", data.token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
@@ -64,7 +62,6 @@ export async function handleUserLogin(userData, redirectUrl) {
     maxAge: 60 * 60 * 24, // 1 day
   });
   if (data.role === "User") redirect(redirectUrl)
-  if (data.role === "PropertyOwner" || data.role === "property-owner") redirect("/dashboard/property-owner/overview")
   return { success: true, message: data.message }
 };
 
@@ -80,14 +77,12 @@ export async function handleAdminLogin(userData, redirectUrl) {
   if (!response.ok) return { success: false, message: data.message }
 
   const cookieStore = await cookies();
-  cookieStore.set({
-    name: "token",
-    value: data.token,
+  cookieStore.set("token", data.token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     path: "/",
-    maxAge: 60 * 60, // 1 day
+    maxAge: 60 * 60, // 1 hour
   });
   if (data.role === "Admin" || data.role === "admin") redirect(redirectUrl)
   return { success: true, message: data.message }
@@ -105,14 +100,12 @@ export async function handlePropertyOwnerLogin(userData, redirectUrl) {
   if (!response.ok) return { success: false, message: data.message }
 
   const cookieStore = await cookies();
-  cookieStore.set({
-    name: "token",
-    value: data.token,
+  cookieStore.set("token", data.token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     path: "/",
-    maxAge: 60 * 60, // 1 day
+    maxAge: 60 * 60, // 1 hour
   });
   if (data.role === "PropertyOwner" || data.role === "property-owner") redirect(redirectUrl)
   return { success: true, message: data.message }

@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { formatCurrency } from "@/app/_lib/utils";
 import EmptyState from "@/app/_components/EmptyState";
-import { FaMapMarkerAlt } from "react-icons/fa";
+import { FaMapMarkerAlt, FaList } from "react-icons/fa";
 import Image from "next/image";
 import { format } from "date-fns";
 import StatusChips from "./StatusChips";
 import OwnerOptionsMenu from "./OwnerOptionsMenu";
 import Pagination from "./Pagination";
+import SearchInput from "./SearchInput";
 
 const tableHeadings = [
     { heading: "Property" },
@@ -18,7 +19,7 @@ const tableHeadings = [
     { heading: "" }
 ];
 
-export default function PropertiesTableList({ properties, bookings = [], pagination, baseUrl = "/dashboard/property-owner/properties", ctaLink = "/dashboard/property-owner/properties/add" }) {
+export default function PropertiesTableList({ properties, bookings = [], pagination, baseUrl = "/dashboard/property-owner/properties", ctaLink = "/dashboard/property-owner/properties/add", recent = false }) {
     if (!properties?.length) return <EmptyState message={"No properties found."} />
 
     const getActiveBooking = (propertyId) => {
@@ -32,12 +33,19 @@ export default function PropertiesTableList({ properties, bookings = [], paginat
     const gridCols = "grid-cols-[2fr_1.5fr_1fr_1fr_1fr_1fr_0.5fr]";
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 p-6 border-[1.5px] border-primary-200 rounded-lg">
             <header className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-800">My Properties</h2>
+                <h2 className="text-xl font-bold text-primary-700 flex items-center gap-2"><FaList className="text-primary" /> My Properties</h2>
+                {recent ? (
+                    <Link href={baseUrl} className="text-sm text-primary hover:underline font-medium">
+                        View All
+                    </Link>
+                ) : (
+                    <SearchInput />
+                )}
             </header>
 
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-white border border-primary-100 rounded-xl overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <div className="min-w-[1000px]">
                         {/* Table Header matching Admin style but visible on mobile via scroll */}
@@ -47,7 +55,7 @@ export default function PropertiesTableList({ properties, bookings = [], paginat
                             ))}
                         </div>
                         
-                        {properties.map((property) => {
+                        {(recent ? properties.slice(0, 4) : properties).map((property) => {
                             const activeBooking = getActiveBooking(property.id || property._id);
                             const tenantName = activeBooking?.user?.firstname ? `${activeBooking.user.firstname} ${activeBooking.user.lastname || ''}` : activeBooking ? "Occupied" : "-";
                             const paymentStatus = activeBooking?.payment_status || activeBooking?.status || "-";
@@ -119,7 +127,7 @@ export default function PropertiesTableList({ properties, bookings = [], paginat
                     </div>
                 </div>
             </div>
-            {pagination && (
+            {!recent && pagination && (
                 <div className="mt-3">
                     <div className="flex items-center justify-between">
                         <span className="text-base font-mono text-base-500 ">Showing <span>{(pagination.page - 1) * pagination.limit + 1}</span> - <span>{pagination?.page === pagination?.totalPages ? pagination.total : pagination?.page * pagination?.limit}</span> of <span>{pagination?.total}</span> results </span>
@@ -127,6 +135,7 @@ export default function PropertiesTableList({ properties, bookings = [], paginat
                     </div>
                 </div>
             )}
+            
         </div>
     )
 }

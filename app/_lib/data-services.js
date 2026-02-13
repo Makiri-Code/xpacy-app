@@ -42,9 +42,9 @@ export async function getRentProperties() {
 
 export async function getProperties(search = {}) {
 
-  const { purpose, type, minBedrooms, location, minPrice, maxPrice, page } = search;
+  const { purpose, type, minBedrooms, location, minPrice, maxPrice, page, property_owner_id } = search;
   try {
-    const response = await fetch(`${url}/property/fetch-properties?purpose=${purpose || ""}&type=${type || ""}&location=${location || ""}&minBedrooms=${minBedrooms || ""}&minPrice=${minPrice || ""}&maxPrice=${maxPrice || ""}&page=${page || 1}`);
+    const response = await fetch(`${url}/property/fetch-properties?purpose=${purpose || ""}&type=${type || ""}&location=${location || ""}&minBedrooms=${minBedrooms || ""}&minPrice=${minPrice || ""}&maxPrice=${maxPrice || ""}&page=${page || 1}&property_owner_id=${property_owner_id || ""}`);
     const { properties, pagination } = await response.json();
     return [properties, pagination]
   } catch (error) {
@@ -316,6 +316,7 @@ export async function getAllAdmin(token) {
     const { data } = await response.json();
     return data 
   } catch (error) {
-    console.error("Error fetching user profile:", error)
+    console.error(`Error in getAllAdmin: ${url}/admin/fetch-admin`, error);
+    return []; 
   }
 }

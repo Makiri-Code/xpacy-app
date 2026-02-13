@@ -26,7 +26,7 @@ export default async function Page() {
                 </DashboardGridItem>
                 {/* Notifications */}
                 <DashboardGridItem title={"Property List"} viewAllLink={"/dashboard/admin/properties"}>
-                    <PropertiesTableList 
+                    <AdminPropertyList  
                         properties={propertyList.slice(0, 5)} 
                         baseUrl="/dashboard/admin/properties" 
                         ctaLink="/admin/add-new-property"

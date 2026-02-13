@@ -20,7 +20,7 @@ export default function Pagination({ pagination }) {
         params.set('page',  Number(currentPage - 1))
         router.replace(`${pathname}?${params.toString()}`, { scroll: true })
     }
-    if(totalPages === 1) return null
+    // if(totalPages === 1) return null
 
     return (
         <div className="flex items-center justify-end font-mono gap-4">
