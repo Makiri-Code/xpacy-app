@@ -134,6 +134,21 @@ export async function handleSignup(userData, referralCode) {
   return { success: true, message: data.message, user: data.user }
 }
 
+export async function handlePropertyOwnerSignup(userData, referralCode) {
+  const response = await fetch(`${URL}/property-owner/register?referralCode=${referralCode}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ...userData })
+  })
+  const data = await response.json();
+
+  if (!response.ok) return { success: false, message: data.message }
+
+  return { success: true, message: data.message, user: data.user }
+}
+
 export async function handleSaveProperty(id) {
   const cookiesStore = await cookies();
   const token = cookiesStore.get("token")

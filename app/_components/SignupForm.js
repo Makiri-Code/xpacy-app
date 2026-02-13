@@ -4,14 +4,14 @@ import { useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { useSearchParams } from "next/navigation"
 
-import { handleSignup } from '@/app/_lib/action';
+import { handleSignup, handlePropertyOwnerSignup } from '@/app/_lib/action';
 import FormInput from "./FormInput"
 import SelectCity from "./SelectCity";
 import SpinnerMini from "./SpinnerMini";
 import toast from "react-hot-toast"
 import { useUser } from "../_context/UserContext"
 
-export default function SignupForm({ cities }) {
+export default function SignupForm({ cities, role = "user" }) {
     const searchParams = useSearchParams();
     const { userData, setUserData } = useUser()
     const referralCode = searchParams.get("referralCode")
@@ -19,10 +19,16 @@ export default function SignupForm({ cities }) {
     const { register, handleSubmit, formState: { errors }, reset, getValues } = useForm()
     async function onSubmit(data) {
         startTransition(async () => {
-            const response = await handleSignup(data, referralCode);
+             let response;
+            if (role === "property-owner") {
+                response = await handlePropertyOwnerSignup(data, referralCode);
+            } else {
+                response = await handleSignup(data, referralCode);
+            }
+            
             if (response.success) {
                 toast.success(response.message)
-                setUserData(response.user)
+                if (role !== "property-owner") setUserData(response.user) // Only set user context for regular users for now
                 reset();
             };
             if (!response.success) toast.error(response.message);

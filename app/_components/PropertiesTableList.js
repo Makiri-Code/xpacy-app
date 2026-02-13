@@ -4,18 +4,32 @@ import EmptyState from "@/app/_components/EmptyState";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import Image from "next/image";
 import { format } from "date-fns";
+import StatusChips from "./StatusChips";
+import OwnerOptionsMenu from "./OwnerOptionsMenu";
+import Pagination from "./Pagination";
 
-export default function PropertiesTableList({ properties, bookings = [], baseUrl = "/dashboard/property-owner/properties", ctaLink = "/dashboard/property-owner/properties/add" }) {
+const tableHeadings = [
+    { heading: "Property" },
+    { heading: "Tenant Name" },
+    { heading: "Payment Status", center: true },
+    { heading: "Availability", center: true },
+    { heading: "Due Date", center: true },
+    { heading: "Price", center: true },
+    { heading: "" }
+];
+
+export default function PropertiesTableList({ properties, bookings = [], pagination, baseUrl = "/dashboard/property-owner/properties", ctaLink = "/dashboard/property-owner/properties/add" }) {
     if (!properties?.length) return <EmptyState message={"No properties found."} />
 
     const getActiveBooking = (propertyId) => {
         if (!bookings.length) return null;
-        // Find a booking for this property that is either 'active' or 'confirmed'
         return bookings.find(b => 
             (b.property_id === propertyId || b.property?._id === propertyId) && 
             ['active', 'confirmed'].includes(b.status?.toLowerCase())
         );
     };
+
+    const gridCols = "grid-cols-[2fr_1.5fr_1fr_1fr_1fr_1fr_0.5fr]";
 
     return (
         <div className="flex flex-col gap-6">
@@ -25,84 +39,94 @@ export default function PropertiesTableList({ properties, bookings = [], baseUrl
 
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead className="bg-gray-50 text-gray-600 text-xs font-semibold uppercase tracking-wider border-b border-gray-200">
-                            <tr>
-                                <th className="p-4 min-w-[250px]">Property</th>
-                                <th className="p-4 min-w-[150px]">Tenant Name</th>
-                                <th className="p-4">Payment Status</th>
-                                <th className="p-4">Availability</th>
-                                <th className="p-4">Due Date</th>
-                                <th className="p-4 text-right">Current Price</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100 text-sm">
-                            {properties.map((property) => {
-                                const activeBooking = getActiveBooking(property.id || property._id);
-                                const tenantName = activeBooking?.user?.firstname ? `${activeBooking.user.firstname} ${activeBooking.user.lastname || ''}` : activeBooking ? "Occupied" : "-";
-                                const paymentStatus = activeBooking?.payment_status || activeBooking?.status || "-";
-                                const dueDate = activeBooking?.end_date ? format(new Date(activeBooking.end_date), "MMM dd, yyyy") : "-";
-                                
-                                return (
-                                    <tr key={property.id || property._id} className="hover:bg-gray-50/50 transition-colors">
-                                        <td className="p-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
-                                                     {property.images?.[0] ? (
-                                                        <Image 
-                                                            src={`https://app.xpacy.com/src/upload/properties/${property.images[0]}`} 
-                                                            alt={property.property_name} 
-                                                            className="object-cover" 
-                                                            fill 
-                                                            unoptimized
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No Img</div>
-                                                    )}
-                                                </div>
-                                                <div className="flex flex-col max-w-[200px]">
-                                                    <span className="font-semibold text-gray-900 truncate" title={property.property_name}>{property.property_name}</span>
-                                                    <div className="flex items-center text-gray-500 text-xs mt-0.5">
-                                                        <FaMapMarkerAlt size={10} className="mr-1 shrink-0" />
-                                                        <span className="truncate">{property.city}, {property.state}</span>
-                                                    </div>
-                                                </div>
+                    <div className="min-w-[1000px]">
+                        {/* Table Header matching Admin style but visible on mobile via scroll */}
+                        <div className={`grid ${gridCols} text-neutrals-900 text-sm font-mono font-bold border-b border-primary-100 bg-gray-50`}>
+                            {tableHeadings.map((h, i) => (
+                                <p key={i} className={`p-4 ${h.center ? "text-center" : ""}`}>{h.heading}</p>
+                            ))}
+                        </div>
+                        
+                        {properties.map((property) => {
+                            const activeBooking = getActiveBooking(property.id || property._id);
+                            const tenantName = activeBooking?.user?.firstname ? `${activeBooking.user.firstname} ${activeBooking.user.lastname || ''}` : activeBooking ? "Occupied" : "-";
+                            const paymentStatus = activeBooking?.payment_status || activeBooking?.status || "-";
+                            const dueDate = activeBooking?.end_date ? format(new Date(activeBooking.end_date), "MMM dd, yyyy") : "-";
+                            
+                            const isPaid = ['paid', 'active', 'confirmed', 'success', 'successful'].includes((paymentStatus || '').toLowerCase());
+                            const isPending = ['pending', 'processing'].includes((paymentStatus || '').toLowerCase());
+                            const isFailed = ['failed', 'cancelled', 'expired'].includes((paymentStatus || '').toLowerCase());
+
+                            let paymentStatusColor = "text-gray-400"; // default
+                            if (isPaid) paymentStatusColor = "bg-[#C3E5C4] text-[#357B38]";
+                            else if (isPending) paymentStatusColor = "bg-[#FFF8BE] text-[#9D7B40]";
+                            else if (isFailed) paymentStatusColor = "bg-[#FBC0BC] text-[#C4170B]";
+                            else if (paymentStatus !== "-") paymentStatusColor = "bg-[#FFF8BE] text-[#9D7B40]"; // fallback other non-empty status to yellow/warning
+
+                            return (
+                                <div key={property.id || property._id} className={`grid ${gridCols} text-neutrals-900 text-sm font-mono border-b border-primary-100 hover:bg-gray-50/50 transition-colors`}>
+                                    <div className="p-4 flex items-center gap-3">
+                                        <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                                            {property.images?.[0] ? (
+                                                <Image 
+                                                    src={`https://app.xpacy.com/src/upload/properties/${property.images[0]}`} 
+                                                    alt={property.property_name} 
+                                                    className="object-cover" 
+                                                    fill 
+                                                    unoptimized
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">No Img</div>
+                                            )}
+                                        </div>
+                                        <div className="flex flex-col max-w-[200px]">
+                                            <span className="font-semibold text-gray-900 truncate" title={property.property_name}>{property.property_name}</span>
+                                            <div className="flex items-center text-gray-500 text-xs mt-0.5">
+                                                <FaMapMarkerAlt size={10} className="mr-1 shrink-0" />
+                                                <span className="truncate">{property.city}, {property.state}</span>
                                             </div>
-                                        </td>
-                                        <td className="p-4 text-gray-700 font-medium whitespace-nowrap">
-                                            {tenantName}
-                                        </td>
-                                        <td className="p-4 whitespace-nowrap">
-                                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
-                                                paymentStatus.toLowerCase() === 'paid' || paymentStatus.toLowerCase() === 'active' || paymentStatus.toLowerCase() === 'confirmed' ? 'bg-green-100 text-green-700' :
-                                                paymentStatus === '-' ? 'text-gray-400' :
-                                                'bg-yellow-100 text-yellow-700'
-                                            }`}>
-                                                {paymentStatus}
-                                            </span>
-                                        </td>
-                                        <td className="p-4 whitespace-nowrap">
-                                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
-                                                property.property_status === 'active' ? 'bg-blue-100 text-blue-700' : 
-                                                property.property_status === 'rented' ? 'bg-purple-100 text-purple-700' :
-                                                'bg-gray-100 text-gray-600'
-                                            }`}>
-                                                {property.property_status || 'Draft'}
-                                            </span>
-                                        </td>
-                                        <td className="p-4 text-gray-600 whitespace-nowrap font-mono text-xs">
-                                            {dueDate}
-                                        </td>
-                                        <td className="p-4 text-right font-mono font-bold text-primary whitespace-nowrap">
-                                            {formatCurrency(property.property_price)}
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
+                                        </div>
+                                    </div>
+
+                                    <div className="p-4 flex items-center justify-center">
+                                        {tenantName}
+                                    </div>
+
+                                    <div className="p-4 flex items-center justify-center">
+                                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${paymentStatusColor}`}>
+                                            {paymentStatus}
+                                        </span>
+                                    </div>
+
+                                    <div className="p-4 flex items-center justify-center">
+                                        <StatusChips status={property.property_status || 'Draft'} />
+                                    </div>
+
+                                    <div className="p-4 flex items-center justify-center text-gray-600 font-mono text-xs">
+                                        {dueDate}
+                                    </div>
+
+                                    <div className="p-4 flex items-center justify-center text-primary font-bold">
+                                        {formatCurrency(property.property_price)}
+                                    </div>
+                                    
+                                    <div className="p-4 flex items-center justify-center relative">
+                                        <OwnerOptionsMenu id={property.id || property._id} />
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
+            {pagination && (
+                <div className="mt-3">
+                    <div className="flex items-center justify-between">
+                        <span className="text-base font-mono text-base-500 ">Showing <span>{(pagination.page - 1) * pagination.limit + 1}</span> - <span>{pagination?.page === pagination?.totalPages ? pagination.total : pagination?.page * pagination?.limit}</span> of <span>{pagination?.total}</span> results </span>
+                        <Pagination pagination={pagination} />
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

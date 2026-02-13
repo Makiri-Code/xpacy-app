@@ -284,7 +284,8 @@ export async function getPropertyOwner(token) {
     const { data } = await response.json();
     return data
   } catch (error) {
-    console.error("Error fetching user profile:", error)
+    console.error("Error fetching user profile:", error);
+    return [];
   }
 }
 export async function getPropertyOwnerById(token, id) {

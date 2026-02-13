@@ -80,7 +80,7 @@ export default function LoginForm({role}) {
                         </div>
                         <button type="submit" disabled={pending} className="bg-primary text-white  cursor-pointer  px-5 py-3 font-semibold flex space-x-2.5 font-mono items-center justify-center rounded-md hover:shadow-md disabled:bg-gray-300 disabled:cursor-not-allowed"> <span>Log In</span> <span>{pending && <SpinnerMini />}</span> </button>
                     </form>
-                    <p className="text-base text-black font-mono -mt-6">Don&apos;t have an account? <Link href={"/auth/sign-up"} className="text-primary text-base font-bold">Sign Up</Link></p>
+                    <p className="text-base text-black font-mono -mt-6">Don&apos;t have an account? <Link href={role === "property-owner" ? "/property-owner/sign-up" : "/auth/sign-up"} className="text-primary text-base font-bold">Sign Up</Link></p>
                 </div>
             </div>
         </div>

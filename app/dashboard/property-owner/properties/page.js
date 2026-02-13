@@ -50,7 +50,7 @@ export default async function Page({searchParams}) {
             <div className="flex justify-end">
                 <DashboardFilter />
             </div>
-            <PropertiesTableList properties={properties} bookings={bookings} />
+            <PropertiesTableList properties={properties} bookings={bookings} pagination={{ page: 1, limit: 10, totalPages: Math.ceil(properties.length / 10), total: properties.length }} />
             <div className="flex justify-start mt-8 pb-8">
                 <Link 
                     href="/dashboard/property-owner/properties/add" 

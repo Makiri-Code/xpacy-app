@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import PropertyOwnerOverview from "@/app/_components/PropertyOwnerOverview";
 import { getBookingList, getBookedServices, getProperties, getUserProfile, getUserNotifications } from "@/app/_lib/data-services";
 import PropertiesSummary from "@/app/_components/PropertiesSummary";
 import ServicesSummary from "@/app/_components/ServicesSummary";
@@ -10,14 +9,20 @@ export default async function Page() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
     
-    // Fetch data in parallel
-    const [profile, propertiesData, services, bookings, notifications] = await Promise.all([
+    // Fetch data in parallel using Promise.allSettled to prevent one failure from breaking the page
+    const results = await Promise.allSettled([
         getUserProfile(token),
         getProperties(),
         getBookedServices(token),
         getBookingList(token),
         getUserNotifications(token)
     ]);
+
+    const profile = results[0].status === 'fulfilled' ? results[0].value : null;
+    const propertiesData = results[1].status === 'fulfilled' ? results[1].value : [];
+    const services = results[2].status === 'fulfilled' ? results[2].value : [];
+    const bookings = results[3].status === 'fulfilled' ? results[3].value : [];
+    const notifications = results[4].status === 'fulfilled' ? results[4].value : [];
     
     // getProperties returns [properties, meta]
     const allProperties = Array.isArray(propertiesData?.[0]) ? propertiesData[0] : [];

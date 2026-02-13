@@ -9,7 +9,7 @@ import { IoCardOutline } from "react-icons/io5";
 import { RiUserSettingsLine } from "react-icons/ri";
 import { LuMessageCircleQuestion } from "react-icons/lu";
 import { IoCalendarOutline } from "react-icons/io5";
-import { RiHome2Line } from "react-icons/ri";
+import { RiHome2Line, RiSearchLine, RiSettings3Line } from "react-icons/ri";
 
 
 const userNavList = [
@@ -134,6 +134,17 @@ const propertyOwnerNavList = [
         text: "Services Requests",
         link: "/dashboard/property-owner/services",
         icon: <IoCalendarOutline />
+    },
+
+    {
+        text: "Settings",
+        link: "/dashboard/property-owner/settings",
+        icon: <RiSettings3Line className='w-5 h-5' />
+    },
+    {
+        text: "Search",
+        link: "/dashboard/property-owner/search",
+        icon: <RiSearchLine />
     },
     {
         text: "Payments",

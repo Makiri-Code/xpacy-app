@@ -56,7 +56,7 @@ export default function ServicesSummary({ services }) {
                
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 {summaryItems.map((item, index) => (
                     <div key={index} className={`p-4 rounded-xl flex flex-col gap-3 shadow-sm hover:shadow-md transition-shadow bg-white`}>
                         <div className="flex items-center justify-between">
