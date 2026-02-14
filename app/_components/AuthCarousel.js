@@ -4,7 +4,14 @@ import Image from "next/image";
 import { getBanners } from "../_lib/data-services";
 
 export default async function AuthCarousel({ position = "top-2/3"}){
-    const banners = await getBanners()
+    let banners = await getBanners();
+    if (!banners || banners.length === 0) {
+        banners = [{
+            id: 'default',
+            image_url: 'default-banner.jpg', // Ensure you have a default image or handle this path
+            title: 'Welcome to Xpacy'
+        }];
+    }
     const slides = banners.map((banner) => {
         return(
         <div className="h-full relative" key={banner.id}>

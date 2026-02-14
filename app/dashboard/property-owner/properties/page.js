@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 import PropertiesTableList from "@/app/_components/PropertiesTableList";
-import { getBookingList, getProperties, getUserProfile, getBookedServices } from "@/app/_lib/data-services";
+import { getPropertyOwnerBookings, getProperties, getUserProfile, getPropertyOwnerServices } from "@/app/_lib/data-services";
 import PropertiesSummary from "@/app/_components/PropertiesSummary";
 import { MdAdd } from "react-icons/md";
 import SearchInput from "@/app/_components/SearchInput";
@@ -17,8 +17,8 @@ export default async function Page({searchParams}) {
     const [user, propertiesData, bookings, services] = await Promise.all([
         getUserProfile(token),
         getProperties(),
-        getBookingList(token),
-        getBookedServices(token)
+        getPropertyOwnerBookings(token),
+        getPropertyOwnerServices(token)
     ]);
 
     const allProperties = Array.isArray(propertiesData?.[0]) ? propertiesData[0] : [];

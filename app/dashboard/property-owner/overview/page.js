@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { getBookingList, getBookedServices, getProperties, getPropertyOwnerProfile, getUserNotifications } from "@/app/_lib/data-services";
+import { getPropertyOwnerBookings, getPropertyOwnerServices, getProperties, getPropertyOwnerProfile, getUserNotifications } from "@/app/_lib/data-services";
 import PropertiesOverviewWrapper from "@/app/_components/PropertiesOverviewWrapper";
 import ServicesOverviewWrapper from "@/app/_components/ServicesOverviewWrapper";
 import PaymentsOverviewWrapper from "@/app/_components/PaymentsOverviewWrapper";
@@ -13,9 +13,9 @@ export default async function Page() {
     // Fetch data in parallel using Promise.allSettled to prevent one failure from breaking the page
     const results = await Promise.allSettled([
         getPropertyOwnerProfile(token),
-        getProperties(),
-        getBookedServices(token),
-        getBookingList(token),
+        getProperties(), // Note: Ideally should filter by owner ID if possible, but keeping logic consistent with existing pattern property fetching
+        getPropertyOwnerServices(token),
+        getPropertyOwnerBookings(token),
         getUserNotifications(token)
     ]);
 
@@ -31,13 +31,9 @@ export default async function Page() {
     const myPropertyIds = properties.map(p => p.id || p._id);
 
     // Filter derived data
-    const myServices = Array.isArray(services) 
-        ? services.filter(s => myPropertyIds.includes(s.property_id || s.propertyId))
-        : [];
+    const myServices = Array.isArray(services) ? services : [];
     
-    const myBookings = Array.isArray(bookings)
-        ? bookings.filter(b => myPropertyIds.includes(b.property_id || b.property?._id))
-        : [];
+    const myBookings = Array.isArray(bookings) ? bookings : [];
 
     return (
         <div className="space-y-8 p-4">

@@ -1,5 +1,5 @@
 
-import { getBookingList, getProperties, getUserProfile } from "@/app/_lib/data-services";
+import { getPropertyOwnerBookings, getProperties, getUserProfile } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
 import PaymentsOverviewWrapper from "@/app/_components/PaymentsOverviewWrapper";
 import PaymentsTableList from "@/app/_components/PaymentsTableList";
@@ -11,7 +11,7 @@ export default async function Page() {
     const [user, propertiesData, bookingsData] = await Promise.all([
         getUserProfile(token),
         getProperties(),
-        getBookingList(token)
+        getPropertyOwnerBookings(token)
     ]);
 
     const allProperties = Array.isArray(propertiesData?.[0]) ? propertiesData[0] : [];
@@ -19,9 +19,7 @@ export default async function Page() {
     const myPropertyIds = myProperties.map(p => p.id || p._id);
 
     // Bookings for my properties
-    const myBookings = Array.isArray(bookingsData) 
-        ? bookingsData.filter(booking => myPropertyIds.includes(booking.property_id || booking.property?._id))
-        : [];
+    const myBookings = Array.isArray(bookingsData) ? bookingsData : [];
 
     return (
         <div className="space-y-6 p-6">

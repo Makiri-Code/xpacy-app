@@ -5,7 +5,7 @@ export default function TableHead({headingsArray, tableCol = "grid-cols-[2fr_1fr
     return (
         <div className={`hidden lg:grid ${tableCol}  text-neutrals-900 text-sm font-mono font-bold border-b border-primary-100`}>
             {headingsArray.map((heading, i) => (
-                <p className={`p-4 ${heading.center ? "text-center" : ""}`}>{heading.heading}</p>
+                <p key={i} className={`p-4 ${heading.center ? "text-center" : ""}`}>{heading.heading}</p>
             ))}
         </div>
     )

@@ -4,6 +4,10 @@ const statusBg = {
     "available": "bg-[#FFF8BE] text-[#9D7B40] ",
     "rented": "bg-[#C3E5C4] text-[#357B38] ",
     "active": "bg-[#C3E5C4] text-[#357B38] ",
+    "draft": "bg-gray-200 text-gray-700",
+    "pending": "bg-[#FFF8BE] text-[#9D7B40]",
+    "verified": "bg-[#C3E5C4] text-[#357B38]",
+    "n/a": "bg-gray-100 text-gray-500"
 }
 
 export default function StatusChips({status}) {

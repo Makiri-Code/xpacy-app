@@ -9,7 +9,7 @@ import { IoCardOutline } from "react-icons/io5";
 import { RiUserSettingsLine } from "react-icons/ri";
 import { LuMessageCircleQuestion } from "react-icons/lu";
 import { IoCalendarOutline } from "react-icons/io5";
-import { RiHome2Line, RiSearchLine, RiSettings3Line } from "react-icons/ri";
+import { RiHome2Line, RiSearchLine, RiSettings3Line, RiPulseLine } from "react-icons/ri";
 
 
 const userNavList = [
@@ -106,6 +106,11 @@ const adminNavList = [
         text: "FAQs",
         link: "/dashboard/admin/faqs",
         icon: <LuMessageCircleQuestion />
+    },
+    {
+        text: "System Status",
+        link: "/dashboard/admin/system-status",
+        icon: <RiPulseLine />
     }
 ]
 

@@ -3,13 +3,21 @@ import SearchInput from "./SearchInput";
 import ProfileDisplay from "./ProfileDisplay";
 import DashboardHeading from "./DashboardHeading";
 import MobileProfileMenu from "./MobileProfileMenu";
-import { getUserProfile } from "../_lib/data-services";
+import { getAdminProfile, getPropertyOwnerProfile, getUserProfile } from "../_lib/data-services";
 import { cookies } from "next/headers";
 import MobileNav from "./MobileNav";
 export default async function SidebarHeader({role = "user"}) {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")
-    const profile = await getUserProfile(token);
+    
+    let profile;
+    if (role === "property-owner") {
+        profile = await getPropertyOwnerProfile(token);
+    } else if (role === "admin") {
+        profile = await getAdminProfile(token);
+    } else {
+        profile = await getUserProfile(token);
+    }
     return (
         <div className="py-4 px-6 flex items-center justify-between border-b border-primary-100 shadow-lg relative">
             <DashboardHeading />
@@ -20,8 +28,8 @@ export default async function SidebarHeader({role = "user"}) {
                     <Link href="/book-service" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Book A Service</Link>
                     <div className="w-0.5 h-10 bg-gray-300">
                     </div>
-                    <ProfileDisplay role="user" />
-                    <MobileProfileMenu profile={profile} />
+                    <ProfileDisplay role="user" profile={profile} />
+                    <MobileProfileMenu profile={profile} role="user"/>
                 </div>
             )}
             {role === "admin" && (
@@ -30,8 +38,8 @@ export default async function SidebarHeader({role = "user"}) {
                     <Link href="/admin/add-new-property" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Add New Property</Link>
                     <div className="w-0.5 h-10 bg-gray-300">
                     </div>
-                    <ProfileDisplay role={"admin"} />
-                    <MobileProfileMenu profile={profile} />
+                    <ProfileDisplay role={"admin"} profile={profile}/>
+                    <MobileProfileMenu profile={profile} role="admin"/>
                 </div>
             )}
             {role === "property-owner" && (
@@ -40,8 +48,8 @@ export default async function SidebarHeader({role = "user"}) {
                     <Link href="/dashboard/property-owner/properties/add" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">New Property Listing</Link>
                     <div className="w-0.5 h-10 bg-gray-300">
                     </div>
-                    <ProfileDisplay role="property-owner" />
-                    <MobileProfileMenu profile={profile} />
+                    <ProfileDisplay role="property-owner" profile={profile} />
+                    <MobileProfileMenu profile={profile} role="property-owner"/>
                 </div>
             )}
         </div>

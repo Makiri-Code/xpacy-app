@@ -28,7 +28,7 @@ function ShareBtnCard({onClose}) {
                 <Link href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pathname)}`} target="_blank" rel="noopener noreferrer" className="bg-[#0d6efd] text-white text-4xl flex items-center justify-center w-[60px] h-[60px] rounded-full">
                     <FaFacebookF/>
                 </Link>
-                <Link href={`https://api.whatsapp.com/send?text=checkout%20this%20on%20property%20on%20Xpacy.com%20${pathname}`} target="_blank" rel="noopener noreferrer" className="bg-[#25D366] text-white text-4xl flex items-center justify-center w-[60px] h-[60px] rounded-full">
+                <Link href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Check out this property on Xpacy: https://xpacy.com${pathname}`)}`} target="_blank" rel="noopener noreferrer" className="bg-[#25D366] text-white text-4xl flex items-center justify-center w-[60px] h-[60px] rounded-full">
                     <FaWhatsapp />
                 </Link>
                 <Link href={`https://twitter.com/intent/tweet?url=${pathname}&text=Checkout%20this%20on%20property%20on%20Xpacy.com`} target="_blank" rel="noopener noreferrer" className="bg-[#657786] text-white text-4xl flex items-center justify-center w-[60px] h-[60px] rounded-full">

@@ -1,18 +1,43 @@
-import AdminPropertyOwnersList from "@/app/_components/AdminPropertyOwnersList";
-import AdminUsersSummary from "@/app/_components/AdminUsersSummary";
-import { getPropertyOwner } from "@/app/_lib/data-services";
+import AdminUsersList from "@/app/_components/AdminUsersList";
+import UsersMatrix from "@/app/_components/UsersMatrix";
+import { getPropertyOwner, getAllAdmin, getAllUsers } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
-
-
 
 export default async function Page(){
         const cookieStore = await cookies();
         const token = cookieStore.get("token")
-        const owners = await getPropertyOwner(token);
+        
+        const [owners, admins, regularUsers] = await Promise.all([
+            getPropertyOwner(token),
+            getAllAdmin(token),
+            getAllUsers(token)
+        ]);
+
+        // Normalize data structure if needed
+        const ownersList = (owners || []).map(u => ({ ...u, role: 'property-owner' }));
+        const adminsList = (admins || []).map(u => ({ ...u, role: 'admin' }));
+        const usersList = (regularUsers || []).map(u => ({ ...u, role: 'user' }));
+
+        const allUsers = [...usersList, ...ownersList, ...adminsList];
+
+        const stats = {
+            totalUsers: allUsers.length,
+            propertyOwners: ownersList.length,
+            admins: adminsList.length,
+            regularUsers: usersList.length,
+            activeUsers: allUsers.filter(u => u.status === 'active').length,
+            inactiveUsers: allUsers.filter(u => u.status === 'inactive').length,
+            unverifiedUsers: allUsers.filter(u => !u.email_verified_at).length 
+        };
+
     return (
         <div className="p-6 space-y-6">
-            <AdminUsersSummary/>
-            <AdminPropertyOwnersList owners={owners}/>
+            <h1 className="lg:text-4xl text-[28px] text-primary font-bold capitalize mb-2">Users Directory</h1>
+            <UsersMatrix stats={stats}/>
+            <AdminUsersList users={usersList} title="Tenants / Buyers List" variant="tenant" />
+            <AdminUsersList users={allUsers} title="All Registered Users List" variant="registered" />
+            <AdminUsersList users={adminsList} title="Admins List" />
+            <AdminUsersList users={ownersList} title="Property Owners List" />
         </div>
     )
 }

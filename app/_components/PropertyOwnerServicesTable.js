@@ -46,10 +46,10 @@ export default function PropertyOwnerServicesTable({ services, pagination, showF
                         
                         {services.map((service) => {
                             const date = service.created_at || service.createdAt || service.date_added;
-                            const formattedDate = date ? format(new Date(date), "MMM dd, yyyy HH:mm") : "-";
-                            const propertyAddress = service.property ? `${service.property.address}, ${service.property.city}` : service.address || "-";
+                            const formattedDate = date ? format(new Date(date), "MMM dd, yyyy HH:mm") : "N/A";
+                            const propertyAddress = service.property ? `${service.property.address}, ${service.property.city}` : service.address || "N/A";
                             // Assuming service.user contains initiator info, or service.initiated_by
-                            const initiator = service.user ? `${service.user.firstname} ${service.user.lastname || ''}` : "Unknown";
+                            const initiator = service.user ? `${service.user.firstname} ${service.user.lastname || ''}` : "N/A";
 
                             return (
                                 <div key={service.id || service._id} className={`grid ${gridCols} text-neutrals-900 text-sm font-mono border-b border-primary-100 hover:bg-gray-50/50 transition-colors`}>

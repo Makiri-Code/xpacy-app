@@ -61,7 +61,7 @@ export async function handleUserLogin(userData, redirectUrl) {
     path: "/",
     maxAge: 60 * 60 * 24, // 1 day
   });
-  if (data.role === "User") redirect(redirectUrl)
+  if (data.role === "User" || data.role === "user") redirect(redirectUrl)
   return { success: true, message: data.message }
 };
 
