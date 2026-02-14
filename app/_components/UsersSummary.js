@@ -1,9 +1,20 @@
 import { FaUsers, FaUserTie, FaUserShield, FaUserCheck, FaUserSlash } from "react-icons/fa";
 import { RiUserUnfollowLine } from "react-icons/ri";
 import { BiUser } from "react-icons/bi";
+import { User2, Users, Users2Icon } from "lucide-react";
 
-export default function UsersMatrix({ stats }) {
-    const { totalUsers = 0, propertyOwners = 0, activeUsers = 0, admins = 0, regularUsers = 0, inactiveUsers = 0, unverifiedUsers = 0 } = stats || {};
+export default function UsersSummary({
+    totalUsers = 0,
+    activeUsers = 0,
+    inactiveUsers = 0,
+    verifiedUsers = 0,
+    unverifiedUsers = 0,
+    regularUsers = 0,
+    propertyOwners = 0,
+    admins = 0,
+    kycVerified = 0,
+    kycPending = 0
+}) {
 
     const items = [
         {
@@ -46,14 +57,14 @@ export default function UsersMatrix({ stats }) {
     return (
         <div className="p-6 flex flex-col gap-4 border border-primary-200 rounded-lg bg-white">
             <div className="flex justify-between items-center pb-4 border-b border-gray-100">
-                <h3 className="text-lg font-bold text-gray-800">Users Summary</h3>
+                <h3 className="text-lg font-bold text-gray-800"> Summary</h3>
             </div>
 
             <div className="flex flex-col gap-4">
                  {/* Main Hero Card */}
                  <div className="flex flex-col border border-primary-200 rounded-lg px-6 py-7 relative overflow-hidden bg-white">
                     <div className="flex gap-2 items-center lg:w-[256px] w-full" >
-                        <span className="w-12 h-12 text-primary bg-primary-100 rounded-full flex items-center justify-center text-2xl "><BiUser /></span>
+                        <span className="w-12 h-12 text-primary-300 bg-yellow-200 rounded-full flex items-center justify-center text-2xl "><FaUsers /></span>
                         <span className="font-mono text-primary-900 uppercase">Total Users</span>
                     </div>
                     <p className="text-center font-bold text-2xl font-mono w-[256px]">{totalUsers}</p>
@@ -62,7 +73,7 @@ export default function UsersMatrix({ stats }) {
                 </div>
 
                 {/* Grid Items */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                     {items.map((item, index) => (
                         <div key={index} className="flex flex-col items-center justify-center p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white border border-primary-100 w-full relative overflow-hidden group">
                            <p className="font-mono text-primary-700 text-base text-center mb-1">{item.title}</p>

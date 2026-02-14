@@ -81,6 +81,7 @@ export async function getCities() {
     return state
   } catch (error) {
     console.error("Error fetching latest properties:", error)
+    return []
   }
 }
 
@@ -345,10 +346,9 @@ export async function getAdminPayments(token) {
     return null;
   }
 }
-
 export async function getPropertyOwner(token) {
   try {
-    const response = await fetch(`${url}/admin/property-owner/fetch-propertyowners`, {
+    const response = await fetch(`${url}/admin/property-owner/fetch-propertowners`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token?.value}`,
@@ -373,7 +373,7 @@ export async function getPropertyOwner(token) {
 export async function getPropertyOwnerById(token, id) {
   console.log(id)
   try {
-    const response = await fetch(`${url}/admin/property-owner/fetch-propertyowner/${id}`, {
+    const response = await fetch(`${url}/admin/property-owner/fetch-propertowner/${id}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token?.value}`,
@@ -534,5 +534,188 @@ export async function getPropertyOwnerNotifications(token) {
   } catch (error) {
     console.error("Error fetching property owner notifications:", error)
     return []
+  }
+}
+
+
+export async function getReferralLeaderboard() {
+  try {
+    const response = await fetch(`${url}/user/fetch-leaderboard`);
+    const { data } = await response.json();
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
+    return [];
+  }
+}
+
+export async function getReferralDownline(referralCode) {
+  try {
+    const response = await fetch(`${url}/user/fetch-downline/${referralCode}`);
+    const { data } = await response.json();
+    return data || null;
+  } catch (error) {
+    console.error("Error fetching downline:", error);
+    return null;
+  }
+}
+
+export async function getAdminServiceProviders(token) {
+  try {
+    const response = await fetch(`${url}/admin/service-providers`, {
+      headers: { "Authorization": `Bearer ${token?.value}` }
+    });
+    const { serviceProviders } = await response.json();
+    return serviceProviders || [];
+  } catch (error) {
+    console.error("Error fetching admin service providers:", error);
+    return [];
+  }
+}
+
+export async function getAdminServiceProviderById(token, id) {
+  try {
+    const response = await fetch(`${url}/admin/service-provider/${id}`, {
+      headers: { "Authorization": `Bearer ${token?.value}` }
+    });
+    const { serviceProvider } = await response.json();
+    return serviceProvider || null;
+  } catch (error) {
+    console.error("Error fetching admin service provider:", error);
+    return null;
+  }
+}
+
+export async function getSavedPropertyById(token, id) {
+  try {
+    const response = await fetch(`${url}/user-property/saved-properties/${id}`, {
+      headers: { "Authorization": `Bearer ${token?.value}` }
+    });
+    const { data } = await response.json();
+    return data || null;
+  } catch (error) {
+    console.error("Error fetching saved property:", error);
+    return null;
+  }
+}
+
+export async function getServiceRequestById(token, id) {
+  try {
+    const response = await fetch(`${url}/service/fetch-service/${id}`, {
+      headers: { "Authorization": `Bearer ${token?.value}` }
+    });
+    const { data } = await response.json();
+    return data || null;
+  } catch (error) {
+    console.error("Error fetching service request:", error);
+    return null;
+  }
+}
+
+export async function getBookingById(token, id) {
+  try {
+    const response = await fetch(`${url}/user/fetch-booking/${id}`, {
+      headers: { "Authorization": `Bearer ${token?.value}` }
+    });
+    const { data } = await response.json();
+    return data || null;
+  } catch (error) {
+    console.error("Error fetching booking:", error);
+    return null;
+  }
+}
+
+export async function getBookingSlots() {
+  try {
+    const response = await fetch(`${url}/bookings/fetch-slots`);
+    const { slots } = await response.json();
+    return slots || [];
+  } catch (error) {
+    console.error("Error fetching booking slots:", error);
+    return [];
+  }
+}
+
+export async function getUserById(token, id) {
+  try {
+    const response = await fetch(`${url}/admin/users/fetch-user/${id}`, {
+      headers: { "Authorization": `Bearer ${token?.value}` }
+    });
+    const { user } = await response.json();
+    return user || null;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
+}
+
+export async function getPropertyOwnerInfo(tokenKey) {
+  // tokenKey represents the actual token string from URL, not cookie object
+  try {
+    const response = await fetch(`${url}/property-owner/fetch-owner-information?token=${tokenKey}`);
+    const { property_owner } = await response.json();
+    return property_owner || null;
+  } catch (error) {
+    console.error("Error fetching owner info:", error);
+    return null;
+  }
+}
+
+export async function getOwnerProperties(token) {
+  try {
+    const response = await fetch(`${url}/property-owner/fetch-properties`, {
+      headers: { "Authorization": `Bearer ${token?.value}` }
+    });
+    const { data } = await response.json(); // Assuming valid response structure
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching owner properties:", error);
+    return [];
+  }
+}
+
+export async function getOwnerServiceById(token, id) {
+  try {
+    const response = await fetch(`${url}/property-owner/fetch-service/${id}`, {
+      headers: { "Authorization": `Bearer ${token?.value}` }
+    });
+    const { data } = await response.json();
+    return data || null;
+  } catch (error) {
+    console.error("Error fetching owner service:", error);
+    return null;
+  }
+}
+
+export async function getFaqById(id) {
+  try {
+    const response = await fetch(`${url}/faq/get-faq/${id}`);
+    const { faq } = await response.json();
+    return faq || null;
+  } catch (error) {
+    console.error("Error fetching faq:", error);
+    return null;
+  }
+}
+
+export async function getAllServiceProviders() {
+  try {
+    const response = await fetch(`${url}/service-provider/get-all-service-providers`);
+    const { date } = await response.json(); // API docs say 'date' not 'data'
+    return date || [];
+  } catch (error) {
+    console.error("Error fetching service providers:", error);
+    return [];
+  }
+}
+
+export async function getServiceProviderById(id) {
+  try {
+    const response = await fetch(`${url}/service-provider/get-service-provider/${id}`);
+    const { serviceProvider } = await response.json();
+    return serviceProvider || null;
+  } catch (error) {
+    console.error("Error fetching service provider:", error);
+    return null;
   }
 }

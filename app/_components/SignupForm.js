@@ -10,6 +10,7 @@ import SelectCity from "./SelectCity";
 import SpinnerMini from "./SpinnerMini";
 import toast from "react-hot-toast"
 import { useUser } from "../_context/UserContext"
+import ResendOwnerEmail from "./ResendOwnerEmail";
 
 export default function SignupForm({ cities, role = "user" }) {
     const searchParams = useSearchParams();
@@ -84,6 +85,7 @@ export default function SignupForm({ cities, role = "user" }) {
                 <label htmlFor="checkbox" className="text-base text-black">I agree to Xpacy’s Terms & Conditions and Privacy Policy.</label>
             </div>
             <button type="submit" disabled={pending} className="bg-primary text-white  cursor-pointer  px-5 py-3 font-semibold flex space-x-2.5 font-mono items-center justify-center rounded-md hover:shadow-md disabled:bg-gray-900 disabled:cursor-not-allowed"> <span>Sign Up</span> <span>{pending && <SpinnerMini />}</span> </button>
+            {role === "property-owner" && <ResendOwnerEmail />}
         </form>
     )
 }

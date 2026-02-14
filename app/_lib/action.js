@@ -142,6 +142,56 @@ export async function handlePropertyOwnerSignup(userData, referralCode) {
   return { success: true, message: data.message, user: data.user }
 }
 
+// ...existing imports...
+import { headers } from "next/headers"
+
+// ...
+
+export async function handleCompleteOwnerRegistration(userData) {
+  const headersList = await headers();
+  const referer = headersList.get("referer");
+  
+  if (!referer) return { success: false, message: "Referer not found" }
+  
+  const token = new URL(referer).searchParams.get("token");
+  console.log(token)
+  
+  if (!token) return { success: false, message: "Token is missing" }
+
+// ...existing code...
+  
+  if (!token) return { success: false, message: "Token is missing" }
+
+  const response = await fetch(`${URL}/property-owner/complete-registration?token=${token}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ password: userData.password })
+  })
+  const data = await response.json();
+// ...existing code...
+
+  if (!response.ok) return { success: false, message: data.message }
+
+  return { success: true, message: data.message }
+}
+
+export async function resendPropertyOwnerRegistrationEmail(email) {
+  const response = await fetch(`${URL}/property-owner/resend-registration-email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email })
+  })
+  const data = await response.json();
+
+  if (!response.ok) return { success: false, message: data.message }
+
+  return { success: true, message: data.message }
+}
+
 export async function handleSaveProperty(id) {
   const cookiesStore = await cookies();
   const token = cookiesStore.get("token")
@@ -361,4 +411,307 @@ export async function submitInvoiceAction(invoice, token) {
     throw new Error(error || "Invoice creation failed")
   }
   return res.json()
+}
+
+export async function requestPasswordReset(email) {
+  const response = await fetch(`${URL}/user/request-password-reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email })
+  });
+  const data = await response.json();
+  return data;
+}
+
+export async function resetPassword(token, newPassword) {
+  const response = await fetch(`${URL}/user/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, newPassword })
+  });
+  const data = await response.json();
+  return data;
+}
+
+export async function uploadKyc(formData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  if (!token?.value) throw new Error("Please Log in to continue");
+  
+  const response = await fetch(`${URL}/user/upload-kyc`, {
+    method: "PUT",
+    headers: { "Authorization": `Bearer ${token?.value}` },
+    body: formData
+  });
+  const data = await response.json();
+  revalidateTag("user-profile");
+  return data;
+}
+
+export async function addFeaturedProperty(propertyId) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/property/add-featured-property/${propertyId}`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    }
+  });
+  const data = await response.json();
+  revalidateTag("featured-properties");
+  return data;
+}
+
+export async function removeFeaturedProperty(propertyId) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/property/remove-featured-property/${propertyId}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    }
+  });
+  const data = await response.json();
+  revalidateTag("featured-properties");
+  return data;
+}
+
+export async function deleteProperty(propertyId) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/property/delete-property/${propertyId}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    }
+  });
+  const data = await response.json();
+  return data;
+}
+
+export async function rescheduleService(serviceId, scheduled_date, scheduled_time) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/user/update-service/${serviceId}`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ scheduled_date, scheduled_time })
+  });
+  const data = await response.json();
+  revalidateTag("booked-services");
+  return data;
+}
+
+export async function cancelService(serviceId) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/user/cancel-service/${serviceId}`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    }
+  });
+  const data = await response.json();
+  revalidateTag("booked-services");
+  return data;
+}
+
+export async function createServiceProvider(formData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/service-provider/create-service-provider`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  });
+  const data = await response.json();
+  return data;
+}
+
+export async function updateServiceProvider(id, formData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/service-provider/update-service-provider/${id}`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  });
+  const data = await response.json();
+  return data;
+}
+
+export async function deleteServiceProvider(id) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/service-provider/delete-service-provider/${id}`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    }
+  });
+  const data = await response.json();
+  return data;
+}
+
+export async function updateInvoice(id, invoiceData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/invoice/update-invoice/${id}`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(invoiceData)
+  });
+  return response.json();
+}
+
+export async function deleteInvoice(id) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/invoice/delete-invoice/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    }
+  });
+  return response.json();
+}
+
+export async function verifyPayment(reference) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/payment/paystack/verify?reference=${reference}`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    }
+  });
+  return response.json();
+}
+
+export async function markNotificationRead(id) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/notification/mark-as-read/${id}`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    }
+  });
+  return response.json();
+}
+
+export async function updatePropertyOwnerDisplayPicture(formData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/property-owner/upload-display-image`, {
+    method: "PUT",
+    headers: { "Authorization": `Bearer ${token?.value}` },
+    body: formData
+  });
+  const data = await response.json();
+  revalidateTag("property-owner-profile");
+  return data;
+}
+
+export async function updatePropertyOwnerProfile(formData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/property-owner/update-profile`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  });
+  const data = await response.json();
+  revalidateTag("property-owner-profile");
+  return data;
+}
+
+export async function createFaq(formData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/faq/create-faq`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  });
+  return response.json();
+}
+
+export async function updateFaq(id, formData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/faq/update-faq/${id}`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  });
+  return response.json();
+}
+
+export async function deleteFaq(id) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  const response = await fetch(`${URL}/faq/delete-faq/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json"
+    }
+  });
+  return response.json();
+}
+
+export async function invitePropertyOwner(formData) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token");
+  
+  // Construct the payload
+  const payload = {
+    name: formData.get("name"),
+    email: formData.get("email"),
+    phone: "0000000000", // Required by endpoint but likely irrelevant for invite
+    subject: "Invitation to Join Xpacy as Property Owner",
+    message: formData.get("message") || "You have been invited to join Xpacy as a property owner. Please sign up to manage your properties."
+  };
+
+  const response = await fetch(`${URL}/contact/send-mail`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload)
+  });
+  
+  const data = await response.json();
+  return data;
 }

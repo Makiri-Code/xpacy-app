@@ -57,20 +57,17 @@ const AdminOverview = async () => {
     ];
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {overview.map((item, index) => (
                 <div key={index} className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition-shadow duration-300">
-                    <div className="flex justify-between items-start">
-                        <div>
+                    <div className="flex justify-center items-center">
+                        <div className="flex flex-col gap-3 items-center">
+                            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${item.color}`}>{item.icon}</div>
                             <p className="text-gray-600 text-sm">{item.title}</p>
                             <p className="text-2xl font-bold mt-2">{item.count.toLocaleString()}</p>
-                            <p className={`text-sm mt-1 ${item.change.startsWith('+') ? 'text-green-600' : item.change === '0%' ? 'text-gray-600' : 'text-red-600'}`}>
-                                {item.change} from last month
-                            </p>
+                           
                         </div>
-                        <div className={`p-3 rounded-full ${item.color}`}>
-                            {item.icon}
-                        </div>
+                        
                     </div>
                 </div>
             ))}

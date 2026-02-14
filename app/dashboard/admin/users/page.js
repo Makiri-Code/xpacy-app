@@ -1,7 +1,10 @@
 import AdminUsersList from "@/app/_components/AdminUsersList";
-import UsersMatrix from "@/app/_components/UsersMatrix";
+import UsersSummary from "@/app/_components/UsersSummary";
 import { getPropertyOwner, getAllAdmin, getAllUsers } from "@/app/_lib/data-services";
+import { UserPlus } from "lucide-react";
 import { cookies } from "next/headers";
+import Link from "next/link";
+import { FaPlus } from "react-icons/fa6";
 
 export default async function Page(){
         const cookieStore = await cookies();
@@ -32,12 +35,20 @@ export default async function Page(){
 
     return (
         <div className="p-6 space-y-6">
-            <h1 className="lg:text-4xl text-[28px] text-primary font-bold capitalize mb-2">Users Directory</h1>
-            <UsersMatrix stats={stats}/>
+            <h1 className="lg:text-4xl text-[28px] text-primary font-bold capitalize mb-2"></h1>
+            <UsersSummary {...stats} />
             <AdminUsersList users={usersList} title="Tenants / Buyers List" variant="tenant" />
             <AdminUsersList users={allUsers} title="All Registered Users List" variant="registered" />
             <AdminUsersList users={adminsList} title="Admins List" />
             <AdminUsersList users={ownersList} title="Property Owners List" />
+            
+            {/* Add New Owner Button */}
+            <div className="flex justify-end mt-6">
+                <Link href="/dashboard/admin/invite-owners" className="bg-primary text-white px-6 py-3 rounded-lg shadow-md hover:bg-primary/90 transition-all flex items-center gap-2 group">
+                    <UserPlus className="text-lg group-hover:scale-110 transition-transform" />
+                    <span className="font-semibold">Add New Owner</span>
+                </Link>
+            </div>
         </div>
     )
 }

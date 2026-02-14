@@ -5,7 +5,7 @@ import {handleSearch} from "@/app/_lib/action"
 export default function Filter() {
   return (
     <form action={handleSearch} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 items-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-2 items-center">
         <select className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all w-full" name="purpose">
           <option value={""}>Purpose</option>
           <option value={"buy"}>Buy</option>

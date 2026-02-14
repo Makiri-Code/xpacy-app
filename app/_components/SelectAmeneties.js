@@ -53,7 +53,12 @@ const SelectAmeneties = ({ propertyAmenities, setPropertyAmenities }) => {
               multiple
               options={amenitites}
               value={propertyAmenities}
-              onBlur={(event) => !propertyAmenities.includes(event.target.value) ? event.target.value !== " " : setPropertyAmenities((prev) => [...prev, event.target.value])}
+              onBlur={(event) => {
+                  const val = event.target.value;
+                  if (val && val.trim() !== "" && !propertyAmenities.includes(val)) {
+                      setPropertyAmenities((prev) => [...prev, val]);
+                  }
+              }}
               renderInput={(params) => (
                   <TextField {...params} placeholder="Select amenities" />
               )}
