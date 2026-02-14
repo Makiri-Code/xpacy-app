@@ -21,7 +21,20 @@ export default async function Page(){
         const adminsList = (admins || []).map(u => ({ ...u, role: 'admin' }));
         const usersList = (regularUsers || []).map(u => ({ ...u, role: 'user' }));
 
-        const allUsers = [...usersList, ...ownersList, ...adminsList];
+        // Deduplicate users for the "All Registered Users" list
+        // Priority: Admin > Property Owner > User
+        const allUsersMap = new Map();
+        
+        // Add users first (lowest priority)
+        usersList.forEach(u => allUsersMap.set(u.email || u.id, u));
+        
+        // Add owners (overwrites user if email matches)
+        ownersList.forEach(u => allUsersMap.set(u.email || u.id, u));
+        
+        // Add admins (highest priority, overwrites others)
+        adminsList.forEach(u => allUsersMap.set(u.email || u.id, u));
+
+        const allUsers = Array.from(allUsersMap.values());
 
         const stats = {
             totalUsers: allUsers.length,

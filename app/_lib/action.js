@@ -154,11 +154,6 @@ export async function handleCompleteOwnerRegistration(userData) {
   if (!referer) return { success: false, message: "Referer not found" }
   
   const token = new URL(referer).searchParams.get("token");
-  console.log(token)
-  
-  if (!token) return { success: false, message: "Token is missing" }
-
-// ...existing code...
   
   if (!token) return { success: false, message: "Token is missing" }
 
