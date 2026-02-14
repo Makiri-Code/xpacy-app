@@ -1,8 +1,10 @@
+"use client";
 import { useForm } from "react-hook-form";
 import FormInput from "./FormInput";
 import SpinnerMini from "./SpinnerMini";
 import { useTransition } from "react";
 import { handleRegisterOwner } from "../_lib/action";
+import toast from "react-hot-toast";
 
 
 export default function AddNewOwnerForm() {

@@ -1,31 +1,12 @@
+"use client";
 import Image from "next/image";
+import { useState } from "react";
 import DashboardGridItem from "./DashboardGridItems";
 import TableHead from "./TableHeader";
 import StatusChips from "./StatusChips";
 import UserOptionsMenu from "./UserOptionsMenu";
-// import Modal from "./Modal";
-// import { HiOutlineUserAdd } from "react-icons/hi";
-// import AddNewOwnerForm from "./AddNewOwnerForm";
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 
-const tableHeadings = [
-    {
-        heading: "Name",
-    },
-    {
-        heading: "Contact Details",
-    },
-    {
-        heading: "User Status",
-        center: true,
-    },
-    {
-        heading: "KYC Status",
-        center: true,
-    },
-    {
-        heading: "",
-    }
-];
 const defaultHeadings = [
     { heading: "Name" },
     { heading: "Contact Details" },
@@ -52,6 +33,9 @@ const tenantHeadings = [
 ];
 
 export default function AdminUsersList({ users, title = "All Users List", variant = "default" }) {
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
     let headings = defaultHeadings;
     let gridCols = "grid-cols-[1.5fr_1.5fr_1fr_0.5fr]";
 
@@ -63,23 +47,27 @@ export default function AdminUsersList({ users, title = "All Users List", varian
         gridCols = "grid-cols-[1.5fr_1.5fr_1fr_1fr_0.5fr]";
     }
 
+    // Pagination Logic
+    const totalPages = Math.ceil((users?.length || 0) / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentUsers = users?.slice(startIndex, startIndex + itemsPerPage);
+
+    const handlePrevious = () => {
+        if (currentPage > 1) {
+            setCurrentPage(prev => prev - 1);
+        }
+    };
+
+    const handleNext = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(prev => prev + 1);
+        }
+    };
+
     return (
         <DashboardGridItem title={title}>
-            {/* <div className="self-end">
-                <Modal>
-                    <Modal.Open>
-                        <button className="flex items-center justify-center cursor-pointer gap-2 px-4 py-3 bg-primary rounded-lg font-mono font-medium text-white">
-                            <span className="text-2xl"><HiOutlineUserAdd /></span>
-                            <span>Add New User</span>
-                        </button>
-                    </Modal.Open>
-                    <Modal.Window>
-                        <AddNewOwnerForm/>
-                    </Modal.Window>
-                </Modal>
-            </div> */}
             <TableHead tableCol={gridCols} headingsArray={headings} />
-            {users?.map(({ first_name, last_name, email, display_picture, phone, id, role, status = "active" }) => (
+            {currentUsers?.map(({ first_name, last_name, email, display_picture, phone, id, role, status = "active", kyc_status }) => (
                 <div key={id} className="contents">
                     {/* Desktop View */}
                     <div className={`hidden lg:grid ${gridCols} text-neutrals-900 text-sm font-mono border-b border-primary-100 items-center`}>
@@ -125,9 +113,14 @@ export default function AdminUsersList({ users, title = "All Users List", varian
                                 </div>
                                 {variant === 'registered' && (
                                     <div className="p-4 flex items-center justify-center capitalize">
-                                         {/* Placeholder for KYC Status until data is available */}
-                                         <span className={`px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-500`}>
-                                            N/A
+                                        <span className={`px-2 py-1 rounded text-xs font-medium capitalize ${
+                                            kyc_status === 'approved' ? 'bg-green-100 text-green-700' :
+                                            kyc_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                            kyc_status === 'processing' ? 'bg-blue-100 text-blue-700' :
+                                            kyc_status === 'declined' ? 'bg-red-100 text-red-700' :
+                                            'bg-gray-100 text-gray-500'
+                                        }`}>
+                                            {kyc_status || 'N/A'}
                                         </span>
                                     </div>
                                 )}
@@ -187,6 +180,20 @@ export default function AdminUsersList({ users, title = "All Users List", varian
                                         <span>Status:</span>
                                         <StatusChips status={status} />
                                     </div>
+                                    {variant === 'registered' && (
+                                        <div className="flex justify-between items-center">
+                                            <span>KYC Status:</span>
+                                            <span className={`px-2 py-1 rounded text-xs font-medium capitalize ${
+                                                kyc_status === 'approved' ? 'bg-green-100 text-green-700' :
+                                                kyc_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                kyc_status === 'processing' ? 'bg-blue-100 text-blue-700' :
+                                                kyc_status === 'declined' ? 'bg-red-100 text-red-700' :
+                                                'bg-gray-100 text-gray-500'
+                                            }`}>
+                                                {kyc_status || 'N/A'}
+                                            </span>
+                                        </div>
+                                    )}
                                 </>
                              )}
                         </div>
@@ -197,6 +204,31 @@ export default function AdminUsersList({ users, title = "All Users List", varian
             {(!users || users.length === 0) && (
                 <div className="p-8 text-center text-gray-500">
                     No users found.
+                </div>
+            )}
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+                <div className="p-4 flex items-center justify-end font-mono gap-4 border-t border-primary-100">
+                    <button 
+                        className="flex gap-1 p-2 cursor-pointer items-center justify-center border border-primary-200 rounded-lg text-sm font-bold text-black hover:bg-primary-200 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400" 
+                        disabled={currentPage === 1} 
+                        onClick={handlePrevious}
+                    >
+                        <span><FaAngleLeft /></span>
+                        <span>Previous</span>
+                    </button>
+                    <span className="text-sm font-medium text-gray-600">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <button 
+                        className="flex gap-1 p-2 cursor-pointer justify-center items-center border border-primary-200 rounded-lg text-sm font-bold text-black hover:bg-primary-200 disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400" 
+                        onClick={handleNext} 
+                        disabled={currentPage === totalPages}
+                    >
+                        <span>Next</span>
+                        <span><FaAngleRight /></span>
+                    </button>
                 </div>
             )}
         </DashboardGridItem>

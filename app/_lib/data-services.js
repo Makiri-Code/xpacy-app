@@ -411,7 +411,7 @@ export async function getAllAdmin(token) {
 
 export async function getAllUsers(token) {
   try {
-    const response = await fetch(`${url}/admin/fetch-users`, {
+    const response = await fetch(`${url}/admin/users/fetch-users`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token?.value}`,

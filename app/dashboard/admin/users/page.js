@@ -1,3 +1,4 @@
+import AdminPropertyOwnersList from "@/app/_components/AdminPropertyOwnersList";
 import AdminUsersList from "@/app/_components/AdminUsersList";
 import UsersSummary from "@/app/_components/UsersSummary";
 import { getPropertyOwner, getAllAdmin, getAllUsers } from "@/app/_lib/data-services";
@@ -26,13 +27,13 @@ export default async function Page(){
         const allUsersMap = new Map();
         
         // Add users first (lowest priority)
-        usersList.forEach(u => allUsersMap.set(u.email || u.id, u));
+        usersList.forEach(u => allUsersMap.set(u.id, u));
         
-        // Add owners (overwrites user if email matches)
-        ownersList.forEach(u => allUsersMap.set(u.email || u.id, u));
+        // Add owners (overwrites user if ID matches)
+        ownersList.forEach(u => allUsersMap.set(u.id, u));
         
         // Add admins (highest priority, overwrites others)
-        adminsList.forEach(u => allUsersMap.set(u.email || u.id, u));
+        adminsList.forEach(u => allUsersMap.set(u.id, u));
 
         const allUsers = Array.from(allUsersMap.values());
 
@@ -41,6 +42,10 @@ export default async function Page(){
             propertyOwners: ownersList.length,
             admins: adminsList.length,
             regularUsers: usersList.length,
+            approvedKyc: allUsers.filter(u => u.kyc_status === 'approved').length,
+            pendingKyc: allUsers.filter(u => u.kyc_status === 'pending').length,
+            rejectedKyc: allUsers.filter(u => u.kyc_status === 'declined').length,
+            processedKyc: allUsers.filter(u => u.kyc_status === 'processing').length,
             activeUsers: allUsers.filter(u => u.status === 'active').length,
             inactiveUsers: allUsers.filter(u => u.status === 'inactive').length,
             unverifiedUsers: allUsers.filter(u => !u.email_verified_at).length 
@@ -53,15 +58,7 @@ export default async function Page(){
             <AdminUsersList users={usersList} title="Tenants / Buyers List" variant="tenant" />
             <AdminUsersList users={allUsers} title="All Registered Users List" variant="registered" />
             <AdminUsersList users={adminsList} title="Admins List" />
-            <AdminUsersList users={ownersList} title="Property Owners List" />
-            
-            {/* Add New Owner Button */}
-            <div className="flex justify-end mt-6">
-                <Link href="/dashboard/admin/invite-owners" className="bg-primary text-white px-6 py-3 rounded-lg shadow-md hover:bg-primary/90 transition-all flex items-center gap-2 group">
-                    <UserPlus className="text-lg group-hover:scale-110 transition-transform" />
-                    <span className="font-semibold">Add New Owner</span>
-                </Link>
-            </div>
+            <AdminPropertyOwnersList owners={ownersList}/>            
         </div>
     )
 }

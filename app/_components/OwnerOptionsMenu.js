@@ -1,3 +1,4 @@
+"use client";
 import { VscNote } from "react-icons/vsc";
 import  ConfirmDeleteModal  from "./ConfirmDeleteModal";
 import { RiDeleteBin6Line } from "react-icons/ri";
