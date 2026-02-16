@@ -66,66 +66,91 @@ export default function AdminUsersList({ users, title = "All Users List", varian
 
     return (
         <DashboardGridItem title={title}>
-            <TableHead tableCol={gridCols} headingsArray={headings} />
-            {currentUsers?.map(({ first_name, last_name, email, display_picture, phone, id, role, status = "active", kyc_status }) => (
-                <div key={id} className="contents">
-                    {/* Desktop View */}
-                    <div className={`hidden lg:grid ${gridCols} text-neutrals-900 text-sm font-mono border-b border-primary-100 items-center`}>
-                        <div className="p-4 flex items-center gap-2 text-sm">
-                            <div className="w-8 h-8 relative shrink-0">
-                                <Image src={display_picture ? `https://app.xpacy.com/src/upload/display_img/${display_picture}` : "/avatar.png"} alt="user-photo" className="object-cover rounded-full" unoptimized fill />
-                            </div>
-                            <span className="truncate font-semibold">{first_name} {last_name}</span>
-                        </div>
-
-                        {variant === 'tenant' ? (
-                            <>
-                                <div className="p-4 flex flex-col justify-center">
-                                    <span className="text-gray-500 italic">N/A</span>
-                                </div>
-                               
-                                <div className="p-4 flex justify-center">
-                                     <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs">N/A</span>
-                                </div>
-                                <div className="p-4 flex justify-center">
-                                     <span className="text-gray-500">N/A</span>
-                                </div>
-                                <div className="p-4 flex justify-center">
-                                     <span className="text-gray-500">N/A</span>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <div className="p-4 flex flex-col justify-center">
-                                    <span>{email}</span>
-                                    <span className="text-gray-500 text-xs">{phone || "N/A"}</span>
-                                </div>
-                                <div className="p-4 flex items-center justify-center capitalize">
-                                    <StatusChips status={status} />
-                                </div>
-                                {variant === 'registered' && (
-                                    <div className="p-4 flex items-center justify-center capitalize">
-                                        <span className={`px-2 py-1 rounded text-xs font-medium capitalize ${
-                                            kyc_status === 'approved' ? 'bg-green-100 text-green-700' :
-                                            kyc_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                            kyc_status === 'processing' ? 'bg-blue-100 text-blue-700' :
-                                            kyc_status === 'declined' ? 'bg-red-100 text-red-700' :
-                                            'bg-gray-100 text-gray-500'
-                                        }`}>
-                                            {kyc_status || 'N/A'}
-                                        </span>
+            {/* Desktop View */}
+            <div className="hidden lg:block bg-white border border-primary-100 rounded-lg overflow-hidden">
+                <table className="w-full text-left border-collapse">
+                    <thead className="bg-gray-50 text-neutrals-900 text-sm font-mono font-bold border-b border-primary-100">
+                        <tr>
+                            {headings.map((h, i) => (
+                                <th key={i} className={`p-4 font-bold ${h.center ? "text-center" : ""}`}>{h.heading}</th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentUsers?.map(({ first_name, last_name, email, display_picture, phone, id, role, status = "active", kyc_status }) => (
+                            <tr key={id} className="text-neutrals-900 text-sm font-mono border-b border-primary-100 hover:bg-gray-50/50 transition-colors last:border-0">
+                                <td className="p-4">
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <div className="w-8 h-8 relative shrink-0">
+                                            <Image src={display_picture ? `https://app.xpacy.com/src/upload/display_img/${display_picture}` : "/avatar.png"} alt="user-photo" className="object-cover rounded-full" unoptimized fill />
+                                        </div>
+                                        <span className="truncate font-semibold">{first_name} {last_name}</span>
                                     </div>
+                                </td>
+
+                                {variant === 'tenant' ? (
+                                    <>
+                                        <td className="p-4">
+                                            <div className="flex flex-col justify-center">
+                                                <span className="text-gray-500 italic">N/A</span>
+                                            </div>
+                                        </td>
+                                        <td className="p-4 text-center">
+                                            <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs">N/A</span>
+                                        </td>
+                                        <td className="p-4 text-center">
+                                            <span className="text-gray-500">N/A</span>
+                                        </td>
+                                        <td className="p-4 text-center">
+                                            <span className="text-gray-500">N/A</span>
+                                        </td>
+                                    </>
+                                ) : (
+                                    <>
+                                        <td className="p-4">
+                                            <div className="flex flex-col justify-center">
+                                                <span>{email}</span>
+                                                <span className="text-gray-500 text-xs">{phone || "N/A"}</span>
+                                            </div>
+                                        </td>
+                                        <td className="p-4 text-center">
+                                            <div className="flex justify-center capitalize">
+                                                <StatusChips status={status} />
+                                            </div>
+                                        </td>
+                                        {variant === 'registered' && (
+                                            <td className="p-4 text-center">
+                                                <div className="flex justify-center capitalize">
+                                                    <span className={`px-2 py-1 rounded text-xs font-medium capitalize ${
+                                                        kyc_status === 'approved' ? 'bg-green-100 text-green-700' :
+                                                        kyc_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                        kyc_status === 'processing' ? 'bg-blue-100 text-blue-700' :
+                                                        kyc_status === 'declined' ? 'bg-red-100 text-red-700' :
+                                                        'bg-gray-100 text-gray-500'
+                                                    }`}>
+                                                        {kyc_status || 'N/A'}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        )}
+                                    </>
                                 )}
-                            </>
-                        )}
 
-                        <div className="p-4 flex items-center justify-center relative">
-                             <UserOptionsMenu id={id} role={role} /> 
-                        </div>
-                    </div>
+                                <td className="p-4 relative text-center">
+                                    <div className="flex justify-center">
+                                         <UserOptionsMenu id={id} role={role} /> 
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
-                    {/* Mobile View */}
-                    <div className="lg:hidden flex flex-col gap-4 p-4 border-b border-primary-100 bg-white">
+            {/* Mobile View */}
+            <div className="lg:hidden flex flex-col bg-white border border-primary-100 rounded-lg overflow-hidden mt-4">
+                {currentUsers?.map(({ first_name, last_name, email, display_picture, phone, id, role, status = "active", kyc_status }) => (
+                    <div key={id} className="flex flex-col gap-4 p-4 border-b border-primary-100 bg-white last:border-0">
                         <div className="flex items-start justify-between gap-4">
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 relative shrink-0">
@@ -190,9 +215,10 @@ export default function AdminUsersList({ users, title = "All Users List", varian
                              )}
                         </div>
                     </div>
-                </div>
-            ))}
-            
+                ))}
+            </div>
+
+            {/* Empty State */}
             {(!users || users.length === 0) && (
                 <div className="p-8 text-center text-gray-500">
                     No users found.

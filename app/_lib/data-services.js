@@ -535,7 +535,7 @@ export async function getPropertyOwnerInvoices(token) {
 
 export async function getPropertyOwnerNotifications(token) {
   try {
-    const response = await fetch(`${url}/property-owner/fetch-notifications`, {
+    const response = await fetch(`${url}/notification/fetch-notifications`, {
       next: {
         tags: ['property-owner-notifications']
       },

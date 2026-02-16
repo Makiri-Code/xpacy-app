@@ -23,9 +23,7 @@ export default async function Page() {
             <Section title={"Account Security"}>
                 <UpdatePasswordForm/>
             </Section>
-            <Section title={"Location Preference"}>
-                <LocationForm cities={cities} profile={profile} updateAction={updatePropertyOwnerProfile}/>
-            </Section>
+          
         </div>
     )
 }

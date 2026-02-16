@@ -115,11 +115,7 @@ const adminNavList = [
 ]
 
 const propertyOwnerNavList = [
-    {
-        text: "Go to Homepage",
-        link: "/",
-        icon: <RiHome2Line />
-    },
+    
     {
         text: "Dashboard",
         link: "/dashboard/property-owner",
@@ -140,26 +136,15 @@ const propertyOwnerNavList = [
         link: "/dashboard/property-owner/services",
         icon: <IoCalendarOutline />
     },
-
-    {
-        text: "Settings",
-        link: "/dashboard/property-owner/settings",
-        icon: <RiSettings3Line className='w-5 h-5' />
-    },
-    {
-        text: "Search",
-        link: "/dashboard/property-owner/search",
-        icon: <RiSearchLine />
-    },
     {
         text: "Payments",
         link: "/dashboard/property-owner/payments",
         icon: <IoCardOutline />
     },
-    {
+     {
         text: "Profile Settings",
-        link: "/dashboard/property-owner/profile-settings",
-        icon: <RiUserSettingsLine />
+        link: "/dashboard/property-owner/settings",
+        icon: <RiSettings3Line className='w-5 h-5' />
     },
     {
         text: "Help/Support",
@@ -170,8 +155,8 @@ const propertyOwnerNavList = [
 
 export default function SidebarNav({ role = "user" }) {
     let navList = [];
-    if (role === "admin") navList = adminNavList;
-    else if (role === "property-owner") navList = propertyOwnerNavList;
+    if (role?.toLowerCase() === "admin") navList = adminNavList;
+    else if (role?.toLowerCase() === "property-owner" || role?.toLowerCase() === "propertyowner") navList = propertyOwnerNavList;
     else navList = userNavList;
 
     const pathname = usePathname();

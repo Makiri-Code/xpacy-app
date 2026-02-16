@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import PropertyOwnerServicesTable from "@/app/_components/PropertyOwnerServicesTable";
 import ServicesOverviewWrapper from "@/app/_components/ServicesOverviewWrapper";
-import { getUserProfile, getProperties, getPropertyOwnerServices } from "@/app/_lib/data-services";
+import { getUserProfile, getProperties, getPropertyOwnerServices, getPropertyOwnerProperties } from "@/app/_lib/data-services";
 import { MdAdd } from "react-icons/md";
 
 export default async function Page({ searchParams }) {
@@ -10,7 +10,7 @@ export default async function Page({ searchParams }) {
   const token = cookieStore.get("token");
   const [user, propertiesData, services] = await Promise.all([
       getUserProfile(token),
-      getProperties(),
+      getPropertyOwnerProperties(token),
       getPropertyOwnerServices(token) 
   ]);
 
@@ -40,19 +40,9 @@ export default async function Page({ searchParams }) {
   return (
     <div className="space-y-6 p-4">
 
-      <h2 className="text-xl font-bold text-gray-900">Service Overview</h2>
         <ServicesOverviewWrapper services={myServices} />
         <PropertyOwnerServicesTable services={paginatedServices} pagination={pagination} />
         
-        <div className="flex justify-start mt-8 pb-8">
-            <Link 
-                href="/dashboard/property-owner/services/add" 
-                className="flex items-center gap-2 "
-            >
-                <MdAdd className="text-2xl" />
-                <span className="font-semibold">Request New Service</span>
-            </Link>
-        </div>
         
     </div>
   );

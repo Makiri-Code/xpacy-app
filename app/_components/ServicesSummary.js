@@ -1,4 +1,5 @@
-import { FaTools, FaClock, FaSpinner, FaCheckCircle } from "react-icons/fa";
+import { FaTools, FaClock, FaSpinner, FaCheckCircle, FaUserEdit } from "react-icons/fa";
+import { FaBuildingUser, FaUserGear, FaUsersGear } from "react-icons/fa6";
 
 export default function ServicesSummary({ services, showHeading = true }) {
     // Calculate counts
@@ -33,7 +34,7 @@ export default function ServicesSummary({ services, showHeading = true }) {
         <div className="p-6 flex flex-col gap-4 border border-primary-200 rounded-lg bg-white">
             {showHeading && (
                 <div className="flex justify-between items-center pb-4 border-b border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-800">Services Summary</h3>
+                    <h3 className="text-lg font-bold text-[#477899]">Summary</h3>
                 </div>
             )}
 
@@ -41,8 +42,8 @@ export default function ServicesSummary({ services, showHeading = true }) {
                 {/* Main Hero Card */}
                 <div className="flex flex-col border border-primary-200 rounded-lg px-6 py-7 relative overflow-hidden bg-white">
                     <div className="flex gap-2 items-center lg:w-[256px] w-full" >
-                        <span className="w-12 h-12 text-primary bg-primary-100 rounded-full flex items-center justify-center text-2xl "><FaTools /></span>
-                        <span className="font-mono text-primary-900 uppercase">Total Services</span>
+                        <span className="w-12 h-12 text-primary bg-primary-100 rounded-full flex items-center justify-center text-2xl "><FaUserGear/></span>
+                        <span className="font-mono text-primary-900 uppercase"> Service Requests</span>
                     </div>
                     <p className="text-center font-bold text-2xl font-mono w-[256px]">{counts.total}</p>
                     <div className="w-[220px] h-[220px] rounded-full absolute lg:-right-[7%] -right-[70%] lg:-top-1 -top-10 bg-[#477899] z-10"></div>
