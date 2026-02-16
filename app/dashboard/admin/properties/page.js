@@ -17,7 +17,7 @@ export default async function Page({searchParams}) {
         <div className="space-y-6 p-4">
             <h1 className="lg:text-4xl text-[28px] text-primary font-bold capitalize mb-4">Properties</h1>
             
-            <PropertiesSummary properties={properties || []} />
+            <PropertiesSummary properties={properties || []} totalProperties={pagination?.totalProperties || pagination?.totalItems || pagination?.total || pagination?.count} />
             
             <DashboardGridItem title={"All Properties"}>
                 <AdminPropertyList properties={properties || []} />

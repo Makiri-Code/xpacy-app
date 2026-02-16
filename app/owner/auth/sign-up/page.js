@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import { handleCompleteOwnerRegistration } from "@/app/_lib/action";
 
 // Component to handle the search params logic
 function SignUpForm() {
@@ -35,17 +36,14 @@ function SignUpForm() {
         setIsLoading(true);
 
         try {
-            // TODO: Replace with actual API endpoint
-            // const response = await fetch(`${url}/owner/complete-registration`, { ... });
+            const response = await handleCompleteOwnerRegistration(formData, token);
             
-            // Mocking success for UI demonstration as requested
-            console.log("Submitting with token:", token, "Password:", formData.password);
-            
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            toast.success("Account setup complete! Please log in.");
-            router.push("/property-owner/log-in");
+            if (response.success) {
+                toast.success(response.message);
+                router.push("/property-owner/log-in");
+            } else {
+                toast.error(response.message);
+            }
             
         } catch (error) {
             console.error(error);

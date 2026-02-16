@@ -147,10 +147,8 @@ import { headers } from "next/headers"
 
 // ...
 
-export async function handleCompleteOwnerRegistration(userData) {
+export async function handleCompleteOwnerRegistration(userData, token) {
   try {
-    const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzM5NDcwODYxLCJleHAiOjE3Mzk0NzQ0NjF9.JIsQVPT29FwGlHmMk7MoGRHSZJ5JpW_qbeSTh5etFEw`
-    
     if (!token) return { success: false, message: "Token is missing" }
 
     const response = await fetch(`${URL}/property-owner/complete-registration?token=${token}`, {

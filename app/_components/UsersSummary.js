@@ -16,7 +16,7 @@ export default function UsersSummary({
 
     const items = [
         {
-            title: "Tenants / Startups",
+            title: "Tenants",
             count: regularUsers,
             icon: <FaUserCheck className="text-green-500" size={20} />,
             color: "bg-green-50 border-green-100",

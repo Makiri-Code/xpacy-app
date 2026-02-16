@@ -83,15 +83,7 @@ export default function AdminUsersList({ users, title = "All Users List", varian
                                 <div className="p-4 flex flex-col justify-center">
                                     <span className="text-gray-500 italic">N/A</span>
                                 </div>
-                                <div className="p-4 flex justify-center">
-                                     <span className={`px-2 py-1 rounded text-xs font-medium capitalize ${
-                                        role === 'admin' ? 'bg-purple-100 text-purple-700' :
-                                        role === 'property-owner' ? 'bg-blue-100 text-blue-700' :
-                                        'bg-gray-100 text-gray-700'
-                                    }`}>
-                                        {role?.replace('-', ' ') || 'User'}
-                                    </span>
-                                </div>
+                               
                                 <div className="p-4 flex justify-center">
                                      <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs">N/A</span>
                                 </div>
