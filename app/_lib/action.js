@@ -159,7 +159,13 @@ export async function handleCompleteOwnerRegistration(userData, token) {
       body: JSON.stringify({ password: userData.password })
     })
     
-    const data = await response.json();
+    let data;
+    try {
+       data = await response.json();
+    } catch (error) {
+       console.error("JSON Parse Error:", error);
+       return { success: false, message: "Invalid server response" };
+    }
 
     if (!response.ok) {
       return { success: false, message: data.message || "Failed to complete registration" }
@@ -300,6 +306,8 @@ export async function updateUserPassword(userData) {
   const data = await response.json();
   return data
 }
+
+
 
 export async function createBooking(formData) {
   const cookieStore = await cookies();
@@ -631,13 +639,27 @@ export async function updatePropertyOwnerDisplayPicture(formData) {
 export async function updatePropertyOwnerProfile(formData) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
+  
+  const mappedData = {
+    ...formData,
+    first_name: formData.firstname,
+    last_name: formData.lastname,
+    phone: formData.phone_number
+  };
+
+  // Remove the old keys if desired, or just send them along (backend typically ignores extras)
+  // But to be clean:
+  delete mappedData.firstname;
+  delete mappedData.lastname;
+  delete mappedData.phone_number;
+
   const response = await fetch(`${URL}/property-owner/update-profile`, {
     method: "PUT",
     headers: {
       "Authorization": `Bearer ${token?.value}`,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify(formData)
+    body: JSON.stringify(mappedData)
   });
   const data = await response.json();
   revalidateTag("property-owner-profile");

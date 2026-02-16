@@ -158,12 +158,12 @@ const propertyOwnerNavList = [
     },
     {
         text: "Profile Settings",
-        link: "/dashboard/user/profile-settings",
+        link: "/dashboard/property-owner/profile-settings",
         icon: <RiUserSettingsLine />
     },
     {
         text: "Help/Support",
-        link: "/dashboard/user/support",
+        link: "/dashboard/property-owner/support",
         icon: <LuMessageCircleQuestion />
     }
 ]

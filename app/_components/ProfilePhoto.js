@@ -5,7 +5,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { uploadDisplayPhoto } from "../_lib/action";
 import SpinnerMini from "./SpinnerMini";
 import toast from "react-hot-toast";
-export default function ProfilePhoto({ profile }) {
+export default function ProfilePhoto({ profile, uploadAction }) {
     const fileInputRef = useRef(null)
     const [isPending, startTransition] = useTransition();
     const handleChange = (e) => {
@@ -13,7 +13,8 @@ export default function ProfilePhoto({ profile }) {
         const formData = new FormData();
         formData.append("display_picture", image)
         startTransition( () => {
-            toast.promise( async () => await uploadDisplayPhoto(formData), {
+            const action = uploadAction || uploadDisplayPhoto;
+            toast.promise( async () => await action(formData), {
                 loading: "Loading...",
                 success: (data) => `${data.message}`,
                 error: "Error uploading photo, please try again"

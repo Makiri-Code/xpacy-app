@@ -6,7 +6,7 @@ import { updateUserProfile } from "../_lib/action";
 import SpinnerMini from "./SpinnerMini";
 import toast from "react-hot-toast";
 
-export default function LocationForm({ profile, cities }) {
+export default function LocationForm({ profile, cities, updateAction }) {
     const [pending, startTransition] = useTransition()
     const { handleSubmit, register, formState: { errors } } = useForm({
         defaultValues: {
@@ -15,7 +15,8 @@ export default function LocationForm({ profile, cities }) {
     })
     async function onSubmit(data) {
         startTransition(async () => {
-            const response = await updateUserProfile(data);
+             const action = updateAction || updateUserProfile;
+            const response = await action(data);
             if (response.success) {
                 toast.success(response.message)
             };

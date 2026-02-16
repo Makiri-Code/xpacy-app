@@ -7,21 +7,22 @@ import { updateUserProfile } from "../_lib/action";
 import toast from "react-hot-toast";
 
 
-export default function ProfileForm({ profile }) {
+export default function ProfileForm({ profile, updateAction }) {
     const [pending, startTransition] = useTransition();
     const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
-            firstname: profile?.firstname,
-            lastname: profile?.lastname,
+            firstname: profile?.first_name,
+            lastname: profile?.last_name,
             email: profile?.email,
-            phone_number: profile?.phone_number,
+            phone_number: profile?.phone,
             address: profile?.address,
             state: profile?.state
         }
     })
     async function onSubmit(data) {
         startTransition(async () => {
-            const response = await updateUserProfile(data);
+             const action = updateAction || updateUserProfile;
+            const response = await action(data);
             if (response.success) {
                 toast.success(response.message)
             };

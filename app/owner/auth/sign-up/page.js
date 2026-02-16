@@ -38,11 +38,11 @@ function SignUpForm() {
         try {
             const response = await handleCompleteOwnerRegistration(formData, token);
             
-            if (response.success) {
-                toast.success(response.message);
+            if (response?.success) {
+                toast.success(response.message || "Account setup complete!");
                 router.push("/property-owner/log-in");
             } else {
-                toast.error(response.message);
+                toast.error(response?.message || "An error occurred during registration.");
             }
             
         } catch (error) {

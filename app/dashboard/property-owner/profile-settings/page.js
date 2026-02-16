@@ -3,6 +3,7 @@ import ProfileForm from "@/app/_components/ProfileForm";
 import ProfilePhoto from "@/app/_components/ProfilePhoto";
 import UpdatePasswordForm from "@/app/_components/UpdatePasswordForm";
 import { getCities, getPropertyOwnerProfile } from "@/app/_lib/data-services";
+import { updatePropertyOwnerDisplayPicture, updatePropertyOwnerProfile } from "@/app/_lib/action";
 import { cookies } from "next/headers";
 
 export default async function Page() {
@@ -14,16 +15,16 @@ export default async function Page() {
             <h1 className="text-2xl font-bold text-gray-900 border-b border-gray-200 pb-4">Account Settings</h1>
             
             <Section title={"Profile Photo"}>
-                <ProfilePhoto profile={profile}/>
+                <ProfilePhoto profile={profile} uploadAction={updatePropertyOwnerDisplayPicture}/>
             </Section>
             <Section title={"Personal Information"}>
-                <ProfileForm profile={profile}/>
+                <ProfileForm profile={profile} updateAction={updatePropertyOwnerProfile}/>
             </Section>
             <Section title={"Account Security"}>
                 <UpdatePasswordForm/>
             </Section>
             <Section title={"Location Preference"}>
-                <LocationForm cities={cities} profile={profile}/>
+                <LocationForm cities={cities} profile={profile} updateAction={updatePropertyOwnerProfile}/>
             </Section>
         </div>
     )

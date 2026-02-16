@@ -7,12 +7,13 @@ import { updateUserPassword } from "../_lib/action";
 import toast from "react-hot-toast";
 
 
-export default function UpdatePasswordForm() {
+export default function UpdatePasswordForm({ updateAction }) {
     const [pending, startTransition] = useTransition();
     const { handleSubmit, register, formState: { errors }, getValues, reset } = useForm();
     const onSubmit = async (data) => {
         startTransition(async () => {
-            const response = await updateUserPassword(data);
+             const action = updateAction || updateUserPassword;
+            const response = await action(data);
             if (response.success) {
                 toast.success(response.message)
             };

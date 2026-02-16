@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 import PropertiesTableList from "@/app/_components/PropertiesTableList";
-import { getPropertyOwnerBookings, getProperties, getUserProfile, getPropertyOwnerServices } from "@/app/_lib/data-services";
+import { getPropertyOwnerBookings, getProperties, getUserProfile, getPropertyOwnerServices, getPropertyOwnerProperties } from "@/app/_lib/data-services";
 import PropertiesSummary from "@/app/_components/PropertiesSummary";
 import { MdAdd } from "react-icons/md";
 import SearchInput from "@/app/_components/SearchInput";
@@ -14,17 +14,16 @@ export default async function Page({searchParams}) {
     const token = cookieStore.get("token");
     
     // Fetch data
-    const [user, propertiesData, bookings, services] = await Promise.all([
-        getUserProfile(token),
-        getProperties(),
+    const [propertiesData, bookings, services] = await Promise.all([
+        getPropertyOwnerProperties(token),
         getPropertyOwnerBookings(token),
         getPropertyOwnerServices(token)
     ]);
 
     const allProperties = Array.isArray(propertiesData?.[0]) ? propertiesData[0] : [];
     
-    // 1. Filter by Owner
-    let properties = allProperties.filter(property => property.property_owner_id === user?.id);
+    // 1. Filter by Owner (Server-side now, but keeping safe check)
+    let properties = allProperties;
 
     // 2. Filter by Date Range (if present in URL)
     const filterRange = (await searchParams)?.range;

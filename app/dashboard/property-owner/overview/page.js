@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { getPropertyOwnerBookings, getPropertyOwnerServices, getProperties, getPropertyOwnerProfile, getUserNotifications } from "@/app/_lib/data-services";
+import { getPropertyOwnerBookings, getPropertyOwnerServices, getProperties, getPropertyOwnerProfile, getUserNotifications, getPropertyOwnerProperties } from "@/app/_lib/data-services";
 import PropertiesOverviewWrapper from "@/app/_components/PropertiesOverviewWrapper";
 import ServicesOverviewWrapper from "@/app/_components/ServicesOverviewWrapper";
 import PaymentsOverviewWrapper from "@/app/_components/PaymentsOverviewWrapper";
@@ -13,7 +13,7 @@ export default async function Page() {
     // Fetch data in parallel using Promise.allSettled to prevent one failure from breaking the page
     const results = await Promise.allSettled([
         getPropertyOwnerProfile(token),
-        getProperties(), // Note: Ideally should filter by owner ID if possible, but keeping logic consistent with existing pattern property fetching
+        getPropertyOwnerProperties(token), // Note: Ideally should filter by owner ID if possible, but keeping logic consistent with existing pattern property fetching
         getPropertyOwnerServices(token),
         getPropertyOwnerBookings(token),
         getUserNotifications(token)

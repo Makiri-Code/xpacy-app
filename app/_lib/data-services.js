@@ -48,11 +48,7 @@ export async function getRentProperties() {
 
 export async function getProperties(search = {}) {
 
-  const { purpose, type, minBedrooms, location, minPrice, maxPrice, page, property_owner_id, status } = search;
-  const apiUrl = `${url}/property/fetch-properties?purpose=${purpose || ""}&type=${type || ""}&location=${location || ""}&minBedrooms=${minBedrooms || ""}&minPrice=${minPrice || ""}&maxPrice=${maxPrice || ""}&page=${page || 1}&property_owner_id=${property_owner_id || ""}&property_status=${status || ""}`;
-  
-  //console.log("getProperties Search Params:", search);
-  //console.log("getProperties API URL:", apiUrl);
+  const apiUrl = `${url}/property/fetch-properties?${new URLSearchParams(search)}`;
 
   try {
     const response = await fetch(apiUrl);
@@ -76,7 +72,13 @@ export async function getLatestProperties() {
 
 export async function getCities() {
   try {
-    const response = await fetch(`${url}/location/fetch-states`, { method: "GET" });
+    const response = await fetch(`${url}/location/fetch-states`, { 
+      method: "GET",
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
+        "Accept": "application/json" 
+      }
+    });
     const { state } = await response.json();
     return state
   } catch (error) {
@@ -142,7 +144,7 @@ export async function getPropertyOwnerProfile(token) {
         return null;
     }
     const data = await response.json();
-    return data.user || data.propertyOwner || data; 
+    return data.owner || data.user || data.data || data; 
   } catch (error) {
     console.error("Error fetching property owner profile:", error)
     return null;
@@ -369,6 +371,24 @@ export async function getPropertyOwner(token) {
     console.error("Error fetching property owner (catch):", error);
     return [];
   }
+}
+
+export async function getPropertyOwnerProperties(token){
+    try {
+        const response = await fetch(`${url}/property-owner/fetch-properties`, {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${token?.value}`,
+              "Content-type": "application/json",
+            },
+          });
+          if (!response.ok) return [[], {}];
+          const { properties, pagination } = await response.json();
+          return [properties || [], pagination];
+    } catch (error) {
+        console.error("Error fetching property-owner properties:", error)
+        return [[], {}];
+    }
 }
 export async function getPropertyOwnerById(token, id) {
   console.log(id)

@@ -5,11 +5,11 @@ import { FaHome, FaCheckCircle, FaTools, FaTag, FaHandshake } from "react-icons/
 export default function PropertiesSummary({ properties, totalProperties, showHeading = true }) {
     // Calculate counts based on passed properties (which are already filtered if needed)
     const counts = {
-        rented: properties.filter(p => p.property_status?.toLowerCase() === 'rented').length,
-        vacant: properties.filter(p => p.property_status?.toLowerCase() === 'active' && p.purpose?.toLowerCase() === 'rent').length,
-        maintenance: properties.filter(p => p.property_status?.toLowerCase() === 'maintenance').length,
-        forSale: properties.filter(p => p.property_status?.toLowerCase() === 'active' && p.purpose?.toLowerCase() === 'sell').length,
-        sold: properties.filter(p => p.property_status?.toLowerCase() === 'sold').length,
+        rented: properties.filter(p => ['rented', 'occupied'].includes(p.availability_status?.toLowerCase())).length,
+        vacant: properties.filter(p => ['active', 'vacant', 'available'].includes(p.availability_status?.toLowerCase()) && p.purpose?.toLowerCase() === 'rent').length,
+        maintenance: properties.filter(p => p.availability_status?.toLowerCase() === 'maintenance').length,
+        forSale: properties.filter(p => ['active', 'available'].includes(p.availability_status?.toLowerCase()) && p.purpose?.toLowerCase() === 'sell').length,
+        sold: properties.filter(p => p.availability_status?.toLowerCase() === 'sold').length,
     };
 
     const summaryItems = [
