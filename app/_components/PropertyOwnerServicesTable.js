@@ -28,9 +28,9 @@ export default function PropertyOwnerServicesTable({ services, pagination, showF
                 <h2 className="text-xl font-bold text-primary-700 flex items-center gap-2">Service Requests</h2>
                 {showFilters && (
                     <div className="flex justify-end gap-2">
-                        <DateFilter />
-                        <ExportButton data={services} filename="services_summary" />
                         <SearchInput />
+                        < DashboardFilter/>
+                        
                     </div>
                 )}
             </header>

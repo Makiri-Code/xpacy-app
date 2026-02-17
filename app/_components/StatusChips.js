@@ -7,7 +7,16 @@ const statusBg = {
     "draft": "bg-gray-200 text-gray-700",
     "pending": "bg-[#FFF8BE] text-[#9D7B40]",
     "verified": "bg-[#C3E5C4] text-[#357B38]",
-    "n/a": "bg-gray-100 text-gray-500"
+    "n/a": "bg-gray-100 text-gray-500",
+    
+    // KYC Statuses
+    "approved": "bg-green-100 text-green-700",
+    "processing": "bg-blue-100 text-blue-700",
+    "declined": "bg-red-100 text-red-700",
+    
+    // Service Statuses
+    "in-progress": "bg-[#FFF8BE] text-[#9D7B40]",
+    "completed": "bg-[#C3E5C4] text-[#357B38]",
 }
 
 export default function StatusChips({status}) {

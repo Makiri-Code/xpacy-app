@@ -31,9 +31,9 @@ export default function TableOptionsMenu({ id }) {
             {tableOptions.map(({ text, link, icon }, i) => {
                 return (
                     text === "Delete property" ? (
-                        <Modal>
+                        <Modal key={i}>
                             <Modal.Open>
-                                <button key={"delete"} className="flex items-center px-2 py-3 gap-2 cursor-pointer hover:bg-gray-100">
+                                <button className="flex items-center px-2 py-3 gap-2 cursor-pointer hover:bg-gray-100 w-full text-left">
                                     <span className="text-2xl">{icon}</span>
                                     <span className="text-md">{text}</span>
                                 </button>

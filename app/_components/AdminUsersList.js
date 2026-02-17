@@ -37,14 +37,11 @@ export default function AdminUsersList({ users, title = "All Users List", varian
     const itemsPerPage = 10;
 
     let headings = defaultHeadings;
-    let gridCols = "grid-cols-[1.5fr_1.5fr_1fr_0.5fr]";
 
     if (variant === 'tenant') {
         headings = tenantHeadings;
-        gridCols = "grid-cols-[1.5fr_1.5fr_1fr_1fr_1fr_1fr_0.5fr]";
     } else if (variant === 'registered') {
         headings = registeredHeadings;
-        gridCols = "grid-cols-[1.5fr_1.5fr_1fr_1fr_0.5fr]";
     }
 
     // Pagination Logic
@@ -104,6 +101,9 @@ export default function AdminUsersList({ users, title = "All Users List", varian
                                         <td className="p-4 text-center">
                                             <span className="text-gray-500">N/A</span>
                                         </td>
+                                        <td className="p-4 text-center">
+                                            <span className="text-gray-500">N/A</span>
+                                        </td>
                                     </>
                                 ) : (
                                     <>
@@ -121,15 +121,7 @@ export default function AdminUsersList({ users, title = "All Users List", varian
                                         {variant === 'registered' && (
                                             <td className="p-4 text-center">
                                                 <div className="flex justify-center capitalize">
-                                                    <span className={`px-2 py-1 rounded text-xs font-medium capitalize ${
-                                                        kyc_status === 'approved' ? 'bg-green-100 text-green-700' :
-                                                        kyc_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                        kyc_status === 'processing' ? 'bg-blue-100 text-blue-700' :
-                                                        kyc_status === 'declined' ? 'bg-red-100 text-red-700' :
-                                                        'bg-gray-100 text-gray-500'
-                                                    }`}>
-                                                        {kyc_status || 'N/A'}
-                                                    </span>
+                                                    <StatusChips status={kyc_status || 'N/A'} />
                                                 </div>
                                             </td>
                                         )}
@@ -200,15 +192,7 @@ export default function AdminUsersList({ users, title = "All Users List", varian
                                     {variant === 'registered' && (
                                         <div className="flex justify-between items-center">
                                             <span>KYC Status:</span>
-                                            <span className={`px-2 py-1 rounded text-xs font-medium capitalize ${
-                                                kyc_status === 'approved' ? 'bg-green-100 text-green-700' :
-                                                kyc_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                kyc_status === 'processing' ? 'bg-blue-100 text-blue-700' :
-                                                kyc_status === 'declined' ? 'bg-red-100 text-red-700' :
-                                                'bg-gray-100 text-gray-500'
-                                            }`}>
-                                                {kyc_status || 'N/A'}
-                                            </span>
+                                            <StatusChips status={kyc_status || 'N/A'} />
                                         </div>
                                     )}
                                 </>

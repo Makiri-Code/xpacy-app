@@ -24,7 +24,7 @@ export default function LoginForm({role}) {
                 reset();
             })
         }
-        if(role === "admin"){ 
+        if(role === "admin" || role ==="super-admin"){ 
             startTransition(async () => {
                 const response = await handleAdminLogin(data, "/dashboard/admin");
                 if (response.success) toast.success(response.message);

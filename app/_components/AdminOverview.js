@@ -25,7 +25,6 @@ const AdminOverview = async () => {
         { 
             title: "Properties Managed", 
             count: propertiesResponse?.pagination?.total || 0, 
-            change: "+8%",
             icon: <FaHome className="text-green-500" size={24} />,
             color: "bg-green-50",
             bgColor: "bg-green-100"
@@ -33,7 +32,6 @@ const AdminOverview = async () => {
         { 
             title: "Pending Services", 
             count: services?.length || 0, 
-            change: services?.length > 0 ? "+12%" : "0%",
             icon: <FaCalendarCheck className="text-purple-500" size={24} />,
             color: "bg-purple-50",
             bgColor: "bg-purple-100"
@@ -41,7 +39,6 @@ const AdminOverview = async () => {
         { 
             title: "Owners Managed", 
             count: propertyOwners?.length || 0, 
-            change: "+5%",
             icon: <FaUsers className="text-blue-500" size={24} />,
             color: "bg-blue-50",
             bgColor: "bg-blue-100"
@@ -49,7 +46,6 @@ const AdminOverview = async () => {
         { 
             title: "Admins", 
             count: admins?.length || 0, 
-            change: "+2%",
             icon: <BiBuildings className="text-orange-500" size={24} />, // Changed from FaUsers to BiBuildings
             color: "bg-orange-50",
             bgColor: "bg-orange-100"
@@ -63,7 +59,7 @@ const AdminOverview = async () => {
                     <div className="flex justify-center items-center">
                         <div className="flex flex-col gap-3 items-center">
                             <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${item.color}`}>{item.icon}</div>
-                            <p className="text-gray-600 text-sm">{item.title}</p>
+                            <p className="text-gray-600 text-sm capitalize">{item.title}</p>
                             <p className="text-2xl font-bold mt-2">{item.count.toLocaleString()}</p>
                            
                         </div>

@@ -119,10 +119,15 @@ export async function getUserProfile(token) {
         "Content-type": "application/json",
       },
     });
+    if (!response.ok) {
+        console.error(`Error fetching user profile: ${response.status}`);
+        return null;
+    }
     const { user } = await response.json();
-    return user
+    return user;
   } catch (error) {
-    console.error("Error fetching user profile:", error)
+    console.error("Error fetching user profile:", error);
+    return null;
   }
 }
 

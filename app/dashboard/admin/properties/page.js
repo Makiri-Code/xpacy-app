@@ -15,7 +15,6 @@ export default async function Page({searchParams}) {
 
     return (
         <div className="space-y-6 p-4">
-            <h1 className="lg:text-4xl text-[28px] text-primary font-bold capitalize mb-4">Properties</h1>
             
             <PropertiesSummary properties={properties || []} totalProperties={pagination?.totalProperties || pagination?.totalItems || pagination?.total || pagination?.count} />
             
