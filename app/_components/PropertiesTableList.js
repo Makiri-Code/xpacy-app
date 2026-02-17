@@ -13,7 +13,7 @@ import DataTable from "./DataTable";
 const tableHeadings = [
     { heading: "Property" },
     { heading: "Views" },
-    { heading: "Payment Status", center: true },
+    { heading: "Property Status", center: true },
     { heading: "Availability Status", center: true },
     { heading: "Featured", center: true },
     { heading: "Price", center: true },
@@ -37,19 +37,9 @@ export default function PropertiesTableList({ properties, bookings = [], paginat
     const renderRow = (property) => {
         const activeBooking = getActiveBooking(property.id || property._id);
         const Views = property?.views || "N/A";
-        const paymentStatus = property?.payment_status || activeBooking?.status || "N/A";
+        const propertyStatus = property?.property_status  || "N/A";
         const Featured = property?.featured ? "Yes" : "No";
          
-        const isPaid = ['paid', 'active', 'confirmed', 'success', 'successful'].includes((paymentStatus || '').toLowerCase());
-        const isPending = ['pending', 'processing'].includes((paymentStatus || '').toLowerCase());
-        const isFailed = ['failed', 'cancelled', 'expired'].includes((paymentStatus || '').toLowerCase());
-
-        let paymentStatusColor = "bg-gray-100 text-gray-500";
-        if (isPaid) paymentStatusColor = "bg-[#C3E5C4] text-[#357B38]";
-        else if (isPending) paymentStatusColor = "bg-[#FFF8BE] text-[#9D7B40]";
-        else if (isFailed) paymentStatusColor = "bg-[#FBC0BC] text-[#C4170B]";
-        else if (paymentStatus !== "N/A") paymentStatusColor = "bg-[#FFF8BE] text-[#9D7B40]";
-
         return (
             <tr key={property.id || property._id} className="text-neutrals-900 text-sm font-mono border-b border-primary-100 hover:bg-gray-50/50 transition-colors last:border-0">
                 <td className="p-4">
@@ -81,8 +71,8 @@ export default function PropertiesTableList({ properties, bookings = [], paginat
                 </td>
                 <td className="p-4">
                     <div className="flex justify-center">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap ${paymentStatusColor}`}>
-                            {paymentStatus}
+                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap`}>
+                            {propertyStatus}
                         </span>
                     </div>
                 </td>
@@ -98,7 +88,7 @@ export default function PropertiesTableList({ properties, bookings = [], paginat
                      {property.property_price ? formatCurrency(property.property_price) : "N/A"}
                 </td>
                 <td className="p-4 text-center text-primary font-bold">
-                     {property.reserve_amount ? formatCurrency(property.reserve_amount) : "N/A"}
+                     {property.reserve_amount ? formatCurrency(property.reserve_amount) : "None"}
                 </td>
                 <td className="p-4 relative text-center">
                     <div className="flex justify-center">
@@ -112,18 +102,8 @@ export default function PropertiesTableList({ properties, bookings = [], paginat
     const renderMobileCard = (property) => {
         const activeBooking = getActiveBooking(property.id || property._id);
         const Views = property?.views || "N/A";
-        const paymentStatus = property?.payment_status || activeBooking?.status || "N/A";
+        const propertyStatus = property?.property_status || "N/A";
         const Featured = property?.featured ? "Yes" : "No";
-         
-        const isPaid = ['paid', 'active', 'confirmed', 'success', 'successful'].includes((paymentStatus || '').toLowerCase());
-        const isPending = ['pending', 'processing'].includes((paymentStatus || '').toLowerCase());
-        const isFailed = ['failed', 'cancelled', 'expired'].includes((paymentStatus || '').toLowerCase());
-
-        let paymentStatusColor = "bg-gray-100 text-gray-500";
-        if (isPaid) paymentStatusColor = "bg-[#C3E5C4] text-[#357B38]";
-        else if (isPending) paymentStatusColor = "bg-[#FFF8BE] text-[#9D7B40]";
-        else if (isFailed) paymentStatusColor = "bg-[#FBC0BC] text-[#C4170B]";
-        else if (paymentStatus !== "N/A") paymentStatusColor = "bg-[#FFF8BE] text-[#9D7B40]";
 
         return (
             <div key={property.id || property._id} className="flex flex-col gap-4 p-4 border-b border-primary-100 bg-white last:border-0 font-mono">
@@ -162,13 +142,13 @@ export default function PropertiesTableList({ properties, bookings = [], paginat
                         <span className="text-gray-900 truncate">{Views}</span>
                     </div>
                     <div className="flex flex-col items-end">
-                        <span className="text-gray-400 mb-1">Payment</span>
-                        <span className={`px-2 py-0.5 rounded-full ${paymentStatusColor}`}>
-                            {paymentStatus}
+                        <span className="text-gray-400 mb-1">Property Status</span>
+                        <span className={`px-2 py-0.5 rounded-full `}>
+                            {propertyStatus}
                         </span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-gray-400 mb-1">Status</span>
+                        <span className="text-gray-400 mb-1">Availability Status</span>
                         <StatusChips status={property.availability_status || 'N/A'} />
                     </div>
                     <div className="flex flex-col items-end">
