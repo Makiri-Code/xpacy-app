@@ -10,16 +10,16 @@ export default function OwnerOptionsMenu({id}){
         {
       label: "View owner details",
       href: `/admin/owner-details/${id}`,
-      icon: <VscNote />,
+      icon: <VscNote className="text-gray-400" />,
     },
     {
       label: "Issue invoice",
       href: `/admin/issue-invoice/${id}`,
-      icon: <TbInvoice />,
+      icon: <TbInvoice className="text-gray-400" />,
     },
     {
       label: "Delete owner",
-      icon: <RiDeleteBin6Line />,
+      icon: <RiDeleteBin6Line className="text-gray-400" />,
       modal: 
         <ConfirmDeleteModal
           title="Are you sure you want to delete this property?"

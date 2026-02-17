@@ -1,10 +1,11 @@
 
 
-const CustomToogle = ({checked, onChange}) => {
+const CustomToogle = ({checked, onChange, disabled = false}) => {
   return (
-    <label className="relative flex justify-between items-center group p-2 text-xl">
+    <label className={`relative flex justify-between items-center group p-2 text-xl ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}>
       <input
         type="checkbox"
+        disabled={disabled}
         checked={checked}
         onChange={(e) => {
           onChange(e.target.checked)

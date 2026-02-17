@@ -8,7 +8,7 @@ import { PiFloppyDiskThin } from "react-icons/pi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useCompressImage } from "../_hooks/useCompressImage";
 
-export default function DragnDrop({ accept, maxFiles, files, setFiles }) {
+export default function DragnDrop({ accept, maxFiles, files, setFiles, isReadOnly = false }) {
   const {
     compressImage,
     files: selectedFiles,
@@ -23,6 +23,7 @@ export default function DragnDrop({ accept, maxFiles, files, setFiles }) {
     maxFiles,
     accept,
     onDrop: compressImage,
+    disabled: isReadOnly,
   });
 
   return (
@@ -82,7 +83,7 @@ export default function DragnDrop({ accept, maxFiles, files, setFiles }) {
               </div>
             ))}
 
-            {maxFiles > 1 && (
+            {!isReadOnly && maxFiles > 1 && (
               <div {...getRootProps()}>
                 <input {...getInputProps()} />
                 <button
@@ -119,7 +120,7 @@ export default function DragnDrop({ accept, maxFiles, files, setFiles }) {
           )}
 
           {/* Remove */}
-          {chosenFile && (
+          {!isReadOnly && chosenFile && (
             <div
               className="flex items-center gap-2 text-[#E03131] cursor-pointer"
               onClick={() => removeFile(chosenFile)}
@@ -130,20 +131,23 @@ export default function DragnDrop({ accept, maxFiles, files, setFiles }) {
           )}
         </div>
       ) : (
-        <div className="w-full h-full border border-gray-200 flex items-center justify-center font-mono rounded-2xl">
+        <div className="w-full h-full border border-gray-200 flex items-center justify-center font-mono rounded-2xl p-8">
           <div {...getRootProps()} className="flex flex-col items-center gap-4">
             <input {...getInputProps()} />
             <IoCloudUploadOutline className="text-[40px]" />
             <div className="text-center space-y-1">
               <button
-                onClick={open}
-                className="text-primary font-bold text-lg"
+                disabled={isReadOnly}
+                onClick={!isReadOnly ? open : undefined}
+                className={`text-primary font-bold text-lg ${isReadOnly ? "opacity-50 cursor-not-allowed" : ""}`}
               >
-                Click to upload
+                {isReadOnly ? "No images uploaded" : "Click to upload"}
               </button>
-              <p className="text-gray-500 text-sm">
-                PNG, JPG, GIF, MP4, MOV up to 100MB
-              </p>
+              {!isReadOnly && (
+                <p className="text-gray-500 text-sm">
+                  PNG, JPG, GIF, MP4, MOV up to 100MB
+                </p>
+              )}
             </div>
           </div>
         </div>

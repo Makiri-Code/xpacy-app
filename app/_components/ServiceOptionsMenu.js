@@ -9,16 +9,16 @@ export default function ServiceOptionsMenu({ id, hasProvider }) {
         {
             label: "View details",
             href: `/admin/service-details/${id}`,
-            icon: <VscNote />,
+            icon: <VscNote className="text-gray-400" />,
         },
         {
             label: hasProvider ? "Reassign provider" : "Assign provider",
             href: `/admin/assign-provider/${id}`,
-            icon: <MdOutlineAssignmentInd />,
+            icon: <MdOutlineAssignmentInd className="text-gray-400" />,
         },
         {
             label: "Delete service request",
-            icon: <RiDeleteBin6Line />,
+            icon: <RiDeleteBin6Line className="text-gray-400" />,
             onClick: () => console.log("delete service", id),
         },
     ];

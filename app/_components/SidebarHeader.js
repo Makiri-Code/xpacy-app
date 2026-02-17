@@ -57,7 +57,6 @@ async function ProfileWrapper({ role }) {
             {role === "property-owner" && (
                 <div className="flex gap-4 items-center relative">
                     <Link href="/book-service" className="p-4 rounded-lg bg-white border border-primary hidden lg:flex items-center justify-center text-primary font-mono font-bold">New Service Request</Link>
-                    <Link href="/dashboard/property-owner/properties/add" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">New Property Listing</Link>
                     <div className="w-0.5 h-10 bg-gray-300"></div>
                     <ProfileDisplay role="property-owner" profile={profile} />
                     <MobileProfileMenu profile={profile} role="property-owner" />

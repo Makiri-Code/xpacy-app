@@ -20,11 +20,6 @@ export default function PropertyOptionsMenu({ id }) {
             href: `/dashboard/property-owner/valuation/${id}`, 
             icon: <FaChartLine className="text-gray-400" />,
         },
-        {
-            label: "New property listing",
-            href: `/dashboard/property-owner/properties/add`,
-            icon: <MdAdd className="text-gray-400" />,
-        },
     ];
 
     return (

@@ -12,17 +12,17 @@ export default function UserOptionsMenu({ id, role }){
         {
             label: "View details",
             href: isOwner ? `/admin/owner-details/${id}` : `/admin/users/${id}`, // Fallback for non-owners
-            icon: <VscNote />,
+            icon: <VscNote className="text-gray-400" />,
         },
         // Only show invoice option for owners for now, unless tenants also get invoices here
         ...(isOwner ? [{
             label: "Issue invoice",
             href: `/admin/issue-invoice/${id}`,
-            icon: <TbInvoice />,
+            icon: <TbInvoice className="text-gray-400" />,
         }] : []),
         {
             label: "Delete user",
-            icon: <RiDeleteBin6Line />,
+            icon: <RiDeleteBin6Line className="text-gray-400" />,
             modal: 
                 <ConfirmDeleteModal
                 title={`Are you sure you want to delete this ${role ? role.replace('-', ' ') : 'user'}?`}

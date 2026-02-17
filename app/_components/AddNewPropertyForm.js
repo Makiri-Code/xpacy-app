@@ -199,7 +199,8 @@ const AddNewPropertyForm = ({
     // Incoming props
     propertyOwnerInfo = null, 
     disableSearch, 
-    propertyObj = {} 
+    propertyObj = {},
+    isReadOnly = false
 }) => {
     // Merge props logic
     const effectiveOwner = preSelectedOwner || propertyOwnerInfo || null;
@@ -353,17 +354,17 @@ const AddNewPropertyForm = ({
     console.log(pathname.split("/")[2])
 
     return (
-        <div className="flex flex-col gap-12 w-[796px]">
+        <div className="flex flex-col gap-12 w-[796px] mx-auto pb-12">
             {/* Header */}
             <header className="flex flex-col items-center justify-center gap-4">
                 <h2 className="text-3xl font-bold text-primary">
                     {
-                        pathname.split("/")[2] === "property-details" ? "Property Details" : 
-                        pathname.split("/")[2] === "edit-property" || isEditMode ? "Edit Property" : 
+                        pathname.includes("property-details") || pathname.includes("/dashboard/property-owner/properties/") && !pathname.includes("/add") ? "Property Details" : 
+                        pathname.includes("edit-property") || isEditMode ? "Edit Property" : 
                         "Add New Property"
                     }
                 </h2>
-                {pathname.split("/").includes("property-details") || isEditMode ? null : <p className="font-mono">Fill in the correct detailed information for the new property.</p>}
+                {pathname.includes("property-details") || (pathname.includes("/dashboard/property-owner/properties/") && !pathname.includes("/add")) || isEditMode ? null : <p className="font-mono">Fill in the correct detailed information for the new property.</p>}
             </header>
             {/* Progress bar */}
             <ProgressBar activeStep={activeStep} setActiveStep={setActiveStep} />
@@ -415,13 +416,13 @@ const AddNewPropertyForm = ({
                         <h3 className="text-lg">Property Overview</h3>
                         <div className="flex flex-col gap-6">
                             <FormInput label={"Property Name"} id={"property_name"} >
-                                <input  {...register("property_name", {
+                                <input disabled={isReadOnly}  {...register("property_name", {
                                     required: "Property Name is required",
                                 })} type={"text"} name={"property_name"} id={"property_name"} placeholder={"Enter your property name"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_name ? "border-error" : "border-primary-200"}`} />
                                 {errors.property_name && <span className="-mt-2 text-xs text-error">{errors.property_name.message}</span>}
                             </FormInput>
                             <FormInput label={"Property Address"} id={"address"} >
-                                <input  {...register("address", {
+                                <input disabled={isReadOnly}  {...register("address", {
                                     required: "Property Address is required",
                                 })} type={"text"} name={"address"} id={"address"} placeholder={"Enter your property address"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.address ? "border-error" : "border-primary-200"}`} />
                                 {errors.address && <span className="-mt-2 text-xs text-error">{errors.address.message}</span>}
@@ -429,7 +430,7 @@ const AddNewPropertyForm = ({
                             <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
 
                                 <FormInput label={"State"} id={"state"} >
-                                    <select {...register("state", {
+                                    <select disabled={isReadOnly} {...register("state", {
                                         required: "State is required",
                                     })} type={"text"} name={"state"} id={"state"} placeholder={"Enter your state"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.state ? "border-error" : "border-primary-200"}`}>
                                         <option value="">Select a state</option>
@@ -440,7 +441,7 @@ const AddNewPropertyForm = ({
                                     {errors.state && <span className="-mt-2 text-xs text-error">{errors.state.message}</span>}
                                 </FormInput>
                                 <FormInput label={"City/Town"} id={"city"} >
-                                    <input  {...register("city", {
+                                    <input disabled={isReadOnly}  {...register("city", {
                                         required: "City/Town is required",
                                     })} type={"text"} name={"city"} id={"city"} placeholder={"Enter your city/town"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.city ? "border-error" : "border-primary-200"}`} />
                                     {errors.city && <span className="-mt-2 text-xs text-error">{errors.city.message}</span>}
@@ -448,7 +449,7 @@ const AddNewPropertyForm = ({
                             </div>
                             <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
                                 <FormInput label={"Property Type"} id={"property_type"} >
-                                    <select {...register("property_type", {
+                                    <select disabled={isReadOnly} {...register("property_type", {
                                         required: "Property Type is required",
                                     })} name={"property_type"} id={"property_type"} placeholder={"Enter your property type"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_type ? "border-error" : "border-primary-200"}`}>
                                         <option value="">Select a property type</option>
@@ -459,7 +460,7 @@ const AddNewPropertyForm = ({
                                     {errors.property_type && <span className="-mt-2 text-xs text-error">{errors.property_type.message}</span>}
                                 </FormInput>
                                 <FormInput label={"Availability Status"} id={"availability_status"} >
-                                    <select {...register("availability_status", {
+                                    <select disabled={isReadOnly} {...register("availability_status", {
                                         required: "Availability Status is required",
                                     })} name={"availability_status"} id={"availability_status"} placeholder={"Enter your availability status"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.availability_status ? "border-error" : "border-primary-200"}`}>
                                         <option value="">Select an availability status</option>
@@ -474,14 +475,14 @@ const AddNewPropertyForm = ({
                                 <FormInput label={"Property Price"} id={"property_price"} >
                                     <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_price ? "border-error" : "border-primary-200"}`}>
                                         <span><FaNairaSign /></span>
-                                        <input  {...register("property_price", {
+                                        <input disabled={isReadOnly}  {...register("property_price", {
                                             required: "Property Price is required",
                                         })} type={"number"} name={"property_price"} id={"property_price"} placeholder={"Enter your property price"} className={`focus:outline-none flex-1`} />
                                     </div>
                                     {errors.property_price && <span className="-mt-2 text-xs text-error">{errors.property_price.message}</span>}
                                 </FormInput>
                                 <FormInput label={"Property Status"} id={"property_status"} >
-                                    <select {...register("property_status", {
+                                    <select disabled={isReadOnly} {...register("property_status", {
                                         required: "Property Status is required",
                                     })} name={"property_status"} id={"property_status"} placeholder={"Enter your property status"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_status ? "border-error" : "border-primary-200"}`}>
                                         <option value="">Select a property status</option>
@@ -493,7 +494,7 @@ const AddNewPropertyForm = ({
                                 </FormInput>
                             </div>
                             <FormInput label={"Property Description"} id={"description"} >
-                                <textarea {...register("description", {
+                                <textarea disabled={isReadOnly} {...register("description", {
                                     required: "Property Description is required",
                                 })} name={"description"} id={"description"} placeholder={"Enter your property description"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 h-32 resize-none focus:outline-none ${errors.description ? "border-error" : "border-primary-200"}`}></textarea>
                                 {errors.description && <span className="-mt-2 text-xs text-error">{errors.description.message}</span>}
@@ -508,7 +509,7 @@ const AddNewPropertyForm = ({
                         <div className="flex flex-col gap-6">
                             <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
                                 <FormInput label={"Bedrooms"} id={"total_bedrooms"} >
-                                    <select {...register("total_bedrooms", {
+                                    <select disabled={isReadOnly} {...register("total_bedrooms", {
                                         required: "Property Status is required",
                                     })} name={"total_bedrooms"} id={"total_bedrooms"} placeholder={"Enter your bedrooms"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.total_bedrooms ? "border-error" : "border-primary-200"}`}>
                                         <option value="">Select a bedroom count</option>
@@ -519,7 +520,7 @@ const AddNewPropertyForm = ({
                                     {errors.total_bedrooms && <span className="-mt-2 text-xs text-error">{errors.total_bedrooms.message}</span>}
                                 </FormInput>
                                 <FormInput label={"Bathrooms"} id={"total_bathrooms"} >
-                                    <select {...register("total_bathrooms", {
+                                    <select disabled={isReadOnly} {...register("total_bathrooms", {
                                         required: "Property Status is required",
                                     })} name={"total_bathrooms"} id={"total_bathrooms"} placeholder={"Enter your bathrooms"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.total_bathrooms ? "border-error" : "border-primary-200"}`}>
                                         <option value="">Select a bathroom count</option>
@@ -532,7 +533,7 @@ const AddNewPropertyForm = ({
                             </div>
                             <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
                                 <FormInput label={"Toilets"} id={"total_toilets"} >
-                                    <select {...register("total_toilets", {
+                                    <select disabled={isReadOnly} {...register("total_toilets", {
                                         required: "Property Status is required",
                                     })} name={"total_toilets"} id={"total_toilets"} placeholder={"Enter your toilets"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.total_toilets ? "border-error" : "border-primary-200"}`}>
                                         <option value="">Select a toilet count</option>
@@ -543,7 +544,7 @@ const AddNewPropertyForm = ({
                                     {errors.total_toilets && <span className="-mt-2 text-xs text-error">{errors.total_toilets.message}</span>}
                                 </FormInput>
                                 <FormInput label={"Parking Area"} id={"parking_area"} >
-                                    <select {...register("parking_area", {
+                                    <select disabled={isReadOnly} {...register("parking_area", {
                                         required: "Property Status is required",
                                     })} name={"parking_area"} id={"parking_area"} placeholder={"Enter your parking area"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.parking_area ? "border-error" : "border-primary-200"}`}>
                                         <option value="">Select a parking area</option>
@@ -558,19 +559,19 @@ const AddNewPropertyForm = ({
                                 <FormInput label={"Property size (square area)"} id={"property_square_area"} >
                                     <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_price ? "border-error" : "border-primary-200"}`}>
                                         <span>sqm2</span>
-                                        <input  {...register("property_square_area")} type={"number"} name={"property_square_area"} id={"property_square_area"} placeholder={"Enter your property square area"} className={`focus:outline-none flex-1`} />
+                                        <input disabled={isReadOnly}  {...register("property_square_area")} type={"number"} name={"property_square_area"} id={"property_square_area"} placeholder={"Enter your property square area"} className={`focus:outline-none flex-1`} />
                                     </div>
                                     {errors.property_square_area && <span className="-mt-2 text-xs text-error">{errors.property_square_area.message}</span>}
                                 </FormInput>
                                 <FormInput label={"Land area"} id={"land_area"} >
                                     <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_price ? "border-error" : "border-primary-200"}`}>
                                         <span>sqm2</span>
-                                        <input  {...register("land_area")} type={"number"} name={"land_area"} id={"land_area"} placeholder={"Enter your land area"} className={`focus:outline-none flex-1`} />
+                                        <input disabled={isReadOnly}  {...register("land_area")} type={"number"} name={"land_area"} id={"land_area"} placeholder={"Enter your land area"} className={`focus:outline-none flex-1`} />
                                     </div>
                                     {errors.land_area && <span className="-mt-2 text-xs text-error">{errors.land_area.message}</span>}
                                 </FormInput>
                             </div>
-                            <SelectAmeneties propertyAmenities={propertyAmenities} setPropertyAmenities={setPropertyAmenities} />
+                            <SelectAmeneties readOnly={isReadOnly} propertyAmenities={propertyAmenities} setPropertyAmenities={setPropertyAmenities} />
                         </div>
                     </>
                 )}
@@ -588,7 +589,7 @@ const AddNewPropertyForm = ({
                                     ))}
                                 </div>
                             </> :
-                            <DragnDrop files={files} setFiles={setFiles} maxFiles={9} />}
+                            <DragnDrop isReadOnly={isReadOnly} files={files} setFiles={setFiles} maxFiles={9} />}
                         <FormInput label={"Property Video Tour (Optional)"} id={"property_video_tour"} >
                             <input  {...register("virtual_tour_url")} type={"text"} name={"virtual_tour_url"} id={"virtual_tour_url"} placeholder={"Enter your property video tour link"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.virtual_tour_url ? "border-error" : "border-primary-200"}`} />
                             {errors.virtual_tour_url && <span className="-mt-2 text-xs text-error">{errors.virtual_tour_url.message}</span>}
@@ -597,17 +598,17 @@ const AddNewPropertyForm = ({
                             <span className="font-mono font-medium">Location Coordinates <a className="text-blue-500 fonr-medium" href="https://www.latlong.net" target="_blank">(Get coordinates)</a></span>
                             <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
                                 <FormInput label={"Latitude"} id={"lat"} >
-                                    <input  {...register("lat")} type={"text"} name={"lat"} id={"lat"} placeholder={"Enter your property latitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.lat ? "border-error" : "border-primary-200"}`} />
+                                    <input disabled={isReadOnly}  {...register("lat")} type={"text"} name={"lat"} id={"lat"} placeholder={"Enter your property latitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.lat ? "border-error" : "border-primary-200"}`} />
                                     {errors.lat && <span className="-mt-2 text-xs text-error">{errors.lat.message}</span>}
                                 </FormInput>
                                 <FormInput label={"Longitude"} id={"long"} >
-                                    <input  {...register("long")} type={"text"} name={"long"} id={"long"} placeholder={"Enter your property longitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.long ? "border-error" : "border-primary-200"}`} />
+                                    <input disabled={isReadOnly}  {...register("long")} type={"text"} name={"long"} id={"long"} placeholder={"Enter your property longitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.long ? "border-error" : "border-primary-200"}`} />
                                     {errors.long && <span className="-mt-2 text-xs text-error">{errors.long.message}</span>}
                                 </FormInput>
                             </div>
                             <div className="flex items-center justify-between font-mono">
                                 <span>Feature this property</span>
-                                <CustomToogle checked={isFeatured} onChange={setIsFeatured} />
+                                <CustomToogle disabled={isReadOnly} checked={isFeatured} onChange={setIsFeatured} />
                             </div>
                         </div>
                     </>

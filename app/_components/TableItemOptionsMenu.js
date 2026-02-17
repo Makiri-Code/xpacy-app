@@ -8,9 +8,9 @@ export default function TableItemOptionsMenu({ actions, menuId = "list" }) {
     <OptionsMenu id={menuId}>
       {actions.map((action, i) => {
         const content = (
-          <div className="flex items-center px-2 py-3 gap-2 hover:bg-gray-100">
-            {action.icon && <span className="text-2xl">{action.icon}</span>}
-            <span className="text-md">{action.label}</span>
+          <div className={`flex items-center px-4 py-4 gap-4 hover:bg-gray-50 transition-colors ${i !== actions.length - 1 ? "border-b border-gray-100" : ""}`}>
+            {action.icon && <span className="text-xl">{action.icon}</span>}
+            <span className="text-sm font-medium text-gray-600">{action.label}</span>
           </div>
         )
 
@@ -27,7 +27,7 @@ export default function TableItemOptionsMenu({ actions, menuId = "list" }) {
         // Link action
         if (action.href) {
           return (
-            <Link key={i} href={action.href}>
+            <Link key={i} href={action.href} className="w-full text-left">
               {content}
             </Link>
           )

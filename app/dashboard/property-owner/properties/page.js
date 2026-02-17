@@ -57,15 +57,6 @@ export default async function Page({searchParams}) {
                 pagination={pagination}
                 recent={false} 
             />
-            <div className="flex justify-start mt-8 pb-8">
-                <Link 
-                    href="/dashboard/property-owner/properties/add" 
-                    className="flex items-center gap-2 "
-                >
-                    <MdAdd className="text-2xl" />
-                    <span className="font-semibold">Request New Property Listing</span>
-                </Link>
-            </div>
         </div>
     );
 };

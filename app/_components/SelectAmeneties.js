@@ -18,11 +18,12 @@ const amenitites = [
     "Fully-equiped Gym",
 ];
 
-const SelectAmeneties = ({ propertyAmenities, setPropertyAmenities }) => {
+const SelectAmeneties = ({ propertyAmenities, setPropertyAmenities, readOnly = false }) => {
   return (
     <div className="flex flex-col gap-2 font-mono">
-          <span>Select Amenities</span>
+          <span>Select Amenities {readOnly && "(Read-only)"}</span>
           <Autocomplete
+              disabled={readOnly}
               freeSolo
               sx={{
                   bgcolor: "#fff",
