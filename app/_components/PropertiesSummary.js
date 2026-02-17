@@ -4,44 +4,38 @@ import { FaHome, FaCheckCircle, FaTools, FaTag, FaHandshake } from "react-icons/
 
 export default function PropertiesSummary({ properties, totalProperties, showHeading = true }) {
     // Calculate counts based on passed properties (which are already filtered if needed)
+    // Calculate counts based on passed properties
     const counts = {
+        shortlet: properties.filter(p => p.property_status?.toLowerCase() === 'shortlet').length,
         rented: properties.filter(p => ['rented', 'occupied'].includes(p.availability_status?.toLowerCase())).length,
-        vacant: properties.filter(p => ['active', 'vacant', 'available'].includes(p.availability_status?.toLowerCase()) && p.purpose?.toLowerCase() === 'rent').length,
-        maintenance: properties.filter(p => p.availability_status?.toLowerCase() === 'maintenance').length,
-        forSale: properties.filter(p => ['active', 'available'].includes(p.availability_status?.toLowerCase()) && p.purpose?.toLowerCase() === 'sell').length,
-        sold: properties.filter(p => p.availability_status?.toLowerCase() === 'sold').length,
+        featured: properties.filter(p => p.featured || p.isFeatured || p.is_featured).length,
+        available: properties.filter(p => ['active', 'available', 'vacant'].includes(p.availability_status?.toLowerCase())).length,
     };
 
     const summaryItems = [
         {
-            title: "Rented",
-            count: counts.rented,
+            title: "Shortlet",
+            count: counts.shortlet,
             icon: <FaHome className="text-blue-500" size={20} />,
             color: "bg-blue-50 border-blue-100"
         },
         {
-            title: "Vacant",
-            count: counts.vacant,
-            icon: <FaCheckCircle className="text-green-500" size={20} />,
+            title: "Rented",
+            count: counts.rented,
+            icon: <FaHandshake className="text-green-500" size={20} />,
             color: "bg-green-50 border-green-100"
         },
         {
-            title: "Under Maintenance",
-            count: counts.maintenance,
-            icon: <FaTools className="text-orange-500" size={20} />,
+            title: "Featured",
+            count: counts.featured,
+            icon: <FaTag className="text-orange-500" size={20} />,
             color: "bg-orange-50 border-orange-100"
         },
         {
-            title: "For Sale",
-            count: counts.forSale,
-            icon: <FaTag className="text-purple-500" size={20} />,
+            title: "Available",
+            count: counts.available,
+            icon: <FaCheckCircle className="text-purple-500" size={20} />,
             color: "bg-purple-50 border-purple-100"
-        },
-        {
-            title: "Sold",
-            count: counts.sold,
-            icon: <FaHandshake className="text-gray-500" size={20} />,
-            color: "bg-gray-50 border-gray-100"
         }
     ];
 
@@ -66,7 +60,7 @@ export default function PropertiesSummary({ properties, totalProperties, showHea
                 </div>
 
                 {/* Grid Items */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {summaryItems.map((item, index) => (
                         <div key={index} className="flex flex-col items-center justify-center p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white border border-primary-100 w-full">
                             <p className="font-mono text-primary-700 text-base text-center">{item.title}</p>

@@ -12,12 +12,12 @@ export default function PropertyOptionsMenu({ id }) {
         },
         {
             label: "Submit service request",
-            href: `/dashboard/property-owner/services/request?propertyId=${id}`, 
+            href: `/dashboard/property-owner/properties/#`, 
             icon: <FaTools className="text-gray-400" />,
         },
         {
             label: "Property valuation",
-            href: `/dashboard/property-owner/valuation/${id}`, 
+            href: `/dashboard/property-owner/properties/#`, 
             icon: <FaChartLine className="text-gray-400" />,
         },
     ];
