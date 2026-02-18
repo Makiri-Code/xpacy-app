@@ -19,9 +19,17 @@ export default function PropertiesOverviewWrapper({ properties, showFilters = tr
     return (
         <div className="flex flex-col gap-4">
             {showFilters && (
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-end gap-2 text-nowrap">
                     <DateFilter onFilterChange={setFilterRange} value={filterRange} />
-                    <ExportButton data={filteredProperties} filename="property_summary" />
+                    <ExportButton 
+                        data={filteredProperties} 
+                        filename="property_summary" 
+                        options={[
+                            { id: "all", label: "All data" },
+                            { id: "summary", label: "Summary" },
+                            { id: "overview", label: "properties overview" }
+                        ]}
+                    />
                 </div>
             )}
             <PropertiesSummary properties={filteredProperties} showHeading={showFilters} />

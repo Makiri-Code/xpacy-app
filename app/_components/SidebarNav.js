@@ -55,7 +55,7 @@ const userNavList = [
     },
     {
         text: "Help/Support",
-        link: "/dashboard/user/support",
+        link: "/contact",
         icon: <LuMessageCircleQuestion />
     }
 ]
@@ -109,7 +109,7 @@ const adminNavList = [
     },
     {
         text: "System Status",
-        link: "/dashboard/admin/system-status",
+        link: "/contact",
         icon: <RiPulseLine />
     }
 ]
@@ -148,7 +148,7 @@ const propertyOwnerNavList = [
     },
     {
         text: "Help/Support",
-        link: "/dashboard/property-owner/support",
+        link: "/contact",
         icon: <LuMessageCircleQuestion />
     }
 ]

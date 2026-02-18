@@ -19,9 +19,16 @@ export default function PaymentsOverviewWrapper({ bookings, showFilters = true }
     return (
         <div className="flex flex-col gap-4">
             {showFilters && (
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-end gap-2 text-nowrap">
                     <DateFilter onFilterChange={setFilterRange} value={filterRange} />
-                    <ExportButton data={filteredBookings} filename="payments_summary" />
+                    <ExportButton 
+                        data={filteredBookings} 
+                        filename="payments_summary" 
+                        options={[
+                            { id: "all", label: "All" },
+                            { id: "invoice_list", label: "Invoice list" }
+                        ]}
+                    />
                 </div>
             )}
             <PaymentsSummary bookings={filteredBookings} showHeading={showFilters} />

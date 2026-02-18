@@ -46,7 +46,15 @@ export default async function Page({searchParams}) {
         <div className="space-y-6 p-4">
             <div className="flex justify-end gap-2">
                 <DateFilter />
-                <ExportButton data={properties} filename="property_summary" />
+                <ExportButton 
+                    data={properties} 
+                    filename="property_summary" 
+                    options={[
+                        { id: "all", label: "All data" },
+                        { id: "summary", label: "Summary" },
+                        { id: "overview", label: "properties overview" }
+                    ]}
+                />
             </div>
             <PropertiesSummary properties={properties} />
            
@@ -57,6 +65,7 @@ export default async function Page({searchParams}) {
                 pagination={pagination}
                 recent={false} 
             />
+            
         </div>
     );
 };

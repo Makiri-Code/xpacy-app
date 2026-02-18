@@ -19,9 +19,17 @@ export default function ServicesOverviewWrapper({ services, showFilters = true }
     return (
         <div className="flex flex-col gap-4">
             {showFilters && (
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-end gap-2 text-nowrap">
                     <DateFilter onFilterChange={setFilterRange} value={filterRange} />
-                    <ExportButton data={filteredServices} filename="services_summary" />
+                    <ExportButton 
+                        data={filteredServices} 
+                        filename="services_summary" 
+                        options={[
+                            { id: "all", label: "All data" },
+                            { id: "summary", label: "Summary" },
+                            { id: "service_list", label: "Service request list" }
+                        ]}
+                    />
                 </div>
             )}
             <ServicesSummary services={filteredServices} showHeading={showFilters} />

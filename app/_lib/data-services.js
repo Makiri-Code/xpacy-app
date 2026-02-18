@@ -108,6 +108,7 @@ export async function getOtherProperties() {
 }
 
 export async function getUserProfile(token) {
+  if (!token?.value) return null;
   try {
     const response = await fetch(`${url}/user/fetch-profile`, {
        next: {
@@ -120,7 +121,9 @@ export async function getUserProfile(token) {
       },
     });
     if (!response.ok) {
-        console.error(`Error fetching user profile: ${response.status}`);
+        if (response.status !== 401 && response.status !== 403) {
+            console.error(`Error fetching user profile: ${response.status}`);
+        }
         return null;
     }
     const { user } = await response.json();
@@ -133,6 +136,7 @@ export async function getUserProfile(token) {
 
 
 export async function getPropertyOwnerProfile(token) {
+  if (!token?.value) return null;
   try {
     const response = await fetch(`${url}/property-owner/fetch-profile`, {
       next: {
@@ -145,7 +149,9 @@ export async function getPropertyOwnerProfile(token) {
       },
     });
     if (!response.ok) {
-        console.error("Failed to fetch property owner profile:", response.status, response.statusText);
+        if (response.status !== 401 && response.status !== 403) {
+            console.error("Failed to fetch property owner profile:", response.status, response.statusText);
+        }
         return null;
     }
     const data = await response.json();
@@ -159,6 +165,7 @@ export async function getPropertyOwnerProfile(token) {
 
 
 export async function getSavedProperties(token) {
+  if (!token?.value) return { data: [], pagination: {} };
   try {
     const response = await fetch(`${url}/user-property/saved-properties`, {
       next: {
@@ -177,6 +184,7 @@ export async function getSavedProperties(token) {
 }
 
 export async function getUserNotifications(token) {
+  if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/notification/fetch-notifications`, {
       next: {
@@ -196,6 +204,7 @@ export async function getUserNotifications(token) {
 }
 
 export async function getBookedServices(token) {
+  if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/user/fetch-services`, {
       next: {
@@ -214,6 +223,7 @@ export async function getBookedServices(token) {
 }
 
 export async function getInvoiceList(token) {
+  if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/user/fetch-invoices`, {
       next: {
@@ -232,6 +242,7 @@ export async function getInvoiceList(token) {
 }
 
 export async function getInvoice(token, id) {
+  if (!token?.value) return null;
   try {
     const response = await fetch(`${url}/user/fetch-invoice/${id}`, {
       method: "GET",
@@ -247,6 +258,7 @@ export async function getInvoice(token, id) {
 }
 
 export async function getBookingList(token) {
+  if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/user/fetch-bookings`, {
       method: "GET",
@@ -266,6 +278,7 @@ export async function getBookingList(token) {
 ////// Admin Data Services /////
 
 export async function getAdminProfile(token) {
+  if (!token?.value) return null;
   try {
     const response = await fetch(`${url}/admin/fetch-admin-profile`, {
       next: {
@@ -278,7 +291,9 @@ export async function getAdminProfile(token) {
       },
     });
     if (!response.ok) {
-        console.error(`Error fetching admin profile: ${response.status}`);
+        if (response.status !== 401 && response.status !== 403) {
+            console.error(`Error fetching admin profile: ${response.status}`);
+        }
         return null;
     }
     const { admin } = await response.json();
@@ -290,6 +305,7 @@ export async function getAdminProfile(token) {
 }
 
 export async function getAdminProperties(token, page) {
+  if (!token?.value) return { properties: [], pagination: {} };
   try {
     const response = await fetch(`${url}/admin/fetch-all-propreties?page=${page || 1}`, {
       method: "GET",
@@ -312,6 +328,7 @@ export async function getAdminProperties(token, page) {
 }
 
 export async function getAdminServices(token) {
+  if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/service/fetch-services`, {
       method: "GET",
@@ -334,6 +351,7 @@ export async function getAdminServices(token) {
 }
 
 export async function getAdminPayments(token) {
+  if (!token?.value) return null;
   try {
     const response = await fetch(`${url}/admin/fetch-payments`, {
       method: "GET",
@@ -354,6 +372,7 @@ export async function getAdminPayments(token) {
   }
 }
 export async function getPropertyOwner(token) {
+  if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/admin/property-owner/fetch-propertowners`, {
       method: "GET",
@@ -379,6 +398,7 @@ export async function getPropertyOwner(token) {
 }
 
 export async function getPropertyOwnerProperties(token){
+    if (!token?.value) return [[], {}];
     try {
         const response = await fetch(`${url}/property-owner/fetch-properties`, {
             method: "GET",
@@ -396,7 +416,7 @@ export async function getPropertyOwnerProperties(token){
     }
 }
 export async function getPropertyOwnerById(token, id) {
-  console.log(id)
+  if (!token?.value) return null;
   try {
     const response = await fetch(`${url}/admin/property-owner/fetch-propertowner/${id}`, {
       method: "GET",
@@ -414,6 +434,7 @@ export async function getPropertyOwnerById(token, id) {
   }
 }
 export async function getAllAdmin(token) {
+  if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/admin/fetch-admin`, {
       method: "GET",
@@ -435,6 +456,7 @@ export async function getAllAdmin(token) {
 }
 
 export async function getAllUsers(token) {
+  if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/admin/users/fetch-users`, {
       method: "GET",
@@ -459,9 +481,9 @@ export async function getAllUsers(token) {
   }
 }
 
-////// Property Owner Data Services /////
 
 export async function getPropertyOwnerBookings(token) {
+  if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/property-owner/fetch-bookings`, {
       next: {
@@ -475,7 +497,6 @@ export async function getPropertyOwnerBookings(token) {
     });
     if (!response.ok) {
         if (response.status === 404) {
-            // Endpoint might not be deployed yet
             console.warn("Property owner bookings endpoint not found (404). Returning empty list.");
         } else {
             console.error("Failed to fetch property owner bookings:", response.status, response.statusText);
@@ -491,6 +512,7 @@ export async function getPropertyOwnerBookings(token) {
 }
 
 export async function getPropertyOwnerServices(token) {
+  if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/property-owner/fetch-services`, {
       next: {
@@ -515,6 +537,7 @@ export async function getPropertyOwnerServices(token) {
 }
 
 export async function getPropertyOwnerInvoices(token) {
+  if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/property-owner/fetch-invoices`, {
       next: {
@@ -539,6 +562,7 @@ export async function getPropertyOwnerInvoices(token) {
 }
 
 export async function getPropertyOwnerNotifications(token) {
+  if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/notification/fetch-notifications`, {
       next: {
