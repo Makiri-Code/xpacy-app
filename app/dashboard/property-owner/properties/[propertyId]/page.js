@@ -1,4 +1,6 @@
 import AddNewPropertyForm from "@/app/_components/AddNewPropertyForm";
+import ViewPropertyForm from "@/app/_components/ViewPropertyForm";
+
 import { getProperty, getPropertyOwnerProfile, getCities } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
 
@@ -15,7 +17,7 @@ export default async function Page({ params }) {
 
     return (
         <div className="flex-1 py-12 bg-neutrals-50">
-            <AddNewPropertyForm 
+            <ViewPropertyForm 
                 allOwners={null}
                 allCities={allCities}
                 token={token}

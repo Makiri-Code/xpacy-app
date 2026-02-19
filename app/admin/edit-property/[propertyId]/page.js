@@ -1,5 +1,6 @@
 import AddNewPropertyForm from "@/app/_components/AddNewPropertyForm";
 import BackBtn from "@/app/_components/BackBtn";
+import EditPropertyForm from "@/app/_components/EditPropertyForm";
 import Logo from "@/app/_components/Logo";
 import { getCities, getProperty, getPropertyOwnerById } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
@@ -25,14 +26,16 @@ export default async function Page({ params }) {
             </nav>
             {/* Form */}
             <div className="flex flex-col items-center justify-center">
-                <AddNewPropertyForm
+                <EditPropertyForm
                     allOwners={null}
                     allCities={allCities}
                     token={token}
                     propertyOwnerInfo={propertyOwner}
                     disableSearch={true}
-                    propertyObj={property}
+                    initialData={property}
+                    isEditMode={true}
                 />
+
             </div>
         </div>
     )

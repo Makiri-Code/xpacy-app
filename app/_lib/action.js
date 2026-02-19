@@ -732,3 +732,27 @@ export async function invitePropertyOwner(formData) {
   const data = await response.json();
   return data;
 }
+
+export async function createProperty(formData, token) {
+  const response = await fetch(`${URL}/property/create-property`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+    },
+    body: formData
+  });
+  const data = await response.json();
+  return data;
+}
+
+export async function updateProperty(id, formData, token) {
+  const response = await fetch(`${URL}/property/update-property/${id}`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${token?.value}`,
+    },
+    body: formData
+  });
+  const data = await response.json();
+  return data;
+}

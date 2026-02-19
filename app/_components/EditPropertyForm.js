@@ -190,7 +190,7 @@ const parkingAreaCount = [
         count: "Fit 5 cars",
     },
 ];
-const AddNewPropertyForm = ({ 
+const EditPropertyForm = ({ 
     allOwners, 
     allCities, 
     token, 
@@ -280,20 +280,21 @@ const AddNewPropertyForm = ({
 
         setIsPending(true);
         toast.promise(submitForm(propertyInfo), {
-            loading: 'Adding new property...',
+            loading: isEditMode ? 'Updating property...' : 'Adding new property...',
             success: (data) => {
                 setActiveStep(1);
                 setIsPending(false);
-                if (!data.success) throw new Error(data.message || data.errors[0].message || "Failed to add property.");
+                if (!data.success) throw new Error(data.message || data.errors[0].message || `Failed to ${isEditMode ? 'update' : 'add'} property.`);
                 reset();
                 setIsOpenModal(false);
-                return "Property added successfully!";
+                return `Property ${isEditMode ? 'updated' : 'added'} successfully!`;
             },
             error: (error) => {
                 setIsPending(false);
-                return `${error.message || "Failed to add property."}`
+                return `${error.message || `Failed to ${isEditMode ? 'update' : 'add'} property.`}`
             },
         })
+
 
 
 
@@ -313,13 +314,13 @@ const AddNewPropertyForm = ({
         const startTime = new Date();
         
         try {
-            // We use axios directly here to maintain progress tracking, but we use the centralized structure logic
             const response = await axios({
                 method: isEditMode ? 'PUT' : 'POST',
-                url: isEditMode && initialData?.id 
-                    ? `${url}/property/update-property/${initialData.id}` 
+                url: isEditMode && (effectiveData?.id || effectiveData?._id)
+                    ? `${url}/property/update-property/${effectiveData.id || effectiveData._id}` 
                     : `${url}/property/create-property`,
                 data: formData,
+
                 headers: {
                     Authorization: `Bearer ${token?.value}`,
                     "Content-Type": "multipart/form-data",
@@ -636,9 +637,10 @@ const AddNewPropertyForm = ({
                         <>
                             {pathname.split("/")[2] === "property-details" ? null : (
                                 <button disabled={isPending} type="submit" className=" px-4 py-2 bg-primary-200 font-mono text-primary rounded-lg hover:bg-primary-200/80 cursor-pointer transition flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50">
-                                    <span>Finish</span>
+                                    <span>{isEditMode ? "Update Property" : "Finish"}</span>
                                     {isPending && <span><SpinnerMini /></span>}
                                 </button>
+
                             )}
                         </>
 
@@ -656,4 +658,4 @@ const AddNewPropertyForm = ({
     );
 };
 
-export default AddNewPropertyForm;
+export default EditPropertyForm;

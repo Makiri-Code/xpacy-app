@@ -1,6 +1,7 @@
 import AddNewPropertyForm from "@/app/_components/AddNewPropertyForm";
 import BackBtn from "@/app/_components/BackBtn";
 import Logo from "@/app/_components/Logo";
+import ViewPropertyForm from "@/app/_components/ViewPropertyForm";
 import { getCities, getProperty, getPropertyOwnerById } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
 
@@ -25,7 +26,7 @@ export default async function Page({ params }) {
             </nav>
             {/* Form */}
             <div className="flex flex-col items-center justify-center">
-                <AddNewPropertyForm
+                <ViewPropertyForm
                     allOwners={null}
                     allCities={allCities}
                     token={token}
