@@ -304,10 +304,27 @@ export async function getAdminProfile(token) {
   }
 }
 
-export async function getAdminProperties(token, page) {
+export async function getAdminProperties(token, searchParams = {}) {
   if (!token?.value) return { properties: [], pagination: {} };
+  
+  let paramsObj = {};
+  if (typeof searchParams === 'string' || typeof searchParams === 'number') {
+    paramsObj.page = searchParams;
+  } else {
+    paramsObj = searchParams || {};
+  }
+  
+  const params = new URLSearchParams({
+    page: paramsObj.page || 1,
+    ...(paramsObj.location && { location: paramsObj.location }),
+    ...(paramsObj.status && { status: paramsObj.status }),
+    ...(paramsObj.type && { type: paramsObj.type }),
+    ...(paramsObj.minPrice && { minPrice: paramsObj.minPrice }),
+    ...(paramsObj.maxPrice && { maxPrice: paramsObj.maxPrice })
+  });
+
   try {
-    const response = await fetch(`${url}/admin/fetch-all-propreties?page=${page || 1}`, {
+    const response = await fetch(`${url}/admin/fetch-all-propreties?${params.toString()}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token?.value}`,
