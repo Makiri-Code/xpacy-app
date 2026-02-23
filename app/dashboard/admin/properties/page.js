@@ -13,11 +13,14 @@ export default async function Page({searchParams}) {
     const token = cookieStore.get("token");
     const params = await searchParams;
     const {properties, pagination} = await getAdminProperties(token, params);
+    
+    // Fetch unpaginated properties to calculate global stats
+    const {properties: allProperties} = await getAdminProperties(token, { limit: 10000 });
 
     return (
         <div className="space-y-6 p-4">
             
-            <PropertiesSummary properties={properties || []} totalProperties={pagination?.totalProperties || pagination?.totalItems || pagination?.total || pagination?.count} />
+            <PropertiesSummary properties={allProperties || []} totalProperties={pagination?.totalProperties || pagination?.totalItems || pagination?.total || pagination?.count} />
             
             <div className={`border-[1.5px] border-primary-200 p-6 flex flex-col gap-4 rounded-lg`}>
                 <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between border-b border-primary-100 pb-4">

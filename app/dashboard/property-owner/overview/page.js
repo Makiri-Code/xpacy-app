@@ -13,7 +13,7 @@ export default async function Page() {
     // Fetch data in parallel using Promise.allSettled to prevent one failure from breaking the page
     const results = await Promise.allSettled([
         getPropertyOwnerProfile(token),
-        getPropertyOwnerProperties(token), // Note: Ideally should filter by owner ID if possible, but keeping logic consistent with existing pattern property fetching
+        getPropertyOwnerProperties(token, { limit: 10000 }), // Fetch unpaginated data for full summary counts
         getPropertyOwnerServices(token),
         getPropertyOwnerBookings(token),
         getUserNotifications(token)

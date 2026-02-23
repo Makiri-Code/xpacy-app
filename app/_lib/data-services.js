@@ -316,6 +316,7 @@ export async function getAdminProperties(token, searchParams = {}) {
   
   const params = new URLSearchParams({
     page: paramsObj.page || 1,
+    ...(paramsObj.limit && { limit: paramsObj.limit }),
     ...(paramsObj.location && { location: paramsObj.location }),
     ...(paramsObj.status && { status: paramsObj.status }),
     ...(paramsObj.type && { type: paramsObj.type }),
@@ -414,10 +415,23 @@ export async function getPropertyOwner(token) {
   }
 }
 
-export async function getPropertyOwnerProperties(token){
+export async function getPropertyOwnerProperties(token, searchParams = {}){
     if (!token?.value) return [[], {}];
+    let paramsObj = {};
+    if (typeof searchParams === 'string' || typeof searchParams === 'number') {
+      paramsObj.page = searchParams;
+    } else {
+      paramsObj = searchParams || {};
+    }
+    
+    const params = new URLSearchParams({
+      ...(paramsObj.page && { page: paramsObj.page }),
+      ...(paramsObj.limit && { limit: paramsObj.limit }),
+    });
+
     try {
-        const response = await fetch(`${url}/property-owner/fetch-properties`, {
+        const urlStr = params.toString() ? `${url}/property-owner/fetch-properties?${params.toString()}` : `${url}/property-owner/fetch-properties`;
+        const response = await fetch(urlStr, {
             method: "GET",
             headers: {
               "Authorization": `Bearer ${token?.value}`,

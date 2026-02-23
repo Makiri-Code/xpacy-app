@@ -7,7 +7,7 @@ export default function PropertiesSummary({ properties, totalProperties, showHea
     // Calculate counts based on passed properties
     const counts = {
         shortlet: properties.filter(p => p.property_status?.toLowerCase() === 'shortlet').length,
-        rented: properties.filter(p => ['rented', 'occupied'].includes(p.availability_status?.toLowerCase())).length,
+        rented: properties.filter(p => p.property_status?.toLowerCase() === 'rent').length,
         featured: properties.filter(p => p.featured || p.isFeatured || p.is_featured).length,
         available: properties.filter(p => ['active', 'available', 'vacant'].includes(p.availability_status?.toLowerCase())).length,
     };

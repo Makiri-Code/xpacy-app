@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 import PropertiesTableList from "@/app/_components/PropertiesTableList";
+import PropertiesOverviewWrapper from "@/app/_components/PropertiesOverviewWrapper";
 import { getPropertyOwnerBookings, getProperties, getUserProfile, getPropertyOwnerServices, getPropertyOwnerProperties } from "@/app/_lib/data-services";
 import PropertiesSummary from "@/app/_components/PropertiesSummary";
 import { MdAdd } from "react-icons/md";
@@ -33,6 +34,10 @@ export default async function Page({searchParams}) {
             return checkDateInRange(dateStr, filterRange);
         });
     }
+    // Fetch unpaginated properties for summary specifically if pagination limits the allProperties query
+    // By default getPropertyOwnerProperties doesn't seem to have paginated limit strictly enforced unless passed, 
+    // but just in case, we'll use `allProperties` for now as it contains the array.
+    const [allPropertiesForSummary] = await getPropertyOwnerProperties(token, { limit: 10000 });
     
     // Pagination data from API (if available) or manual
     const pagination = propertiesData?.[1] || {
@@ -56,9 +61,10 @@ export default async function Page({searchParams}) {
                     ]}
                 />
             </div>
-            <PropertiesSummary properties={properties} />
+            <PropertiesSummary properties={allPropertiesForSummary || allProperties || []} />
            
-            <PropertiesTableList 
+            <PropertiesOverviewWrapper 
+                activeTab={(await searchParams)?.tab} 
                 properties={properties} 
                 bookings={Array.isArray(bookings) ? bookings : []}
                 services={Array.isArray(services) ? services : []}
