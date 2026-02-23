@@ -106,7 +106,7 @@ const adminNavList = [
         text: "FAQs",
         link: "/dashboard/admin/faqs",
         icon: <LuMessageCircleQuestion />
-    },
+    }
 ]
 
 const propertyOwnerNavList = [

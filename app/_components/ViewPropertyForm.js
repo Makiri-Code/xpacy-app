@@ -204,7 +204,7 @@ const ViewPropertyForm = ({
     propertyOwnerInfo = null, 
     disableSearch, 
     propertyObj = {},
-    isReadOnly = false
+    isReadOnly = true
 }) => {
     // Merge props logic
     const effectiveOwner = preSelectedOwner || propertyOwnerInfo || null;

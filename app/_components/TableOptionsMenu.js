@@ -25,6 +25,7 @@ export default function TableOptionsMenu({ id }) {
             label: "Delete property",
             icon: <RiDeleteBin6Line className="text-gray-400" />,
             modal: <DeleteWindow propertyId={id} />
+            
         },
     ];
 
