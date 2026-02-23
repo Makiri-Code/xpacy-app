@@ -12,15 +12,45 @@ export default async function Page({searchParams}) {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
     const params = await searchParams;
-    const {properties, pagination} = await getAdminProperties(token, params);
     
-    // Fetch unpaginated properties to calculate global stats
+    // Fetch unpaginated properties for full filtering
     const {properties: allProperties} = await getAdminProperties(token, { limit: 10000 });
+    let propertiesList = allProperties || [];
+
+    // Local Filtering exactly matching frontend query params
+    if (params.status) {
+        propertiesList = propertiesList.filter(p => p.property_status?.toLowerCase() === params.status.toLowerCase());
+    }
+    if (params.type) {
+        propertiesList = propertiesList.filter(p => p.property_type?.toLowerCase() === params.type.toLowerCase());
+    }
+    if (params.minPrice) {
+        propertiesList = propertiesList.filter(p => Number(p.property_price) >= Number(params.minPrice));
+    }
+    if (params.maxPrice) {
+        propertiesList = propertiesList.filter(p => Number(p.property_price) <= Number(params.maxPrice));
+    }
+    if (params.location) {
+        const query = params.location.toLowerCase();
+        propertiesList = propertiesList.filter(p => 
+            p.city?.toLowerCase().includes(query) || 
+            p.state?.toLowerCase().includes(query) || 
+            p.property_name?.toLowerCase().includes(query)
+        );
+    }
+
+    // Manual Pagination
+    const page = Number(params.page) || 1;
+    const limit = 10;
+    const totalItems = propertiesList.length;
+    const totalPages = Math.ceil(totalItems / limit) || 1;
+    const paginatedProperties = propertiesList.slice((page - 1) * limit, page * limit);
+    const pagination = { page, limit, total: totalItems, totalPages };
 
     return (
         <div className="space-y-6 p-4">
             
-            <PropertiesSummary properties={allProperties || []} totalProperties={pagination?.totalProperties || pagination?.totalItems || pagination?.total || pagination?.count} />
+            <PropertiesSummary properties={allProperties || []} totalProperties={allProperties?.length || 0} />
             
             <div className={`border-[1.5px] border-primary-200 p-6 flex flex-col gap-4 rounded-lg`}>
                 <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between border-b border-primary-100 pb-4">
@@ -31,11 +61,11 @@ export default async function Page({searchParams}) {
                     </div>
                 </div>
                 
-                <AdminPropertyList properties={properties || []} />
+                <AdminPropertyList properties={paginatedProperties || []} bookings={[]} pagination={pagination} />
             </div>
             
             <div className="mt-8 flex justify-center">
-                <Pagination pagination={pagination || { page: 1, totalPages: 1 }} />
+                <Pagination pagination={pagination} />
             </div>
         </div>
     )

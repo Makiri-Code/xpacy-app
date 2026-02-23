@@ -88,7 +88,7 @@ export default async function AdminPropertyList({ properties, bookings = [], pag
                     {property?.property_price ? formatCurrency(property?.property_price) : "N/A"}
                 </td>
                 <td className="p-4 text-center text-primary font-bold">
-                    {property?.reserve_amount || activeBooking?.amount ? formatCurrency(property?.reserve_amount || activeBooking?.amount) : "None"}
+                    {property?.reserve_amount ? formatCurrency(property?.reserve_amount): 0}
                 </td>
                 <td className="p-4 relative text-center">
                     <div className="flex justify-center">
@@ -168,7 +168,7 @@ export default async function AdminPropertyList({ properties, bookings = [], pag
                     <div className="flex flex-col col-span-2 border-t border-gray-100 pt-2">
                         <div className="flex flex-col">
                             <span className="text-gray-400 uppercase">Reserve Amount</span>
-                            <span className="text-primary">{property?.reserve_amount || activeBooking?.amount ? formatCurrency(property?.reserve_amount || activeBooking?.amount) : "None"}</span>
+                            <span className="text-primary">{property?.reserve_amount ? formatCurrency(property?.reserve_amount) : 0}</span>
                         </div>
                     </div>
                 </div>

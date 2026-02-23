@@ -511,7 +511,34 @@ export async function getAllUsers(token) {
     return []; 
   }
 }
-
+export async function getAdminBooking(token) {
+  if (!token?.value) return [];
+  try {
+    const response = await fetch(`${url}/admin/fetch-bookings`, {
+      next: {
+        tags: ['admin-bookings']
+      },
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-type": "application/json",
+      },
+    });
+    if (!response.ok) {
+        if (response.status === 404) {
+            console.warn("Admin bookings endpoint not found (404). Returning empty list.");
+        } else {
+            console.error("Failed to fetch admin bookings:", response.status, response.statusText);
+        }
+        return [];
+    }
+    const json = await response.json();
+    return json?.data || json?.bookings || json || [];
+  } catch (error) {
+    console.error("Error fetching admin bookings:", error)
+    return []
+  }
+}
 
 export async function getPropertyOwnerBookings(token) {
   if (!token?.value) return [];

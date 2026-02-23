@@ -6,24 +6,28 @@ import DashboardGridItem from "@/app/_components/DashboardGridItems";
 import PropertiesTableList from "@/app/_components/PropertiesTableList";
 import PropertyOwnerServicesTable from "@/app/_components/PropertyOwnerServicesTable";
 import ServicesTableList from "@/app/_components/ServicesTableList";
-import { getAdminProfile, getAdminProperties, getAdminServices, getPropertyOwnerServices, getUserNotifications } from "@/app/_lib/data-services";
+import AdminBookingList from "@/app/_components/AdminBookingList";
+import { getAdminProfile, getAdminProperties, getAdminServices, getPropertyOwnerServices, getUserNotifications, getAdminPayments, getAdminBooking } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
 
 export default async function Page() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")
     
-    // Parallel fetch for profile, properties, services, and notifications
-    const [profile, propertiesData, services, notifications] = await Promise.all([
+    // Parallel fetch for profile, properties, services, notifications, and payments
+    const [profile, propertiesData, services, notifications, payments, bookings] = await Promise.all([
         getAdminProfile(token),
         getAdminProperties(token),
         getAdminServices(token),
-        getUserNotifications(token)
+        getUserNotifications(token),
+        getAdminPayments(token),
+        getAdminBooking(token)
     ]);
 
     const propertyList = (propertiesData?.properties || []).slice(0, 10);
     const slicedServices = (services || []).slice(0, 10);
     const slicedNotifications = (notifications || []).slice(0, 10);
+    const slicedBookings = (bookings || []).slice(0, 10);
 
     return (
       <div className="p-6 space-y-6">
@@ -45,6 +49,9 @@ export default async function Page() {
                 </DashboardGridItem>
                 <DashboardGridItem title={"Services Requests"} viewAllLink={"/dashboard/admin/services"}>
                     <AdminServiceList services={slicedServices} />
+                </DashboardGridItem>
+                <DashboardGridItem title={"Recent Bookings"} viewAllLink={"/dashboard/admin/payments"}>
+                    <AdminBookingList bookings={slicedBookings} />
                 </DashboardGridItem>
 
             </div>

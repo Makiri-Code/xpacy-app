@@ -43,10 +43,9 @@ function FilterContent({ onClose }) {
                     onChange={(e) => setStatus(e.target.value)}
                     className="p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                 >
-                    <option value="">All Statuses</option>
-                    <option value="active">Active</option>
-                    <option value="rented">Rented</option>
-                    <option value="draft">Draft</option>
+                    <option value="">All</option>
+                    <option value="shortlet">Shortlet</option>
+                    <option value="rent">Rented</option>
                 </select>
             </div>
 

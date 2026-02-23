@@ -13,38 +13,61 @@ import { checkDateInRange } from "@/app/_lib/utils";
 export default async function Page({searchParams}) {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
-    
-    // Fetch data
-    const [propertiesData, bookings, services] = await Promise.all([
-        getPropertyOwnerProperties(token),
+    const params = await searchParams;
+    const filterRange = params?.range;
+
+    // Fetch data - explicitly query full unpaginated list
+    const [[allPropertiesForSummary], bookings, services] = await Promise.all([
+        getPropertyOwnerProperties(token, { limit: 10000 }),
         getPropertyOwnerBookings(token),
         getPropertyOwnerServices(token)
     ]);
 
-    const allProperties = Array.isArray(propertiesData?.[0]) ? propertiesData[0] : [];
-    
-    // 1. Filter by Owner (Server-side now, but keeping safe check)
-    let properties = allProperties;
+    let propertiesList = allPropertiesForSummary || [];
 
-    // 2. Filter by Date Range (if present in URL)
-    const filterRange = (await searchParams)?.range;
+    // Filter by Date Range
     if (filterRange && filterRange !== 'all_time') {
-        properties = properties.filter(p => {
+        propertiesList = propertiesList.filter(p => {
             const dateStr = p.createdAt || p.created_at || p.date_added; 
             return checkDateInRange(dateStr, filterRange);
         });
     }
-    // Fetch unpaginated properties for summary specifically if pagination limits the allProperties query
-    // By default getPropertyOwnerProperties doesn't seem to have paginated limit strictly enforced unless passed, 
-    // but just in case, we'll use `allProperties` for now as it contains the array.
-    const [allPropertiesForSummary] = await getPropertyOwnerProperties(token, { limit: 10000 });
+
+    // Local Filtering exactly matching frontend query params
+    if (params.status) {
+        propertiesList = propertiesList.filter(p => p.property_status?.toLowerCase() === params.status.toLowerCase());
+    }
+    if (params.type) {
+        propertiesList = propertiesList.filter(p => p.property_type?.toLowerCase() === params.type.toLowerCase());
+    }
+    if (params.minPrice) {
+        propertiesList = propertiesList.filter(p => Number(p.property_price) >= Number(params.minPrice));
+    }
+    if (params.maxPrice) {
+        propertiesList = propertiesList.filter(p => Number(p.property_price) <= Number(params.maxPrice));
+    }
+    if (params.location) {
+        const query = params.location.toLowerCase();
+        propertiesList = propertiesList.filter(p => 
+            p.city?.toLowerCase().includes(query) || 
+            p.state?.toLowerCase().includes(query) || 
+            p.property_name?.toLowerCase().includes(query)
+        );
+    }
+
+    // Manual Pagination
+    const page = Number(params.page) || 1;
+    const limit = 10;
+    const totalItems = propertiesList.length;
+    const totalPages = Math.ceil(totalItems / limit) || 1;
+    const paginatedProperties = propertiesList.slice((page - 1) * limit, page * limit);
     
     // Pagination data from API (if available) or manual
-    const pagination = propertiesData?.[1] || {
-        page: 1,
-        limit: 10,
-        totalPages: Math.ceil(properties.length / 10),
-        total: properties.length
+    const pagination = {
+        page,
+        limit,
+        totalPages,
+        total: totalItems
     };
 
     return (
@@ -61,11 +84,11 @@ export default async function Page({searchParams}) {
                     ]}
                 />
             </div>
-            <PropertiesSummary properties={allPropertiesForSummary || allProperties || []} />
+            <PropertiesSummary properties={allPropertiesForSummary || []} />
            
             <PropertiesOverviewWrapper 
-                activeTab={(await searchParams)?.tab} 
-                properties={properties} 
+                activeTab={params?.tab} 
+                properties={paginatedProperties} 
                 bookings={Array.isArray(bookings) ? bookings : []}
                 services={Array.isArray(services) ? services : []}
                 pagination={pagination}
