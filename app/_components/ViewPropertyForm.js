@@ -412,7 +412,23 @@ const ViewPropertyForm = ({
                 {activeStep === 4 && (
                     <section className="flex flex-col gap-6">
                         <h3 className="text-xl font-bold font-mono text-primary pb-2 border-b border-primary-100">Tenant Information</h3>
-                        <AdminUsersList users={effectiveData?.tenants || []} variant="tenant" title="Property Tenants" />
+                        <AdminUsersList 
+                            users={(effectiveData?.bookings || effectiveData?.transactions || []).map(b => ({
+                                id: b.id || b._id,
+                                first_name: b.user?.firstname || b.user?.first_name || "Unknown",
+                                last_name: b.user?.lastname || b.user?.last_name || "",
+                                email: b.user?.email || "N/A",
+                                phone: b.user?.phone || "N/A",
+                                user_type: b.user?.role || b.user?.user_type || "Tenant",
+                                display_picture: b.user?.display_picture || b.user?.profile_picture || "",
+                                property_name: b.property?.property_name || effectiveData?.property_name || "N/A",
+                                start_date: b.start_date || b.createdAt ? new Date(b.start_date || b.createdAt).toLocaleDateString() : "N/A",
+                                end_date: b.end_date ? new Date(b.end_date).toLocaleDateString() : "N/A",
+                                price: b.amount || b.property?.property_price ? `₦${Number(b.amount || b.property?.property_price).toLocaleString()}` : "N/A"
+                            }))} 
+                            variant="tenant" 
+                            title="Property Tenants" 
+                        />
                     </section>
                 )}
 

@@ -2,13 +2,15 @@ import { format } from "date-fns";
 import { formatCurrency } from "@/app/_lib/utils";
 import EmptyState from "@/app/_components/EmptyState";
 import DataTable from "./DataTable";
+import BookingOptionsMenu from "./BookingOptionsMenu";
 
 const tableHeadings = [
     { heading: "Property" },
     { heading: "Payer" },
     { heading: "Date" },
     { heading: "Status" },
-    { heading: "Amount", right: true }
+    { heading: "Amount", right: true },
+    { heading: "" }
 ];
 
 export default function PaymentsTableList({ bookings }) {
@@ -42,6 +44,9 @@ export default function PaymentsTableList({ bookings }) {
                 <td className="p-4 text-right font-bold text-primary">
                     {booking.amount || booking.property?.property_price ? formatCurrency(booking.amount || booking.property?.property_price) : "N/A"}
                 </td>
+                <td className="p-4 text-center">
+                    <BookingOptionsMenu id={booking.id || booking._id} />
+                </td>
             </tr>
         );
     };
@@ -62,9 +67,12 @@ export default function PaymentsTableList({ bookings }) {
                         <h3 className="font-bold text-sm text-gray-900">{booking.property?.property_name || "N/A"}</h3>
                         <p className="text-xs text-gray-500">{booking.user?.firstname ? `${booking.user.firstname} ${booking.user.lastname || ''}` : "N/A"}</p>
                     </div>
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${statusColor}`}>
-                        {status}
-                    </span>
+                    <div className="flex items-center gap-2">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${statusColor}`}>
+                            {status}
+                        </span>
+                        <BookingOptionsMenu id={booking.id || booking._id} />
+                    </div>
                 </div>
                 
                 <div className="flex justify-between items-center text-xs bg-gray-50 p-3 rounded-lg">

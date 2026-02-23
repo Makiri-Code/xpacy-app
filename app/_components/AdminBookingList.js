@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import EmptyState from "./EmptyState";
 import StatusChips from "./StatusChips";
 import DataTable from "./DataTable";
+import BookingOptionsMenu from "./BookingOptionsMenu";
 import { formatCurrency } from "../_lib/utils";
 import { format } from "date-fns";
 
@@ -11,7 +12,8 @@ const tableHeadings = [
     { heading: "Tenant/Buyer" },
     { heading: "Date" },
     { heading: "Status", center: true },
-    { heading: "Amount", right: true }
+    { heading: "Amount", right: true },
+    { heading: "" }
 ];
 
 export default async function AdminBookingList({ bookings }) {
@@ -41,6 +43,9 @@ export default async function AdminBookingList({ bookings }) {
                 <td className="p-4 text-right font-bold text-primary">
                     {booking.amount || booking.property?.property_price ? formatCurrency(booking.amount || booking.property?.property_price) : "N/A"}
                 </td>
+                <td className="p-4 text-center">
+                    <BookingOptionsMenu id={booking.id || booking._id} />
+                </td>
             </tr>
         );
     }
@@ -55,7 +60,10 @@ export default async function AdminBookingList({ bookings }) {
                         <h3 className="text-sm font-bold text-gray-800">{booking.property?.property_name || "N/A"}</h3>
                         <p className="text-xs text-gray-500">{booking.createdAt || booking.start_date ? format(new Date(booking.createdAt || booking.start_date), "MMM dd, yyyy") : "N/A"}</p>
                     </div>
-                    <StatusChips status={status} />
+                    <div className="flex items-center gap-2">
+                        <StatusChips status={status} />
+                        <BookingOptionsMenu id={booking.id || booking._id} />
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-lg text-xs">

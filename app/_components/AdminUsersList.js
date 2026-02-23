@@ -22,10 +22,9 @@ const registeredHeadings = [
 const tenantHeadings = [
     { heading: "Name" },
     { heading: "Property" },
-    { heading: "Rent Status", center: true },
+    { heading: "Rent Duration", center: true },
     { heading: "Price", center: true },
-    { heading: "Owner", center: true },
-    { heading: "Contact", center: true },
+    { heading: "Contact/Info", center: true },
     { heading: "" }
 ];
 
@@ -47,11 +46,24 @@ export default function AdminUsersList({ users = [], title = "All Users List", v
 
             {variant === 'tenant' ? (
                 <>
-                    <td className="p-4 text-center"><span className="text-gray-500 italic text-xs">N/A</span></td>
-                    <td className="p-4 text-center"><span className="bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full text-xs">N/A</span></td>
-                    <td className="p-4 text-center text-gray-400 text-xs">N/A</td>
-                    <td className="p-4 text-center text-gray-400 text-xs">N/A</td>
-                    <td className="p-4 text-center text-gray-400 text-xs">N/A</td>
+                    <td className="p-4 text-center">
+                        <span className="text-gray-900 font-medium truncate max-w-[150px] inline-block" title={user.property_name}>{user.property_name || "N/A"}</span>
+                    </td>
+                    <td className="p-4 text-center">
+                        <div className="flex flex-col text-xs text-gray-500">
+                            <span>{user.start_date || "N/A"}</span>
+                            <span>to</span>
+                            <span>{user.end_date || "N/A"}</span>
+                        </div>
+                    </td>
+                    <td className="p-4 text-center font-bold text-primary text-sm">{user.price || "N/A"}</td>
+                    <td className="p-4 text-center">
+                        <div className="flex flex-col justify-center items-center">
+                            <span className="text-gray-900 text-xs">{user.email}</span>
+                            <span className="text-gray-500 text-[10px]">{user.phone || "N/A"}</span>
+                            <span className="text-gray-400 font-semibold text-[10px] mt-1 uppercase">{user.user_type || user.role || ""}</span>
+                        </div>
+                    </td>
                 </>
             ) : (
                 <>
@@ -111,11 +123,22 @@ export default function AdminUsersList({ users = [], title = "All Users List", v
                     <>
                         <div className="flex justify-between items-center text-xs">
                             <span className="font-semibold text-gray-500 uppercase">Property:</span>
-                            <span className="font-medium text-gray-900">N/A</span>
+                            <span className="font-medium text-gray-900 truncate max-w-[120px]">{user.property_name || "N/A"}</span>
                         </div>
                         <div className="flex justify-between items-center text-xs">
-                            <span className="font-semibold text-gray-500 uppercase">Rent Status:</span>
-                            <span className="bg-white text-gray-500 px-2 py-0.5 rounded border border-gray-100">N/A</span>
+                            <span className="font-semibold text-gray-500 uppercase">Duration:</span>
+                            <span className="text-gray-700">{user.start_date || "N/A"} - {user.end_date || "N/A"}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-xs">
+                            <span className="font-semibold text-gray-500 uppercase">Price:</span>
+                            <span className="font-bold text-primary">{user.price || "N/A"}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-xs">
+                            <span className="font-semibold text-gray-500 uppercase">Contact:</span>
+                            <div className="flex flex-col items-end">
+                                <span className="font-medium text-gray-900">{user.email || "N/A"}</span>
+                                <span className="text-gray-500">{user.phone || "N/A"}</span>
+                            </div>
                         </div>
                     </>
                  ) : (
