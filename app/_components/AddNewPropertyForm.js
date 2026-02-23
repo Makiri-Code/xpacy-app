@@ -239,6 +239,7 @@ const AddNewPropertyForm = ({
             property_type: effectiveData?.property_type || "",
             availability_status: effectiveData?.availability_status || "",
             property_price: effectiveData?.property_price || "",
+            reserve_amount: effectiveData?.reserve_amount || "",
             property_status: effectiveData?.property_status || "",
             description: effectiveData?.description || "",
             total_bedrooms: effectiveData?.total_bedrooms || "",
@@ -273,6 +274,7 @@ const AddNewPropertyForm = ({
             total_bedrooms: Number(data.total_bedrooms),
             total_toilets: Number(data.total_toilets),
             property_price: Number(data.property_price),
+            reserve_amount: Number(data.reserve_amount || 0),
             long: Number(data.long),
             lat: Number(data.lat),
         }
@@ -484,6 +486,15 @@ const AddNewPropertyForm = ({
                                     </div>
                                     {errors.property_price && <span className="-mt-2 text-xs text-error">{errors.property_price.message}</span>}
                                 </FormInput>
+                                <FormInput label={"Reserve Amount"} id={"reserve_amount"} >
+                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.reserve_amount ? "border-error" : "border-primary-200"}`}>
+                                        <span><FaNairaSign /></span>
+                                        <input disabled={isReadOnly}  {...register("reserve_amount")} type={"number"} name={"reserve_amount"} id={"reserve_amount"} placeholder={"Enter reserve amount"} className={`focus:outline-none flex-1`} />
+                                    </div>
+                                    {errors.reserve_amount && <span className="-mt-2 text-xs text-error">{errors.reserve_amount.message}</span>}
+                                </FormInput>
+                            </div>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
                                 <FormInput label={"Property Status"} id={"property_status"} >
                                     <select disabled={isReadOnly} {...register("property_status", {
                                         required: "Property Status is required",
@@ -494,6 +505,9 @@ const AddNewPropertyForm = ({
                                         ))}
                                     </select>
                                     {errors.property_status && <span className="-mt-2 text-xs text-error">{errors.property_status.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Views"} id={"views"} >
+                                    <input disabled={true} value={effectiveData?.views || 0} type={"number"} name={"views"} id={"views"} placeholder={"0"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200`} />
                                 </FormInput>
                             </div>
                             <FormInput label={"Property Description"} id={"description"} >

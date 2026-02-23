@@ -236,6 +236,7 @@ const ViewPropertyForm = ({
             property_type: effectiveData?.property_type || "",
             availability_status: effectiveData?.availability_status || "",
             property_price: effectiveData?.property_price || "",
+            reserve_amount: effectiveData?.reserve_amount || "",
             property_status: effectiveData?.property_status || "",
             description: effectiveData?.description || "",
             total_bedrooms: effectiveData?.total_bedrooms || "",
@@ -330,6 +331,29 @@ const ViewPropertyForm = ({
                                 <FormInput label={"Property Status"} id={"property_status"} >
                                     <input disabled={isReadOnly} {...register("property_status", { required: "Required" })} type="text" placeholder="Property Status" className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200 w-full`} />
                                 </FormInput>
+                            </div>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Property Price"} id={"property_price"} >
+                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200 w-full`}>
+                                        <span><FaNairaSign className="text-gray-500" /></span>
+                                        <input disabled={isReadOnly} {...register("property_price")} type="text" placeholder="Price" className={`focus:outline-none flex-1 bg-transparent`} />
+                                    </div>
+                                </FormInput>
+                                <FormInput label={"Reserve Amount"} id={"reserve_amount"} >
+                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200 w-full`}>
+                                        <span><FaNairaSign className="text-gray-500" /></span>
+                                        <input disabled={isReadOnly} {...register("reserve_amount")} type="text" placeholder="Reserve Amount" className={`focus:outline-none flex-1 bg-transparent`} />
+                                    </div>
+                                </FormInput>
+                            </div>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Views"} id={"views"} >
+                                    <input disabled={true} value={effectiveData?.views || 0} type={"number"} name={"views"} id={"views"} placeholder={"0"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200 w-full`} />
+                                </FormInput>
+                                <div className="flex items-center justify-between font-mono w-full px-4 border border-primary-200 bg-[#FCFEFF] rounded-lg py-3 mt-6">
+                                    <span className="text-gray-500 font-medium">Featured Property</span>
+                                    <CustomToogle disabled={true} checked={isFeatured} onChange={() => {}} />
+                                </div>
                             </div>
                             <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
                                 <FormInput label={"Bedrooms"} id={"total_bedrooms"} >
