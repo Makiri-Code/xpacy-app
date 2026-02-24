@@ -108,7 +108,6 @@ export default function EditBookingForm({ booking }) {
                     </div>
                 </div>
 
-                <div className="border-t border-primary-50"></div>
 
                 {/* 2. Read-only Contextual Info Section */}
                 <div className="flex flex-col gap-6">

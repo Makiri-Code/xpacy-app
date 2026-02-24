@@ -19,8 +19,8 @@ export default function MobileInvoice({ invoice }) {
                     {/* Invoice number & dates */}
                     <div className="flex flex-col lg:items-end lg:gap-6 gap-4">
                         <p className="text-base lg:text-md text-black">Invoice Number: <span className="text-base font-mono"> {invoice?.invoiceNumber}</span></p>
-                        <p className="text-base lg:text-md text-black">Issued Date: <span className="text-base font-mono"> {format(invoice?.issuedDate, "dd/MM/yy")}</span></p>
-                        <p className="text-base lg:text-md text-black">Due Date:  <span className="text-base font-mono"> {format(invoice?.dueDate, "dd/MM/yy")} </span></p>
+                        <p className="text-base lg:text-md text-black">Issued Date: <span className="text-base font-mono"> {invoice?.issuedDate ? format(new Date(invoice.issuedDate), "dd/MM/yy") : "N/A"}</span></p>
+                        <p className="text-base lg:text-md text-black">Due Date:  <span className="text-base font-mono"> {invoice?.dueDate ? format(new Date(invoice.dueDate), "dd/MM/yy") : "N/A"} </span></p>
                     </div>
                 </div>
             </header>
@@ -29,13 +29,13 @@ export default function MobileInvoice({ invoice }) {
                 <div className="flex flex-col items-start gap-6">
                     <h2 className="text-primary">Recipient&apos;s Details</h2>
                     <div className="space-y-2 font-mono">
-                        <p>{invoice?.user.firstname} {invoice?.user.lastname}</p>
+                        <p>{invoice?.user?.firstname} {invoice?.user?.lastname}</p>
                         <p>{invoice?.user?.address}</p>
                         <p>{invoice?.user?.email}</p>
                         <p>{invoice?.user?.phone}</p>
                     </div>
                 </div>
-                <p className={`-order-1 bg-error text-secondary-100 w-max  px-2.5 py-2  rounded-full text-center text-2xl font-bold font-mono`}><span className="block my-auto">{invoice?.status}</span></p>
+                <p className={`-order-1 bg-error text-secondary-100 w-max  px-2.5 py-2  rounded-full text-center text-2xl font-bold font-mono`}><span className="block my-auto">{invoice?.status || "Pending"}</span></p>
             </section>
             {/* Invoice details table */}
             <section className="py-6">
@@ -47,12 +47,12 @@ export default function MobileInvoice({ invoice }) {
                     <p className="p-4 text-right">Total Amount</p>
                 </div>
                 {/* Body */}
-                {invoice?.items.map((item) => (
-                    <div className="grid grid-cols-[3fr_1fr_1fr_2fr] text-neutrals-900 text-sm font-mono border-b border-primary-100" key={item?.id}>
+                {(invoice?.items || []).map((item) => (
+                    <div className="grid grid-cols-[3fr_1fr_1fr_2fr] text-neutrals-900 text-sm font-mono border-b border-primary-100" key={item?.id || Math.random()}>
                         <p className="p-4 ">{item?.description}</p>
-                        <p className="p-4 text-right">{formatCurrency(item?.unitPrice)}</p>
-                        <p className="p-4 text-right">{item?.quantity}</p>
-                        <p className="p-4 text-right font-bold">{formatCurrency(item?.total)}</p>
+                        <p className="p-4 text-right">{formatCurrency(item?.unitPrice || 0)}</p>
+                        <p className="p-4 text-right">{item?.quantity || 1}</p>
+                        <p className="p-4 text-right font-bold">{formatCurrency((item?.unitPrice || 0) * (item?.quantity || 1))}</p>
                     </div>
                 ))}
                 <div className="grid grid-cols-[3fr_1fr_1fr_2fr] text-neutrals-900 text-sm font-mono border-b border-primary-100">

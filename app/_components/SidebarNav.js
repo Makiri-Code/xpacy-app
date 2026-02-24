@@ -10,6 +10,7 @@ import { RiUserSettingsLine } from "react-icons/ri";
 import { LuMessageCircleQuestion } from "react-icons/lu";
 import { IoCalendarOutline } from "react-icons/io5";
 import { RiHome2Line, RiSearchLine, RiSettings3Line, RiPulseLine } from "react-icons/ri";
+import { User } from "lucide-react";
 
 
 const userNavList = [
@@ -85,6 +86,11 @@ const adminNavList = [
     {
         text: "Users",
         link: "/dashboard/admin/users",
+        icon: <User />
+    },
+    {
+        text: "Bookings",
+        link: "/dashboard/admin/bookings",
         icon: <IoCalendarOutline />
     },
     {

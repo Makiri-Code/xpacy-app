@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
-import { getAdminProperties, getAdminServices, getPropertyOwner, getAllAdmin } from "../_lib/data-services";
+import { getAdminProperties, getAdminServices, getPropertyOwner, getAllAdmin, getAdminBooking } from "../_lib/data-services";
 import { FaHome, FaUsers, FaCalendarCheck } from "react-icons/fa";
-import { BiBuildings } from "react-icons/bi";
+import { BiBuildings, BiCalendarStar } from "react-icons/bi";
 import { RiAdminLine } from "react-icons/ri";
 import { MdOutlineHomeRepairService } from "react-icons/md";
 import { FaBuildingUser } from "react-icons/fa6";
@@ -13,12 +13,14 @@ const AdminOverview = async () => {
         propertiesResponse, 
         services, 
         propertyOwners, 
-        admins
+        admins,
+        bookings
     ] = await Promise.all([
         getAdminProperties(token),
         getAdminServices(token),
         getPropertyOwner(token),
-        getAllAdmin(token)
+        getAllAdmin(token),
+        getAdminBooking(token)
     ]);
 
     const overview = [
@@ -44,6 +46,13 @@ const AdminOverview = async () => {
             bgColor: "bg-blue-100"
         },
         { 
+            title: "Total Bookings", 
+            count: bookings?.length || 0, 
+            icon: <BiCalendarStar className="text-pink-500" size={24} />,
+            color: "bg-pink-50",
+            bgColor: "bg-pink-100"
+        },
+        { 
             title: "Admins", 
             count: admins?.length || 0, 
             icon: <BiBuildings className="text-orange-500" size={24} />, // Changed from FaUsers to BiBuildings
@@ -53,7 +62,7 @@ const AdminOverview = async () => {
     ];
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
             {overview.map((item, index) => (
                 <div key={index} className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition-shadow duration-300">
                     <div className="flex justify-center items-center">

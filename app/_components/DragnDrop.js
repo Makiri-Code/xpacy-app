@@ -137,6 +137,7 @@ export default function DragnDrop({ accept, maxFiles, files, setFiles, isReadOnl
             <IoCloudUploadOutline className="text-[40px]" />
             <div className="text-center space-y-1">
               <button
+                type="button"
                 disabled={isReadOnly}
                 onClick={!isReadOnly ? open : undefined}
                 className={`text-primary font-bold text-lg ${isReadOnly ? "opacity-50 cursor-not-allowed" : ""}`}

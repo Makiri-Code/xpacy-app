@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition, useRef } from "react";
 import ProgressBar from "./ProgressBar";
 import SearchPropertyOwner from "./SearchPropertyOwner";
 import FormInput from "./FormInput";
@@ -216,13 +216,12 @@ const EditPropertyForm = ({
     // Initialize files if editing (assuming initialData.images handles preview or we skip valid file check)
     // For now we might not pre-fill files as handling remote URLs in file input is complex, user can re-upload
     const [files, setFiles] = useState(() => effectiveData?.images || []); 
-    const { files: selectedFiles } = useCompressImage(files, setFiles);
     const [isFeatured, setIsFeatured] = useState(() => effectiveData?.isFeatured || effectiveData?.is_featured || false);
     const [isPending, setIsPending] = useState(false);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [uploadingProgress, setUploadingProgress] = useState(0);
     const [estimatedTime, setEstimatedTime] = useState(0);
-    const controller = new AbortController();
+    const controllerRef = useRef(null);
     console.log(propertyObj)
     const { register, handleSubmit, formState: { errors }, reset, getValues, setValue } = useForm({
         defaultValues: {
@@ -268,7 +267,7 @@ const EditPropertyForm = ({
             // If isEditMode and no new files, we might need a different strategy.
             // For MVP edit: requiring re-upload or handling distinct update logic. 
             // As per instructions, we prioritize "means to edit".
-            images: selectedFiles, 
+            images: files, 
             isFeatured: isFeatured,
             total_bathrooms: Number(data.total_bathrooms),
             total_bedrooms: Number(data.total_bedrooms),
@@ -278,7 +277,14 @@ const EditPropertyForm = ({
             long: Number(data.long),
             lat: Number(data.lat),
         }
-
+        if (!data.state) return toast.error("State is required");
+        if (!data.property_type) return toast.error("Property Type is required");
+        if (!data.availability_status) return toast.error("Availability Status is required");
+        if (!data.property_status) return toast.error("Property Status is required");
+        if (!data.total_bedrooms) return toast.error("Number of bedrooms is required");
+        if (!data.total_bathrooms) return toast.error("Number of bathrooms is required");
+        if (!data.total_toilets) return toast.error("Number of toilets is required");
+        if (!data.parking_area) return toast.error("Parking Area is required");
 
         setIsPending(true);
         toast.promise(submitForm(propertyInfo), {
@@ -293,15 +299,14 @@ const EditPropertyForm = ({
             },
             error: (error) => {
                 setIsPending(false);
+                setIsOpenModal(false);
+                if (error.message === "canceled" || error.message === "Upload cancelled") return "Upload cancelled.";
                 return `${error.message || `Failed to ${isEditMode ? 'update' : 'add'} property.`}`
             },
         })
-
-
-
-
     }
     const submitForm = async (propertyInfo) => {
+        controllerRef.current = new AbortController();
         const formData = new FormData();
         Object.entries(propertyInfo).forEach(([key, value]) => {
             if (Array.isArray(value)) {
@@ -327,15 +332,18 @@ const EditPropertyForm = ({
                     Authorization: `Bearer ${token?.value}`,
                     "Content-Type": "multipart/form-data",
                 },
+                signal: controllerRef.current.signal,
                 onUploadProgress: (progressEvent) => progress(progressEvent, setIsOpenModal, setUploadingProgress, setEstimatedTime, startTime)
             });
-            if (controller.signal.aborted) throw new Error("Upload cancelled")
+            if (controllerRef.current.signal.aborted) throw new Error("Upload cancelled")
 
             return response.data;
         } catch (error) {
-
+            if (axios.isCancel(error)) {
+                throw new Error("Upload cancelled");
+            }
             console.log("Error submitting form:", error);
-            toast.error(error.message || "An error occurred. Please try again.");
+            throw new Error(error?.response?.data?.message || error.message || "An error occurred. Please try again.");
         }
     }
 
@@ -350,10 +358,7 @@ const EditPropertyForm = ({
     }, [propertyOwner, setValue]);
 
     useEffect(() => {
-        // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
-        return () => {
-            selectedFiles.forEach((file) => URL.revokeObjectURL(file.preview));
-        }
+        // Files are managed inside DragnDrop's useCompressImage hook object URLs
     }, []);
 
     const pathname = usePathname();
@@ -666,7 +671,7 @@ const EditPropertyForm = ({
                 setIsOpenModal={setIsOpenModal}
                 uploadingProgress={uploadingProgress}
                 estimatedTime={estimatedTime}
-                controller={controller}
+                controller={controllerRef.current}
             />
         </div>
     );

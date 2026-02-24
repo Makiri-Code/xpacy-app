@@ -3,14 +3,18 @@ import imageCompression from "browser-image-compression";
 
 const SERVER_BASE = "https://app.xpacy.com/src/upload/properties";
 
-const normalizeServerFile = (file) => ({
-  id: crypto.randomUUID(),
-  name: file,
-  type: file.endsWith(".mp4") ? "video/mp4" : "image/jpeg",
-  size: 0,
-  url: `${SERVER_BASE}/${file}`,
-  isRemote: true,
-});
+const normalizeServerFile = (file) => {
+  const isString = typeof file === "string";
+  const fileName = isString ? file : (file?.name || "unknown");
+  return {
+    id: crypto.randomUUID(),
+    name: fileName,
+    type: typeof fileName === "string" && fileName.endsWith(".mp4") ? "video/mp4" : "image/jpeg",
+    size: file?.size || 0,
+    url: isString ? `${SERVER_BASE}/${file}` : (file?.url || `${SERVER_BASE}/${fileName}`),
+    isRemote: true,
+  };
+};
 
 const normalizeLocalFile = (file) => ({
   id: crypto.randomUUID(),
@@ -26,14 +30,37 @@ export const useCompressImage = (initialFiles = [], setParentFiles) => {
   const [files, setFiles] = useState([]);
   const [chosenFile, setChosenFile] = useState(null);
 
-  // Normalize server files on mount
+  // Safely sync remote strings or local files pushed from parent
   useEffect(() => {
     if (initialFiles?.length) {
-      const normalized = initialFiles.map(normalizeServerFile);
-      setFiles(normalized);
-      setChosenFile(normalized[0]);
+      setFiles(prev => {
+        const newElements = initialFiles.filter(item => {
+           if (typeof item === "string") return !prev.some(p => p.isRemote && p.name === item);
+           if (item instanceof File) return !prev.some(p => p.raw === item || (!p.isRemote && p.name === item.name));
+           return false;
+        });
+
+        if (newElements.length > 0) {
+            const normalized = newElements.map(item => {
+               if (typeof item === "string") return normalizeServerFile(item);
+               return normalizeLocalFile(item);
+            });
+            const newState = [...prev, ...normalized];
+            return newState;
+        }
+        return prev;
+      });
     }
   }, [initialFiles]);
+
+  // Ensure chosen file is set initially or falls back
+  useEffect(() => {
+    if (files.length > 0 && !chosenFile) {
+        setChosenFile(files[0]);
+    } else if (files.length === 0 && chosenFile) {
+        setChosenFile(null);
+    }
+  }, [files, chosenFile]);
 
   const compressImage = useCallback(async (acceptedFiles) => {
     const options = {
@@ -58,12 +85,13 @@ export const useCompressImage = (initialFiles = [], setParentFiles) => {
           (nf) => !prev.some((pf) => pf.name === nf.name)
         );
         const merged = [...prev, ...unique];
-
-        setParentFiles?.(
-          merged
-            .filter((f) => !f.isRemote)
-            .map((f) => f.raw)
-        );
+        
+        // Use timeout to schedule the parent state update outside the current render cycle
+        setTimeout(() => {
+          setParentFiles?.(
+            merged.map((f) => f.isRemote ? f.name : f.raw)
+          );
+        }, 0);
 
         return merged;
       });
@@ -80,9 +108,12 @@ export const useCompressImage = (initialFiles = [], setParentFiles) => {
     setFiles((prev) => {
       const next = prev.filter((f) => f.id !== file.id);
 
-    //   setParentFiles?.(
-    //     next.filter((f) => !f.isRemote).map((f) => f.raw)
-    //   );
+      // Use timeout to schedule the parent state update safely
+      setTimeout(() => {
+        setParentFiles?.(
+          next.map((f) => f.isRemote ? f.name : f.raw)
+        );
+      }, 0);
 
       setChosenFile(next[0] || null);
       return next;

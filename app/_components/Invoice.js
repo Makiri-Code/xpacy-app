@@ -19,8 +19,9 @@ export default function Invoice({
 
   // Recalculate subtotal, tax, total whenever items change
   useEffect(() => {
-    const subTotal = invoice.items.reduce(
-      (sum, i) => sum + Number(i.unitPrice) * Number(i.quantity),
+    const itemsList = invoice?.items || []
+    const subTotal = itemsList.reduce(
+      (sum, i) => sum + Number(i?.unitPrice || 0) * Number(i?.quantity || 0),
       0
     )
     const tax = subTotal * 0.075
@@ -29,7 +30,7 @@ export default function Invoice({
     onChange?.("subTotal", subTotal)
     onChange?.("tax", tax)
     onChange?.("total", total)
-  }, [invoice.items])
+  }, [invoice?.items])
 
   return (
     <div ref={ref} className="hidden lg:flex flex-col gap-16 p-6 rounded-lg border-2 border-primary-200 bg-white">
@@ -42,9 +43,9 @@ export default function Invoice({
         <div className="flex flex-col gap-8">
           <h1 className="text-[64px] text-primary font-bold">INVOICE</h1>
           <div className="flex flex-col items-end gap-6 font-mono">
-            <Field label="Invoice Number" value={invoice.invoiceNumber} />
-            <Field label="Issued Date" value={invoice.issuedDate} type="date" isEdit={isEdit} onChange={v => update("issuedDate", v)} />
-            <Field label="Due Date" value={invoice.dueDate} type="date" isEdit={isEdit} onChange={v => update("dueDate", v)} />
+            <Field label="Invoice Number" value={invoice?.invoiceNumber || ""} />
+            <Field label="Issued Date" value={invoice?.issuedDate || new Date()} type="date" isEdit={isEdit} onChange={v => update("issuedDate", v)} />
+            <Field label="Due Date" value={invoice?.dueDate || new Date()} type="date" isEdit={isEdit} onChange={v => update("dueDate", v)} />
           </div>
         </div>
       </header>
@@ -54,15 +55,15 @@ export default function Invoice({
         <div className="flex flex-col gap-6">
           <h2 className="text-primary">Recipient&apos;s Details</h2>
           <div className="space-y-2 font-mono">
-            <EditableText value={invoice.user.firstname} isEdit={isEdit} onChange={v => update("user.firstname", v)} placeholder={"Enter Recipent's first name"} />
-            <EditableText value={invoice.user.lastname} isEdit={isEdit} onChange={v => update("user.lastname", v)} placeholder={"Enter Recipent's last name"} />
-            <EditableText value={invoice.user.address} isEdit={isEdit} onChange={v => update("user.address", v)} placeholder={"Enter Recipent's address"} />
-            <EditableText value={invoice.user.email} isEdit={isEdit} onChange={v => update("user.email", v)} placeholder={"Enter Recipent's email"} />
-            <EditableText value={invoice.user.phone} isEdit={isEdit} onChange={v => update("user.phone", v)} placeholder={"Enter Recipent's phone number"} />
+            <EditableText value={invoice?.user?.firstname || ""} isEdit={isEdit} onChange={v => update("user.firstname", v)} placeholder={"Enter Recipent's first name"} />
+            <EditableText value={invoice?.user?.lastname || ""} isEdit={isEdit} onChange={v => update("user.lastname", v)} placeholder={"Enter Recipent's last name"} />
+            <EditableText value={invoice?.user?.address || ""} isEdit={isEdit} onChange={v => update("user.address", v)} placeholder={"Enter Recipent's address"} />
+            <EditableText value={invoice?.user?.email || ""} isEdit={isEdit} onChange={v => update("user.email", v)} placeholder={"Enter Recipent's email"} />
+            <EditableText value={invoice?.user?.phone || ""} isEdit={isEdit} onChange={v => update("user.phone", v)} placeholder={"Enter Recipent's phone number"} />
           </div>
         </div>
         <span className="bg-error w-max text-secondary-100 px-4 py-2 rounded-full text-2xl font-bold font-mono">
-          {invoice.status}
+          {invoice?.status || "Pending"}
         </span>
       </section>
 
@@ -75,18 +76,18 @@ export default function Invoice({
           <p className="p-4 text-right">Total</p>
         </div>
 
-        {invoice.items.map((item, i) => (
+        {(invoice?.items || []).map((item, i) => (
           <div key={i} className="grid grid-cols-[3fr_1fr_1fr_2fr] font-mono border-b">
-            <Cell value={item.description} isEdit={isEdit} onChange={v => update(`items.${i}.description`, v)} align="left" />
-            <Cell value={item.unitPrice} isEdit={isEdit} onChange={v => update(`items.${i}.unitPrice`, Number(v))} type="number" />
-            <Cell value={item.quantity} isEdit={isEdit} onChange={v => update(`items.${i}.quantity`, Number(v))} type="number" />
-            <p className="p-4 text-right font-bold">{formatCurrency(item.unitPrice * item.quantity)}</p>
+            <Cell value={item?.description || ""} isEdit={isEdit} onChange={v => update(`items.${i}.description`, v)} align="left" />
+            <Cell value={item?.unitPrice || 0} isEdit={isEdit} onChange={v => update(`items.${i}.unitPrice`, Number(v))} type="number" />
+            <Cell value={item?.quantity || 1} isEdit={isEdit} onChange={v => update(`items.${i}.quantity`, Number(v))} type="number" />
+            <p className="p-4 text-right font-bold">{formatCurrency((item?.unitPrice || 0) * (item?.quantity || 1))}</p>
           </div>
         ))}
 
-        <TotalRow label="Sub-total" value={invoice.subTotal} />
-        <TotalRow label="Tax (7.5%)" value={invoice.tax} />
-        <TotalRow label="TOTAL" value={invoice.total} highlight />
+        <TotalRow label="Sub-total" value={invoice?.subTotal || 0} />
+        <TotalRow label="Tax (7.5%)" value={invoice?.tax || 0} />
+        <TotalRow label="TOTAL" value={invoice?.total || 0} highlight />
       </section>
 
       {/* Footer */}
@@ -112,21 +113,47 @@ export default function Invoice({
 
 /* ---------- Primitives ---------- */
 
-const Field = ({ label, value, isEdit, onChange, type="text" }) => (
-  <p>
-    {label}:{" "}
-    {isEdit ? (
-      <input
-        type={type}
-        value={type === "date" ? new Date(value).toISOString().slice(0, 10) : value}
-        onChange={e => onChange(type === "date" ? new Date(e.target.value) : e.target.value)}
-        className="border border-primary-700 px-3 py-2 rounded-lg outline-none"
-      />
-    ) : (
-      <span>{type === "date" ? format(new Date(value), "dd/MM/yy") : value}</span>
-    )}
-  </p>
-)
+const Field = ({ label, value, isEdit, onChange, type="text" }) => {
+  const displayValue = () => {
+    if (type === "date") {
+      if (!value) return "N/A"
+      try {
+        return format(new Date(value), "dd/MM/yy")
+      } catch (e) {
+        return "Invalid Date"
+      }
+    }
+    return value || ""
+  }
+
+  const inputValue = () => {
+    if (type === "date") {
+      if (!value) return ""
+      try {
+        return new Date(value).toISOString().slice(0, 10)
+      } catch (e) {
+        return ""
+      }
+    }
+    return value || ""
+  }
+
+  return (
+    <p>
+      {label}:{" "}
+      {isEdit ? (
+        <input
+          type={type}
+          value={inputValue()}
+          onChange={e => onChange(type === "date" ? new Date(e.target.value) : e.target.value)}
+          className="border border-primary-700 px-3 py-2 rounded-lg outline-none"
+        />
+      ) : (
+        <span>{displayValue()}</span>
+      )}
+    </p>
+  )
+}
 
 const EditableText = ({ value, isEdit, onChange, placeholder }) =>
   isEdit ? (

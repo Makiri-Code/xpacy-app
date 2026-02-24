@@ -2,6 +2,7 @@
 import { VscNote } from "react-icons/vsc"
 import { CiEdit } from "react-icons/ci"
 import { RiDeleteBin6Line } from "react-icons/ri"
+import { MdOutlineReceipt } from "react-icons/md"
 import TableItemOptionsMenu from "./TableItemOptionsMenu";
 import { useTransition } from "react";
 import toast from "react-hot-toast";
@@ -19,6 +20,11 @@ export default function BookingOptionsMenu({ id }) {
             label: "Edit booking",
             href: `/admin/edit-booking/${id}`,
             icon: <CiEdit className="text-gray-400" />
+        },
+        {
+            label: "Issue invoice",
+            href: `/invoice/${id}`,
+            icon: <MdOutlineReceipt className="text-gray-400" />
         },
         {
             label: "Delete booking",
