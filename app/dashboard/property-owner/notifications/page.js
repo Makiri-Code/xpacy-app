@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { getPropertyOwnerNotifications } from "@/app/_lib/data-services";
+import { getPropertyOwnerNotifications, getUserNotifications } from "@/app/_lib/data-services";
 import CustomCheckbox from "@/app/_components/CustomCheckbox";
 import DashboardFilter from "@/app/_components/DashboardFilter";
 import EmptyState from "@/app/_components/EmptyState";
@@ -12,7 +12,7 @@ import MobileNotificationItem from "@/app/_components/MobileNotificationItem";
 export default async function Page() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")
-    const notifications = await getPropertyOwnerNotifications(token);
+    const notifications = await getUserNotifications(token);
     console.log(notifications)
     if (notifications.length <= 0) return <div className="grid place-content-center"><EmptyState message={"Opps... No notification available"} /></div>
     return (

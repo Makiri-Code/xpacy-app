@@ -75,7 +75,7 @@ export default async function Page({searchParams}) {
             <div className="flex justify-end gap-2">
                 <DateFilter />
                 <ExportButton 
-                    data={properties} 
+                    data={propertiesList} 
                     filename="property_summary" 
                     options={[
                         { id: "all", label: "All data" },
@@ -86,14 +86,7 @@ export default async function Page({searchParams}) {
             </div>
             <PropertiesSummary properties={allPropertiesForSummary || []} />
            
-            <PropertiesOverviewWrapper 
-                activeTab={params?.tab} 
-                properties={paginatedProperties} 
-                bookings={Array.isArray(bookings) ? bookings : []}
-                services={Array.isArray(services) ? services : []}
-                pagination={pagination}
-                recent={false} 
-            />
+            <PropertiesTableList properties={paginatedProperties}  />
             
         </div>
     );
