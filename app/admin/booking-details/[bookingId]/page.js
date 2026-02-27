@@ -44,7 +44,6 @@ export default async function ViewBookingPage({ params }) {
 
             <main className="flex-1 px-[7%] py-8">
                 <div className="flex flex-col gap-12 w-full max-w-[796px] mx-auto pb-12">
-                  
                     {/* Content Area */}
                     <div className="p-8 flex flex-col gap-10 bg-white rounded-xl shadow-sm">
                         

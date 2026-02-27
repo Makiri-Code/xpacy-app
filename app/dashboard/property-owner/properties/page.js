@@ -86,7 +86,7 @@ export default async function Page({searchParams}) {
             </div>
             <PropertiesSummary properties={allPropertiesForSummary || []} />
            
-            <PropertiesTableList properties={paginatedProperties}  />
+            <PropertiesTableList properties={paginatedProperties} />
             
         </div>
     );
