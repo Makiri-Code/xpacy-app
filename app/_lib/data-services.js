@@ -826,3 +826,58 @@ export async function getServiceProviderById(id) {
     return null;
   }
 }
+
+export async function getInvoices(token) {
+  if (!token?.value) return [];
+  try {
+    const response = await fetch(`${url}/invoice/fetch-invoices`, {
+      next: {
+        tags: ['invoices']
+      },
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-type": "application/json",
+      },
+    });
+    if (!response.ok) {
+        if (response.status === 404) {
+            console.warn("Invoices endpoint not found (404). Returning empty list.");
+        } else {
+            console.error("Failed to fetch invoices:", response.status, response.statusText);
+        }
+        return [];
+    }
+    const { data } = await response.json();
+    return data
+  } catch (error) {
+    console.error("Error fetching invoices:", error)
+    return []
+  }
+}
+
+export async function getAdminInvoice(token, id) {
+  if (!token?.value) return null;
+  try {
+    const response = await fetch(`${url}/invoice/fetch-invoice/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-type": "application/json",
+      },
+    });
+    if (!response.ok) {
+        if (response.status === 404) {
+             console.warn(`Invoice ${id} endpoint not found (404).`);
+        } else {
+             console.error(`Error fetching invoice ${id}: ${response.status}`);
+        }
+        return null;
+    }
+    const data = await response.json();
+    return data?.data || data?.invoice || data;
+  } catch (error) {
+    console.error(`Error fetching invoice ${id}:`, error);
+    return null;
+  }
+}

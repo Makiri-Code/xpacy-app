@@ -1,5 +1,6 @@
 "use client"
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -13,9 +14,14 @@ export default function LoginForm({role}) {
     const searchParams = useSearchParams();
     const redirectUrl = searchParams.get("redirectUrl") ?? "/dashboard/user";
     const [pending, startTransition] = useTransition();
+    const [captchaValue, setCaptchaValue] = useState(null);
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
     
     async function onSubmit(data) {
+        if (!captchaValue) {
+            toast.error("Please verify that you are not a robot.");
+            return;
+        }
         if(role === "user"){
             startTransition(async () => {
                 const response = await handleUserLogin(data, redirectUrl);
@@ -77,6 +83,12 @@ export default function LoginForm({role}) {
                                 <label htmlFor="checkbox" className="text-base text-black">Remember me</label>
                             </div>
                             <Link href="/auth/forgot-password" className="font-mono text-base text-primary">Forgot Password?</Link>
+                        </div>
+                        <div className="flex justify-center w-full my-4">
+                            <ReCAPTCHA
+                                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"}
+                                onChange={setCaptchaValue}
+                            />
                         </div>
                         <button type="submit" disabled={pending} className="bg-primary text-white  cursor-pointer  px-5 py-3 font-semibold flex space-x-2.5 font-mono items-center justify-center rounded-md hover:shadow-md disabled:bg-gray-300 disabled:cursor-not-allowed"> <span>Log In</span> <span>{pending && <SpinnerMini />}</span> </button>
                     </form>

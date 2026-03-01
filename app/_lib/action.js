@@ -381,13 +381,16 @@ export async function handleRegisterOwner(formData) {
 
 
 export async function submitInvoiceAction(invoice, token) {
+  const subTotal = invoice.items.reduce((sum, item) => sum + (Number(item.quantity || 0) * Number(item.unitPrice || 0)), 0);
+  const taxAmount = subTotal * (Number(invoice.tax || 0) / 100);
+
   const payload = {
     recipientId: Number(invoice.recipientId),
     recipientType: "User",
     issuedDate: invoice.issuedDate.toISOString().split("T")[0],
     dueDate: invoice.dueDate.toISOString().split("T")[0],
     invoice_reason: invoice.invoiceReason,
-    tax: Number(invoice.tax),
+    tax: taxAmount,
     amountPaid: invoice.total,
     items: invoice.items.map(item => ({
       description: item.description,

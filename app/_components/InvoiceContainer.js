@@ -5,8 +5,9 @@ import { useRef } from "react";
 import { toPng } from "html-to-image";
 import MobileInvoice from "./MobileInvoice";
 import { saveAs } from "file-saver";
+import toast from "react-hot-toast";
 
-export default function InvoiceContainer({ invoice, token }) {
+export default function InvoiceContainer({ invoice, token, users = [] }) {
     //     const {toPDF, toIMG, targetRef} = usePDF({
     //     filename: `Invoice_${invoice?.invoiceNumber || "invoice"}`,
     //     page: { margin: Margin.MEDIUM, orientation: 'portrait',},
@@ -23,13 +24,13 @@ export default function InvoiceContainer({ invoice, token }) {
             // Save file
             saveAs(blob, `Invoice_${invoice?.invoiceNumber || "invoice"}.png`);
         } catch (error) {
-            toat.error("image download failed")
+            toast.error("image download failed")
         }
     }
     return (
         <>
-            <Invoice invoice={invoice} ref={targetRef} />
-            <MobileInvoice invoice={invoice} ref={targetRef} />
+            <Invoice invoice={invoice} ref={targetRef} users={users} />
+            <MobileInvoice invoice={invoice} ref={targetRef} users={users} />
             <InvoiceBtn token={token} onDownload={downloadPng} />
         </>
     )

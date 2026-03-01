@@ -11,6 +11,7 @@ import { LuMessageCircleQuestion } from "react-icons/lu";
 import { IoCalendarOutline } from "react-icons/io5";
 import { RiHome2Line, RiSearchLine, RiSettings3Line, RiPulseLine } from "react-icons/ri";
 import { User } from "lucide-react";
+import { FaCheck } from "react-icons/fa6";
 
 
 const userNavList = [
@@ -136,6 +137,11 @@ const propertyOwnerNavList = [
         text: "Services Requests",
         link: "/dashboard/property-owner/services",
         icon: <IoCalendarOutline />
+    },
+    {
+        text: "Bookings",
+        link: "/dashboard/property-owner/bookings",
+        icon: <FaCheck />
     },
     {
         text: "Payments",

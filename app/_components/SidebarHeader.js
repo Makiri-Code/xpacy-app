@@ -14,9 +14,35 @@ export default function SidebarHeader({ role = "user" }) {
             <DashboardHeading />
             <MobileNav isSidebar={true} role={role} />
             
-            <Suspense fallback={<HeaderSkeleton role={role} />}>
-                <ProfileWrapper role={role} />
-            </Suspense>
+            <div className="flex gap-4 items-center relative">
+                {/* Static Navigations hoisted out of Suspense to ensure they always load instantly */}
+                {role === "user" && (
+                    <>
+                        <SearchInput />
+                        <Link href="/book-service" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Book A Service</Link>
+                        <div className="w-0.5 h-10 bg-gray-300 hidden lg:block"></div>
+                    </>
+                )}
+                
+                {role === "admin" && (
+                    <>
+                        <Link href="/admin/add-new-property" className="p-4 rounded-lg bg-white border border-primary hidden lg:flex items-center justify-center text-primary font-mono font-bold">Manage Service Requests</Link>
+                        <Link href="/admin/add-new-property" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Add New Property</Link>
+                        <div className="w-0.5 h-10 bg-gray-300 hidden lg:block"></div>
+                    </>
+                )}
+                
+                {role === "property-owner" && (
+                    <>
+                        <Link href="/book-service" className="p-4 rounded-lg bg-white border border-primary hidden lg:flex items-center justify-center text-primary font-mono font-bold">New Service Request</Link>
+                        <div className="w-0.5 h-10 bg-gray-300 hidden lg:block"></div>
+                    </>
+                )}
+
+                <Suspense fallback={<HeaderSkeleton />}>
+                    <ProfileWrapper role={role} />
+                </Suspense>
+            </div>
         </div>
     );
 }
@@ -36,42 +62,18 @@ async function ProfileWrapper({ role }) {
 
     return (
         <>
-            {role === "user" && (
-                <div className="flex gap-4 items-center relative">
-                    <SearchInput />
-                    <Link href="/book-service" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Book A Service</Link>
-                    <div className="w-0.5 h-10 bg-gray-300"></div>
-                    <ProfileDisplay role="user" profile={profile} />
-                    <MobileProfileMenu profile={profile} role="user" />
-                </div>
-            )}
-            {role === "admin" && (
-                <div className="flex gap-4 items-center relative">
-                    <Link href="/admin/add-new-property" className="p-4 rounded-lg bg-white border border-primary hidden lg:flex items-center justify-center text-primary font-mono font-bold">Manage Service Requests</Link>
-                    <Link href="/admin/add-new-property" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Add New Property</Link>
-                    <div className="w-0.5 h-10 bg-gray-300"></div>
-                    <ProfileDisplay role={"admin"} profile={profile} />
-                    <MobileProfileMenu profile={profile} role="admin" />
-                </div>
-            )}
-            {role === "property-owner" && (
-                <div className="flex gap-4 items-center relative">
-                    <Link href="/book-service" className="p-4 rounded-lg bg-white border border-primary hidden lg:flex items-center justify-center text-primary font-mono font-bold">New Service Request</Link>
-                    <div className="w-0.5 h-10 bg-gray-300"></div>
-                    <ProfileDisplay role="property-owner" profile={profile} />
-                    <MobileProfileMenu profile={profile} role="property-owner" />
-                </div>
-            )}
+            <ProfileDisplay role={role} profile={profile} />
+            <MobileProfileMenu profile={profile} role={role} />
         </>
     );
 }
 
-function HeaderSkeleton({ role }) {
+function HeaderSkeleton() {
     return (
         <div className="flex gap-4 items-center opacity-50 animate-pulse">
-            <div className="w-32 h-10 bg-gray-200 rounded-lg hidden lg:block"></div>
-            <div className="w-32 h-10 bg-gray-200 rounded-lg hidden lg:block"></div>
-            <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+            <div className="w-10 h-10 bg-gray-200 rounded-full lg:block hidden"></div>
+            <div className="w-24 h-5 bg-gray-200 rounded-md lg:block hidden"></div>
+            <div className="w-8 h-8 bg-gray-200 rounded-full lg:hidden block"></div>
         </div>
     );
 }

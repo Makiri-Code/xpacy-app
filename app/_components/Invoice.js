@@ -9,13 +9,26 @@ export default function Invoice({
   invoice,
   mode = "view",
   onChange,
+  className = "hidden lg:flex",
+  users = [],
   ref
 }) {
+
   const isEdit = mode === "edit"
+  const rawRecipient = invoice?.recipientID || invoice?.recipientId || invoice?.reciepientID || invoice?.recipient;
+  const recipientIdStr = typeof rawRecipient === 'object' && rawRecipient !== null ? String(rawRecipient._id || rawRecipient.id) : String(rawRecipient);
+  
+  let recipient = users?.find(u => String(u._id || u.id) === recipientIdStr) || invoice?.user;
+  if (!recipient && typeof rawRecipient === 'object' && rawRecipient !== null) {
+      recipient = rawRecipient;
+  }
 
   const update = (path, value) => {
     onChange?.(path, value)
   }
+  console.log(invoice)
+
+  const itemsStr = JSON.stringify(invoice?.items || [])
 
   // Recalculate subtotal, tax, total whenever items change
   useEffect(() => {
@@ -24,18 +37,20 @@ export default function Invoice({
       (sum, i) => sum + Number(i?.unitPrice || 0) * Number(i?.quantity || 0),
       0
     )
-    const tax = subTotal * 0.075
-    const total = subTotal + tax
+    
+    // In this new model, invoice.tax represents a percentage (e.g., 5 for 5%)
+    const taxRate = Number(invoice?.tax || 0); 
+    const calculatedTaxAmount = subTotal * (taxRate / 100);
+    const total = subTotal + calculatedTaxAmount;
 
-    onChange?.("subTotal", subTotal)
-    onChange?.("tax", tax)
-    onChange?.("total", total)
-  }, [invoice?.items])
+    if (invoice?.subTotal !== subTotal) onChange?.("subTotal", subTotal)
+    if (invoice?.total !== total) onChange?.("total", total)
+  }, [itemsStr, invoice?.tax])
 
   return (
-    <div ref={ref} className="hidden lg:flex flex-col gap-16 p-6 rounded-lg border-2 border-primary-200 bg-white">
+    <div ref={ref} className={`${className} flex-col gap-8 lg:gap-16 p-4 lg:p-6 rounded-lg border-2 border-primary-200 bg-white`}>
       {/* Header */}
-      <header className="flex items-start justify-between">
+      <header className="flex flex-col lg:flex-row items-start justify-between gap-8 lg:gap-0">
         <div className="w-[180px] h-[123px] relative">
           <Image src="/invoice-logo.png" alt="logo" fill className="object-cover" />
         </div>
@@ -43,23 +58,24 @@ export default function Invoice({
         <div className="flex flex-col gap-8">
           <h1 className="text-[64px] text-primary font-bold">INVOICE</h1>
           <div className="flex flex-col items-end gap-6 font-mono">
-            <Field label="Invoice Number" value={invoice?.invoiceNumber || ""} />
+            <Field label="Invoice Number" value={invoice?.invoiceNumber || invoice?.invoice_number || ""} />
             <Field label="Issued Date" value={invoice?.issuedDate || new Date()} type="date" isEdit={isEdit} onChange={v => update("issuedDate", v)} />
             <Field label="Due Date" value={invoice?.dueDate || new Date()} type="date" isEdit={isEdit} onChange={v => update("dueDate", v)} />
+              
           </div>
         </div>
       </header>
 
       {/* Recipient */}
-      <section className="flex justify-between items-center">
+      <section className="flex flex-col lg:flex-row justify-between lg:items-center gap-6 lg:gap-0">
         <div className="flex flex-col gap-6">
           <h2 className="text-primary">Recipient&apos;s Details</h2>
           <div className="space-y-2 font-mono">
-            <EditableText value={invoice?.user?.firstname || ""} isEdit={isEdit} onChange={v => update("user.firstname", v)} placeholder={"Enter Recipent's first name"} />
-            <EditableText value={invoice?.user?.lastname || ""} isEdit={isEdit} onChange={v => update("user.lastname", v)} placeholder={"Enter Recipent's last name"} />
-            <EditableText value={invoice?.user?.address || ""} isEdit={isEdit} onChange={v => update("user.address", v)} placeholder={"Enter Recipent's address"} />
-            <EditableText value={invoice?.user?.email || ""} isEdit={isEdit} onChange={v => update("user.email", v)} placeholder={"Enter Recipent's email"} />
-            <EditableText value={invoice?.user?.phone || ""} isEdit={isEdit} onChange={v => update("user.phone", v)} placeholder={"Enter Recipent's phone number"} />
+            <EditableText value={recipient?.firstname || recipient?.first_name || ""} isEdit={isEdit} onChange={v => update("user.firstname", v)} placeholder={"Enter Recipent's first name"} />
+            <EditableText value={recipient?.lastname || recipient?.last_name || ""} isEdit={isEdit} onChange={v => update("user.lastname", v)} placeholder={"Enter Recipent's last name"} />
+            <EditableText value={recipient?.address || ""} isEdit={isEdit} onChange={v => update("user.address", v)} placeholder={"Enter Recipent's address"} />
+            <EditableText value={recipient?.email || ""} isEdit={isEdit} onChange={v => update("user.email", v)} placeholder={"Enter Recipent's email"} />
+            <EditableText value={recipient?.phone || recipient?.phone_number || ""} isEdit={isEdit} onChange={v => update("user.phone", v)} placeholder={"Enter Recipent's phone number"} />
           </div>
         </div>
         <span className="bg-error w-max text-secondary-100 px-4 py-2 rounded-full text-2xl font-bold font-mono">
@@ -68,31 +84,68 @@ export default function Invoice({
       </section>
 
       {/* Items */}
-      <section className="py-6">
-        <div className="grid grid-cols-[3fr_1fr_1fr_2fr] font-mono font-bold border-b">
-          <p className="p-4 text-left">Description</p>
-          <p className="p-4 text-right">Price</p>
-          <p className="p-4 text-right">Qty</p>
-          <p className="p-4 text-right">Total</p>
-        </div>
-
-        {(invoice?.items || []).map((item, i) => (
-          <div key={i} className="grid grid-cols-[3fr_1fr_1fr_2fr] font-mono border-b">
-            <Cell value={item?.description || ""} isEdit={isEdit} onChange={v => update(`items.${i}.description`, v)} align="left" />
-            <Cell value={item?.unitPrice || 0} isEdit={isEdit} onChange={v => update(`items.${i}.unitPrice`, Number(v))} type="number" />
-            <Cell value={item?.quantity || 1} isEdit={isEdit} onChange={v => update(`items.${i}.quantity`, Number(v))} type="number" />
-            <p className="p-4 text-right font-bold">{formatCurrency((item?.unitPrice || 0) * (item?.quantity || 1))}</p>
-          </div>
-        ))}
-
-        <TotalRow label="Sub-total" value={invoice?.subTotal || 0} />
-        <TotalRow label="Tax (7.5%)" value={invoice?.tax || 0} />
-        <TotalRow label="TOTAL" value={invoice?.total || 0} highlight />
+      <section className="py-6 overflow-x-auto">
+        <table className="w-full font-mono border-collapse min-w-[600px]">
+          <thead>
+            <tr className="border-b text-left">
+              <th className="p-4 font-bold w-[45%]">Description</th>
+              <th className="p-4 font-bold text-right w-[15%]">Price</th>
+              <th className="p-4 font-bold text-right w-[15%]">Qty</th>
+              <th className="p-4 font-bold text-right w-[25%]">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(invoice?.items || []).map((item, i) => (
+              <tr key={i} className="border-b">
+                <td className="p-4 align-top text-left">
+                  <Cell value={item?.description || ""} isEdit={isEdit} onChange={v => update(`items.${i}.description`, v)} align="left" />
+                </td>
+                <td className="p-4 align-top text-right">
+                  <Cell value={item?.unitPrice || 0} isEdit={isEdit} onChange={v => update(`items.${i}.unitPrice`, Number(v))} type="number" />
+                </td>
+                <td className="p-4 align-top text-right">
+                  <Cell value={item?.quantity || 1} isEdit={isEdit} onChange={v => update(`items.${i}.quantity`, Number(v))} type="number" />
+                </td>
+                <td className="p-4 align-middle text-right font-bold">
+                  {formatCurrency((item?.unitPrice || 0) * (item?.quantity || 1))}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot className="font-bold">
+            <tr className="border-b">
+              <td colSpan={3} className="p-4 text-left">Sub-total</td>
+              <td className="p-4 text-right">{formatCurrency(invoice?.subTotal || 0)}</td>
+            </tr>
+            <tr className="border-b">
+              <td colSpan={3} className="p-4 text-left">Tax (%)</td>
+              <td className="p-4 text-right flex items-center justify-end gap-2">
+                {isEdit ? (
+                  <>
+                    <input
+                      type="number"
+                      value={invoice?.tax || 0}
+                      onChange={(e) => update("tax", Number(e.target.value))}
+                      className="w-[80px] border py-1.5 px-3 rounded-lg border-primary-100 outline-none text-right font-mono"
+                    />
+                    <span>%</span>
+                  </>
+                ) : (
+                  <span>{invoice?.tax || 0}% ({formatCurrency((invoice?.subTotal || 0) * (Number(invoice?.tax || 0) / 100))})</span>
+                )}
+              </td>
+            </tr>
+            <tr className="border-b bg-primary-200">
+              <td colSpan={3} className="p-4 text-left">TOTAL</td>
+              <td className="p-4 text-right">{formatCurrency(invoice?.total || 0)}</td>
+            </tr>
+          </tfoot>
+        </table>
       </section>
 
       {/* Footer */}
-      <section className="flex justify-between">
-        <div className="flex flex-col gap-6 font-mono">
+      <section className="flex flex-col-reverse lg:flex-row justify-between gap-8 lg:gap-0 items-center lg:items-start">
+        <div className="flex flex-col gap-6 font-mono text-center lg:text-left items-center lg:items-start">
           <p><b>Address:</b> No. 1 Joe Akonobi Street</p>
           <p><b>Email:</b> info@xpacy.com</p>
           <p><b>Phone:</b> 09068557780</p>
@@ -163,7 +216,7 @@ const EditableText = ({ value, isEdit, onChange, placeholder }) =>
   )
 
 const Cell = ({ value, isEdit, onChange, type="text", align="right" }) => (
-  <div className="p-4">
+  <>
     {isEdit ? (
       <input
         type={type}
@@ -174,12 +227,5 @@ const Cell = ({ value, isEdit, onChange, type="text", align="right" }) => (
     ) : (
       <p className={`text-${align}`}>{value}</p>
     )}
-  </div>
-)
-
-const TotalRow = ({ label, value, highlight }) => (
-  <div className={`flex justify-between font-mono font-bold border-b ${highlight ? "bg-primary-200" : ""}`}>
-    <p className="p-4">{label}</p>
-    <p className="p-4">{formatCurrency(value)}</p>
-  </div>
+  </>
 )

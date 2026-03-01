@@ -1,31 +1,33 @@
 import { FaMoneyBillWave } from "react-icons/fa";
 import { formatCurrency } from "@/app/_lib/utils";
 
-export default function PaymentsSummary({ bookings, showHeading = true }) {
+export default function PaymentsSummary({ invoices = [], showHeading = true }) {
+    const isPaid = (b) => ['paid', 'completed', 'active', 'confirmed', 'success', 'successful'].includes((b.payment_status || b.status || "").toLowerCase());
+    const isPending = (b) => ['pending', 'processing'].includes((b.payment_status || b.status || "").toLowerCase());
+    const isUnpaid = (b) => !isPaid(b) && !isPending(b);
+
     // Calculate counts and totals
     const counts = {
-        totalRevenue: bookings
-            .filter(b => b.payment_status?.toLowerCase() === 'paid' || b.payment_status?.toLowerCase() === 'completed')
-            .reduce((acc, curr) => acc + (curr.amount || curr.property?.property_price || 0), 0),
-        pendingAmount: bookings
-            .filter(b => b.payment_status?.toLowerCase() === 'pending')
-            .reduce((acc, curr) => acc + (curr.amount || curr.property?.property_price || 0), 0),
-        completedCount: bookings.filter(b => b.payment_status?.toLowerCase() === 'paid' || b.payment_status?.toLowerCase() === 'completed').length,
-        pendingCount: bookings.filter(b => b.payment_status?.toLowerCase() === 'pending').length,
+        totalRevenue: invoices
+            .filter(isPaid)
+            .reduce((acc, curr) => acc + (curr.amountPaid || curr.amount || curr.total || curr.property?.property_price || 0), 0),
+        paidCount: invoices.filter(isPaid).length,
+        pendingCount: invoices.filter(isPending).length,
+        unpaidCount: invoices.filter(isUnpaid).length,
     };
 
     const summaryItems = [
         {
-            title: "Pending Payments",
-            count: formatCurrency(counts.pendingAmount),
+            title: "Paid Invoices",
+            count: counts.paidCount,
         },
         {
-            title: "Upcoming Payments",
-            count: counts.upcomingCount || 0,
+            title: "Pending Invoices",
+            count: counts.pendingCount,
         },
         {
-            title: "Expenditure",
-            count: counts.expenditure || 0,
+            title: "Unpaid Invoices",
+            count: counts.unpaidCount,
         }
     ];
 
@@ -45,7 +47,7 @@ export default function PaymentsSummary({ bookings, showHeading = true }) {
                         <span className="font-mono text-primary-900 uppercase">Total Revenue</span>
                     </div>
                     <p className="text-center font-bold text-2xl font-mono w-[256px]">{formatCurrency(counts.totalRevenue)}</p>
-                    <div className="w-[220px] h-[220px] rounded-full absolute lg:-right-[7%] -right-[70%] lg:-top-1 -top-10 bg-[#477899] z-10"></div>
+                    <div className="w-[220px] h-[220px] rounded-full absolute lg:-right-[7%] -right-[70%] lg:-top-1 -top-10 bg-primary-700 z-10"></div>
                     <div className="w-[220px] h-[220px] rounded-full absolute lg:right-[4%] -right-[65%] top-2 bg-[#73A0BE]"></div>
                 </div>
 
@@ -53,7 +55,7 @@ export default function PaymentsSummary({ bookings, showHeading = true }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {summaryItems.map((item, index) => (
                         <div key={index} className="flex flex-col items-center justify-center p-6 rounded-lg shadow-lg bg-white border border-primary-100 w-full">
-                            <p className="font-mono text-[#477899] text-base text-center">{item.title}</p>
+                            <p className="font-mono text-primary-700 text-base text-center">{item.title}</p>
                             <p className="text-center font-bold text-lg font-mono">{item.count}</p>
                         </div>
                     ))}

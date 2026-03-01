@@ -27,7 +27,7 @@ export default async function ViewBookingPage({ params }) {
         );
     }
 
-    const { user, property, amount, payment_status, status, start_date, end_date, createdAt, id, _id } = booking;
+    const { user, property, amount, payment_status, status, start_date, end_date, created_at, id, _id } = booking;
     const bookingStatus = payment_status || status || "pending";
 
     return (
@@ -141,7 +141,7 @@ export default async function ViewBookingPage({ params }) {
                                     <FormInput label="Booking Date" id="booking_date">
                                         <input 
                                             disabled 
-                                            value={createdAt ? format(new Date(createdAt), "MMM dd, yyyy - hh:mm a") : "Unknown"}
+                                            value={created_at ? format(new Date(created_at), "MMM dd, yyyy - hh:mm a") : "Unknown"}
                                             className="rounded-lg border border-primary-200 bg-gray-50 px-4.5 py-3 focus:outline-none w-full text-gray-700 font-mono" 
                                         />
                                     </FormInput>

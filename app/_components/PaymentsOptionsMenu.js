@@ -1,44 +1,32 @@
 "use client"
 import { VscNote } from "react-icons/vsc"
-import { CiEdit } from "react-icons/ci"
 import { RiDeleteBin6Line } from "react-icons/ri"
-import { MdOutlineReceipt } from "react-icons/md"
 import TableItemOptionsMenu from "./TableItemOptionsMenu";
 import { useTransition } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import SpinnerMini from "./SpinnerMini";
 
-export default function BookingOptionsMenu({ id }) {
+export default function PaymentsOptionsMenu({ id }) {
     const tableOptions = [
         {
-            label: "View booking",
-            href: `/admin/booking-details/${id}`,
+            label: "View details",
+            href: `/dashboard/admin/payments/${id}`,
             icon: <VscNote className="text-gray-400" />
         },
         {
-            label: "Edit booking",
-            href: `/admin/edit-booking/${id}`,
-            icon: <CiEdit className="text-gray-400" />
-        },
-        {
-            label: "Issue invoice",
-            href: `/admin/issue-invoice/${id}`,
-            icon: <MdOutlineReceipt className="text-gray-400" />
-        },
-        {
-            label: "Delete booking",
+            label: "Delete record",
             icon: <RiDeleteBin6Line className="text-gray-400" />,
-            modal: <DeleteWindow bookingId={id} />
+            modal: <DeleteWindow recordId={id} />
         },
     ];
 
     return (
-        <TableItemOptionsMenu actions={tableOptions} menuId={`booking-menu-${id}`} />
+        <TableItemOptionsMenu actions={tableOptions} menuId={`payment-menu-${id}`} />
     );
 }
 
-const DeleteWindow = ({ onClose, bookingId }) => {
+const DeleteWindow = ({ onClose, recordId }) => {
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
 
@@ -46,15 +34,14 @@ const DeleteWindow = ({ onClose, bookingId }) => {
         startTransition(async () => {
             try {
                 // UI stub since endpoint logic wasn't explicitly provided
-                // const res = await deleteBooking(bookingId);
                 const res = { success: false, message: "Endpoint not yet attached." };
                 
                 if (res?.success) {
-                    toast.success(res?.message || "Booking deleted successfully");
+                    toast.success(res?.message || "Payment deleted successfully");
                     router.refresh(); 
                     onClose?.(); 
                 } else {
-                    toast.error(res?.message || "Failed to delete booking");
+                    toast.error(res?.message || "Failed to delete payment");
                 }
             } catch (err) {
                 toast.error(err.message || "An error occurred");
@@ -64,7 +51,7 @@ const DeleteWindow = ({ onClose, bookingId }) => {
 
     return (
         <div className="flex flex-col">
-            <p className="px-6 pt-6 font-mono text-error font-bold ">Are you sure you want to delete this booking?</p>
+            <p className="px-6 pt-6 font-mono text-error font-bold ">Are you sure you want to delete this payment record?</p>
             <div className="flex items-center justify-between p-6">
                 <button 
                     disabled={isPending} 

@@ -1,5 +1,5 @@
 "use client"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { toPng } from "html-to-image"
 import { saveAs } from "file-saver"
 import Invoice from "./Invoice"
@@ -8,33 +8,47 @@ import toast from "react-hot-toast"
 import { submitInvoiceAction } from "../_lib/action"
 import { useParams } from "next/navigation"
 
-export default function IssueInvoice({ token }) {
+export default function IssueInvoice({ token, users, booking }) {
   const targetRef = useRef(null)
-const params = useParams();
+  const params = useParams();
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Extract booking details if available
+  const bUser = booking?.user || {};
+  let rawAmount = booking?.amount || booking?.property?.property_price || booking?.property?.price || 0;
+  // If the price comes in as a formatted string (e.g. "1,000,000"), strip the commas before converting.
+  let bAmount = typeof rawAmount === 'string' ? Number(rawAmount.replace(/,/g, '')) : Number(rawAmount);
+  if (isNaN(bAmount)) bAmount = 0;
+  const bPropertyTitle = booking?.property?.property_name || booking?.property?.title ? `Booking for ${booking.property.property_name || booking.property.title}` : "";
+
   const defaultInvoice = {
-    recipientId: params?.userId, 
-    invoiceNumber: "",
+    recipientId: params?.userId || booking?.user?.id || booking?.user?._id || "", 
+    invoiceNumber: `INV-${Math.floor(1000 + Math.random() * 9000)}`,
     issuedDate: new Date(),
-    dueDate: new Date(),
+    dueDate: new Date(new Date().setDate(new Date().getDate() + 7)), // 7 days from now
     status: "Pending",
     user: {
-      firstname: "",
-      lastname: "",
-      address: "",
-      email: "",
-      phone: "",
+      firstname: bUser.firstname || bUser.first_name || "",
+      lastname: bUser.lastname || bUser.last_name || "",
+      address: booking?.property?.address || "",
+      email: bUser.email || "",
+      phone: bUser.phone || "",
     },
     items: [
       {
-        description: "",
-        unitPrice: 0,
+        description: bPropertyTitle || "Standard Booking",
+        unitPrice: bAmount,
         quantity: 1,
       },
     ],
-    subTotal: 0,
+    subTotal: bAmount,
     tax: 0,
-    total: 0,
-    invoiceReason: "Shortlet"
+    total: bAmount,
+    invoiceReason: "Shortlet" // Or "Services" based on needs
   }
 
   const [invoice, setInvoice] = useState(defaultInvoice)
@@ -77,31 +91,34 @@ const params = useParams();
     }
   }
 
-  return (
-    <div className="flex flex-col gap-8 px-6 lg:px-[7%] pb-12">
+  if (!mounted) return null;
 
-      <InvoiceNav />
-      <Invoice
-        ref={targetRef}
-        invoice={invoice}
-        mode="edit"
-        onChange={updateInvoice}
-      />
-      <div className="flex gap-4 flex-1 justify-between">
-        <button
-          onClick={downloadPng}
-          className="border border-primary text-primary px-4 py-2 rounded-lg font-mono cursor-pointer"
-        >
-          Download PNG
-        </button>
-        <button
-          onClick={submitInvoice}
-          disabled={loading}
-          className="bg-primary text-white px-4 py-2 rounded-lg font-mono cursor-pointer"
-        >
-          {loading ? "Submitting..." : "Submit Invoice"}
-        </button>
+  return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        <Invoice
+          ref={targetRef}
+          invoice={invoice}
+          mode="edit"
+          className="flex"
+          users={users}
+          onChange={updateInvoice}
+        />
+        
+        <div className="flex gap-4 p-6 justify-end items-center border-t border-gray-100 bg-gray-50/50">
+          <button
+            onClick={downloadPng}
+            className="border border-primary-200 hover:bg-primary-50 text-primary px-6 py-2.5 rounded-lg font-bold font-mono transition-colors"
+          >
+            Download PNG
+          </button>
+          <button
+            onClick={submitInvoice}
+            disabled={loading}
+            className="bg-primary hover:bg-primary-700 text-white px-6 py-2.5 rounded-lg font-bold font-mono transition-colors disabled:opacity-50"
+          >
+            {loading ? "Submitting..." : "Submit Invoice"}
+          </button>
+        </div>
       </div>
-    </div>
   )
 }

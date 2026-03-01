@@ -5,16 +5,16 @@ import ExportButton from "./ExportButton";
 import PaymentsSummary from "./PaymentsSummary";
 import { checkDateInRange } from "@/app/_lib/utils";
 
-export default function PaymentsOverviewWrapper({ bookings, showFilters = true }) {
+export default function PaymentsOverviewWrapper({ invoices = [], showFilters = true }) {
     const [filterRange, setFilterRange] = useState("all_time");
 
-    const filteredBookings = useMemo(() => {
-        if (!filterRange || filterRange === "all_time") return bookings;
-        return bookings.filter(b => {
-             const dateStr = b.createdAt || b.created_at || b.payment_date || b.date; 
+    const filteredInvoices = useMemo(() => {
+        if (!filterRange || filterRange === "all_time") return invoices;
+        return invoices.filter(b => {
+             const dateStr = b.createdAt || b.created_at || b.payment_date || b.issuedDate || b.date; 
             return checkDateInRange(dateStr, filterRange); 
         });
-    }, [bookings, filterRange]);
+    }, [invoices, filterRange]);
 
     return (
         <div className="flex flex-col gap-4">
@@ -22,7 +22,7 @@ export default function PaymentsOverviewWrapper({ bookings, showFilters = true }
                 <div className="flex justify-end gap-2 text-nowrap">
                     <DateFilter onFilterChange={setFilterRange} value={filterRange} />
                     <ExportButton 
-                        data={filteredBookings} 
+                        data={filteredInvoices} 
                         filename="payments_summary" 
                         options={[
                             { id: "all", label: "All" },
@@ -31,7 +31,7 @@ export default function PaymentsOverviewWrapper({ bookings, showFilters = true }
                     />
                 </div>
             )}
-            <PaymentsSummary bookings={filteredBookings} showHeading={showFilters} />
+            <PaymentsSummary invoices={filteredInvoices} showHeading={showFilters} />
         </div>
     )
 }
