@@ -18,7 +18,8 @@ export default function Invoice({
   const rawRecipient = invoice?.recipientID || invoice?.recipientId || invoice?.reciepientID || invoice?.recipient;
   const recipientIdStr = typeof rawRecipient === 'object' && rawRecipient !== null ? String(rawRecipient._id || rawRecipient.id) : String(rawRecipient);
   
-  let recipient = users?.find(u => String(u._id || u.id) === recipientIdStr) || invoice?.user;
+  let sysUser = users?.find(u => String(u._id || u.id) === recipientIdStr);
+  let recipient = (isEdit && invoice?.user) ? invoice.user : (sysUser || invoice?.user);
   if (!recipient && typeof rawRecipient === 'object' && rawRecipient !== null) {
       recipient = rawRecipient;
   }

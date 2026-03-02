@@ -8,7 +8,7 @@ import toast from "react-hot-toast"
 import { submitInvoiceAction } from "../_lib/action"
 import { useParams } from "next/navigation"
 
-export default function IssueInvoice({ token, users, booking }) {
+export default function IssueInvoice({ token, users, booking, service }) {
   const targetRef = useRef(null)
   const params = useParams();
   const [mounted, setMounted] = useState(false)
@@ -18,15 +18,32 @@ export default function IssueInvoice({ token, users, booking }) {
   }, [])
 
   // Extract booking details if available
-  const bUser = booking?.user || {};
-  let rawAmount = booking?.amount || booking?.property?.property_price || booking?.property?.price || 0;
+  const recipientId = booking?.user_id || booking?.user?._id || service?.userId || service?.user_id || service?.user?._id || "";
+  const matchedUser = users?.find(u => String(u._id || u.id) === String(recipientId)) || {};
+  
+  let bUser = matchedUser;
+  if (booking?.user && Object.keys(booking.user).length > 0) {
+    bUser = booking.user;
+  } else if (service?.user && Object.keys(service.user).length > 0) {
+    bUser = service.user;
+  }
+
+  let rawAmount = booking?.amount || booking?.property?.property_price || booking?.property?.price || service?.amount || service?.price || 0;
   // If the price comes in as a formatted string (e.g. "1,000,000"), strip the commas before converting.
   let bAmount = typeof rawAmount === 'string' ? Number(rawAmount.replace(/,/g, '')) : Number(rawAmount);
   if (isNaN(bAmount)) bAmount = 0;
-  const bPropertyTitle = booking?.property?.property_name || booking?.property?.title ? `Booking for ${booking.property.property_name || booking.property.title}` : "";
+  
+  let bTitle = "Standard Invoice";
+  if (booking?.property?.property_name || booking?.property?.title) {
+    bTitle = `Booking for ${booking.property.property_name || booking.property.title}`;
+  } else if (service?.service_name || service?.name || service?.service_type) {
+    bTitle = `Service: ${service.service_name || service.name || service.service_type}`;
+  }
+
+  const invoiceReason = service ? "Service" : "Shortlet";
 
   const defaultInvoice = {
-    recipientId: params?.userId || booking?.user?.id || booking?.user?._id || "", 
+    recipientId, 
     invoiceNumber: `INV-${Math.floor(1000 + Math.random() * 9000)}`,
     issuedDate: new Date(),
     dueDate: new Date(new Date().setDate(new Date().getDate() + 7)), // 7 days from now
@@ -34,21 +51,21 @@ export default function IssueInvoice({ token, users, booking }) {
     user: {
       firstname: bUser.firstname || bUser.first_name || "",
       lastname: bUser.lastname || bUser.last_name || "",
-      address: booking?.property?.address || "",
+      address: booking?.property?.address || service?.address || bUser.address || "",
       email: bUser.email || "",
-      phone: bUser.phone || "",
+      phone: bUser.phone || bUser.phone_number || "",
     },
     items: [
       {
-        description: bPropertyTitle || "Standard Booking",
+        description: bTitle,
         unitPrice: bAmount,
         quantity: 1,
       },
     ],
     subTotal: bAmount,
-    tax: 0,
+    tax: 10,
     total: bAmount,
-    invoiceReason: "Shortlet" // Or "Services" based on needs
+    invoiceReason
   }
 
   const [invoice, setInvoice] = useState(defaultInvoice)

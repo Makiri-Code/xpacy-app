@@ -21,9 +21,6 @@ const registeredHeadings = [
 
 const tenantHeadings = [
     { heading: "Name" },
-    { heading: "Property" },
-    { heading: "Rent Duration", center: true },
-    { heading: "Price", center: true },
     { heading: "Contact/Info", center: true },
     { heading: "" }
 ];
@@ -40,23 +37,12 @@ export default function AdminUsersList({ users = [], title = "All Users List", v
                     <div className="w-8 h-8 relative shrink-0">
                         <Image src={user.display_picture ? `https://app.xpacy.com/src/upload/display_img/${user.display_picture}` : "/avatar.png"} alt="user-photo" className="object-cover rounded-full" unoptimized fill />
                     </div>
-                    <span className="truncate font-semibold">{user.first_name} {user.last_name}</span>
+                    <span className="truncate font-semibold">{user.firstname || user.first_name || user.firstName} {user.lastname || user.last_name || user.lastName || user.username}</span>
                 </div>
             </td>
 
             {variant === 'tenant' ? (
                 <>
-                    <td className="p-4 text-center">
-                        <span className="text-gray-900 font-medium truncate max-w-[150px] inline-block" title={user.property_name}>{user.property_name || "N/A"}</span>
-                    </td>
-                    <td className="p-4 text-center">
-                        <div className="flex flex-col text-xs text-gray-500">
-                            <span>{user.start_date || "N/A"}</span>
-                            <span>to</span>
-                            <span>{user.end_date || "N/A"}</span>
-                        </div>
-                    </td>
-                    <td className="p-4 text-center font-bold text-primary text-sm">{user.price || "N/A"}</td>
                     <td className="p-4 text-center">
                         <div className="flex flex-col justify-center items-center">
                             <span className="text-gray-900 text-xs">{user.email}</span>
@@ -90,7 +76,7 @@ export default function AdminUsersList({ users = [], title = "All Users List", v
 
             <td className="p-4 relative text-center">
                 <div className="flex justify-center">
-                    <UserOptionsMenu id={user.id} role={user.role} /> 
+                    <UserOptionsMenu id={user.id} role={user.user_role} /> 
                 </div>
             </td>
         </tr>
@@ -104,14 +90,14 @@ export default function AdminUsersList({ users = [], title = "All Users List", v
                         <Image src={user.display_picture ? `https://app.xpacy.com/src/upload/display_img/${user.display_picture}` : "/avatar.png"} alt="user-photo" className="object-cover rounded-full" unoptimized fill />
                     </div>
                     <div className="flex flex-col">
-                        <h3 className="font-bold text-sm text-neutrals-900">{user.first_name} {user.last_name}</h3>
+                        <h3 className="font-bold text-sm text-neutrals-900">{user.firstname} {user.lastname}</h3>
                         {variant !== 'tenant' && <p className="text-xs text-gray-500">{user.email}</p>}
                         <span className={`mt-1 inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold capitalize w-fit ${
-                            user.role === 'admin' ? 'bg-purple-100 text-purple-700' :
-                            user.role === 'property-owner' ? 'bg-blue-100 text-blue-700' :
+                            user.user_role === 'admin' ? 'bg-purple-100 text-purple-700' :
+                            user.user_role === 'property-owner' ? 'bg-blue-100 text-blue-700' :
                             'bg-gray-100 text-gray-700'
                         }`}>
-                            {user.role?.replace('-', ' ') || 'User'}
+                            {user.user_role?.replace('-', ' ') || 'User'}
                         </span>
                     </div>
                 </div>
@@ -124,14 +110,6 @@ export default function AdminUsersList({ users = [], title = "All Users List", v
                         <div className="flex justify-between items-center text-xs">
                             <span className="font-semibold text-gray-500 uppercase">Property:</span>
                             <span className="font-medium text-gray-900 truncate max-w-[120px]">{user.property_name || "N/A"}</span>
-                        </div>
-                        <div className="flex justify-between items-center text-xs">
-                            <span className="font-semibold text-gray-500 uppercase">Duration:</span>
-                            <span className="text-gray-700">{user.start_date || "N/A"} - {user.end_date || "N/A"}</span>
-                        </div>
-                        <div className="flex justify-between items-center text-xs">
-                            <span className="font-semibold text-gray-500 uppercase">Price:</span>
-                            <span className="font-bold text-primary">{user.price || "N/A"}</span>
                         </div>
                         <div className="flex justify-between items-center text-xs">
                             <span className="font-semibold text-gray-500 uppercase">Contact:</span>

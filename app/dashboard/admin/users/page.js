@@ -52,7 +52,7 @@ export default async function Page(){
         <div className="p-6 space-y-6">
             <h1 className="lg:text-4xl text-[28px] text-primary font-bold capitalize mb-2"></h1>
             <UsersSummary {...stats} />
-            <AdminUsersList users={usersList} title="Tenants / Buyers List" variant="tenant" />
+            <AdminUsersList users={usersList} title="All Users List" variant="tenant" />
             <AdminUsersList users={allUsers} title="All Registered Users List" variant="registered" />
             <AdminUsersList users={adminsList} title="Admins List" />
             <AdminPropertyOwnersList owners={ownersList}/>            
