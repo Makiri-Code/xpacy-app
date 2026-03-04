@@ -13,7 +13,6 @@ const tableHeadings = [
     { heading: "Availability Status", center: true },
     { heading: "Featured", center: true },
     { heading: "Price", center: true },
-    { heading: "Reserve Amount", center: true },
     { heading: "" }
 ];
 
@@ -87,9 +86,7 @@ export default async function AdminPropertyList({ properties, bookings = [], pag
                 <td className="p-4 text-center text-primary font-bold">
                     {property?.property_price ? formatCurrency(property?.property_price) : "N/A"}
                 </td>
-                <td className="p-4 text-center text-primary font-bold">
-                    {property?.reserve_amount ? formatCurrency(property?.reserve_amount): 0}
-                </td>
+                
                 <td className="p-4 relative text-center">
                     <div className="flex justify-center">
                         <TableOptionsMenu id={property?.id || property?._id} />
@@ -164,12 +161,6 @@ export default async function AdminPropertyList({ properties, bookings = [], pag
                     <div className="flex flex-col items-end">
                         <span className="text-gray-400 mb-1">Featured</span>
                         <span className="text-gray-900">{Featured}</span>
-                    </div>
-                    <div className="flex flex-col col-span-2 border-t border-gray-100 pt-2">
-                        <div className="flex flex-col">
-                            <span className="text-gray-400 uppercase">Reserve Amount</span>
-                            <span className="text-primary">{property?.reserve_amount ? formatCurrency(property?.reserve_amount) : 0}</span>
-                        </div>
                     </div>
                 </div>
             </div>
