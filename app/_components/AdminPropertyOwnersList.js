@@ -17,7 +17,7 @@ const tableHeadings = [
 export default function AdminPropertyOwnersList({ owners }) {
 
     const renderRow = (owner) => (
-        <tr key={owner.id} className="text-neutrals-900 text-sm font-mono border-b border-primary-100 hover:bg-gray-50/50 transition-colors last:border-0">
+        <tr key={owner._id || owner.id} className="text-neutrals-900 text-sm font-mono border-b border-primary-100 hover:bg-gray-50/50 transition-colors last:border-0">
             <td className="p-4">
                 <div className="flex items-center gap-2 text-sm">
                     <div className="w-8 h-8 relative shrink-0">
@@ -39,14 +39,14 @@ export default function AdminPropertyOwnersList({ owners }) {
             </td>
             <td className="p-4 relative text-center">
                 <div className="flex justify-center">
-                    <OwnerOptionsMenu id={owner.id} />
+                    <OwnerOptionsMenu id={owner._id || owner.id} />
                 </div>
             </td>
         </tr>
     );
 
     const renderMobileCard = (owner) => (
-        <div key={owner.id} className="flex flex-col gap-4 p-4 border-b border-primary-100 bg-white last:border-0 font-mono">
+        <div key={owner._id || owner.id} className="flex flex-col gap-4 p-4 border-b border-primary-100 bg-white last:border-0 font-mono">
             <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
                     <div className="w-12 h-12 relative shrink-0">
@@ -57,7 +57,7 @@ export default function AdminPropertyOwnersList({ owners }) {
                         <p className="text-xs text-gray-500">{owner.email}</p>
                     </div>
                 </div>
-                <OwnerOptionsMenu id={owner.id} />
+                <OwnerOptionsMenu id={owner._id || owner.id} />
             </div>
             
             <div className="flex flex-col gap-2 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">

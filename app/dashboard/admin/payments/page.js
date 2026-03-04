@@ -1,7 +1,7 @@
 import PaymentsTableList from "@/app/_components/PaymentsTableList";
 import DashboardGridItem from "@/app/_components/DashboardGridItems";
 import PaymentsOverviewWrapper from "@/app/_components/PaymentsOverviewWrapper";
-import { getAdminPayments, getInvoiceList, getInvoices } from "@/app/_lib/data-services";
+import {getInvoices } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
 
 export default async function Page() {

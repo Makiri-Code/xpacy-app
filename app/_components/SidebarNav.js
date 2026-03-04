@@ -10,7 +10,7 @@ import { RiUserSettingsLine } from "react-icons/ri";
 import { LuMessageCircleQuestion } from "react-icons/lu";
 import { IoCalendarOutline } from "react-icons/io5";
 import { RiHome2Line, RiSearchLine, RiSettings3Line, RiPulseLine } from "react-icons/ri";
-import { User } from "lucide-react";
+import { Settings, User } from "lucide-react";
 import { FaCheck } from "react-icons/fa6";
 
 
@@ -82,7 +82,7 @@ const adminNavList = [
     {
         text: "Services",
         link: "/dashboard/admin/services",
-        icon: <FaRegHeart />
+        icon: <IoCalendarOutline />
     },
     {
         text: "Users",
@@ -107,7 +107,7 @@ const adminNavList = [
     {
         text: "Settings",
         link: "/dashboard/admin/settings",
-        icon: <LuMessageCircleQuestion />
+        icon: <Settings />
     },
     {
         text: "FAQs",

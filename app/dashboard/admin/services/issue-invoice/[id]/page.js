@@ -10,9 +10,8 @@ export default async function Page({ params }) {
         const cookieStore = await cookies();
         const token = cookieStore.get("token");
      
-        const [users, booking, service] = await Promise.all([
+        const [users, service] = await Promise.all([
             getAllUsers(token),
-            getAdminBookingById(token, id),
             getAdminServiceById(token, id)
         ]);
     
@@ -22,7 +21,6 @@ export default async function Page({ params }) {
             <IssueInvoice 
                 token={token} 
                 users={users?.data || users || []} 
-                booking={booking}
                 service={service}
             />
         </div>

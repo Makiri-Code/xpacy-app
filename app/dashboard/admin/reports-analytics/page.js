@@ -5,7 +5,7 @@ import ServiceGrowthChart from "@/app/_components/ServiceGrowthChart";
 import RevenueOverviewChart from "@/app/_components/RevenueOverviewChart";
 import UserDistributionChart from "@/app/_components/UserDistributionChart";
 import ServicesByTypeChart from "@/app/_components/ServicesByTypeChart";
-import { getAdminProperties, getAdminServices, getAllAdmin, getAllUsers, getPropertyOwner, getAdminPayments } from "@/app/_lib/data-services";
+import { getAdminProperties, getAdminServices, getAllAdmin, getAllUsers, getPropertyOwner } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
 
 export default async function Page() {
@@ -19,14 +19,12 @@ export default async function Page() {
         propertyOwners,
         admins,
         users,
-        payments
     ] = await Promise.all([
         getAdminProperties(token),
         getAdminServices(token),
         getPropertyOwner(token),
         getAllAdmin(token),
         getAllUsers(token),
-        getAdminPayments(token)
     ]);
 
     const userStats = {

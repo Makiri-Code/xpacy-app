@@ -16,17 +16,10 @@ export default function IssueInvoice({ token, users, booking, service }) {
   useEffect(() => {
     setMounted(true)
   }, [])
-
   // Extract booking details if available
-  const recipientId = booking?.user_id || booking?.user?._id || service?.userId || service?.user_id || service?.user?._id || "";
-  const matchedUser = users?.find(u => String(u._id || u.id) === String(recipientId)) || {};
+  const recipientId = booking?.user_id || booking?.user?._id || service?.userId || service?.user_id || service?.user?._id || service?.recipientId || "";
   
-  let bUser = matchedUser;
-  if (booking?.user && Object.keys(booking.user).length > 0) {
-    bUser = booking.user;
-  } else if (service?.user && Object.keys(service.user).length > 0) {
-    bUser = service.user;
-  }
+  let bUser = booking?.user || service?.user || booking || service || {};
 
   let rawAmount = booking?.amount || booking?.property?.property_price || booking?.property?.price || service?.amount || service?.price || 0;
   // If the price comes in as a formatted string (e.g. "1,000,000"), strip the commas before converting.
@@ -49,11 +42,11 @@ export default function IssueInvoice({ token, users, booking, service }) {
     dueDate: new Date(new Date().setDate(new Date().getDate() + 7)), // 7 days from now
     status: "Pending",
     user: {
-      firstname: bUser.firstname || bUser.first_name || "",
-      lastname: bUser.lastname || bUser.last_name || "",
-      address: booking?.property?.address || service?.address || bUser.address || "",
-      email: bUser.email || "",
-      phone: bUser.phone || bUser.phone_number || "",
+      firstname: bUser?.firstname || bUser?.first_name || "",
+      lastname: bUser?.lastname || bUser?.last_name || "",
+      address: booking?.property?.address || service?.address || bUser?.address || "",
+      email: bUser?.email || "",
+      phone: bUser?.phone || bUser?.phone_number || "",
     },
     items: [
       {

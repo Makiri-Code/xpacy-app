@@ -31,7 +31,7 @@ export default function AdminUsersList({ users = [], title = "All Users List", v
     else if (variant === 'registered') headings = registeredHeadings;
 
     const renderRow = (user) => (
-        <tr key={user.id} className="text-neutrals-900 text-sm font-mono border-b border-primary-100 hover:bg-gray-50 transition-colors last:border-0">
+        <tr key={user._id || user.id} className="text-neutrals-900 text-sm font-mono border-b border-primary-100 hover:bg-gray-50 transition-colors last:border-0">
             <td className="p-4">
                 <div className="flex items-center gap-2 text-sm">
                     <div className="w-8 h-8 relative shrink-0">
@@ -76,14 +76,14 @@ export default function AdminUsersList({ users = [], title = "All Users List", v
 
             <td className="p-4 relative text-center">
                 <div className="flex justify-center">
-                    <UserOptionsMenu id={user.id} role={user.user_role} /> 
+                    <UserOptionsMenu id={user._id || user.id} role={user.user_role} /> 
                 </div>
             </td>
         </tr>
     );
 
     const renderMobileCard = (user) => (
-        <div key={user.id} className="flex flex-col gap-4 p-4 border-b border-primary-100 bg-white last:border-0">
+        <div key={user._id || user.id} className="flex flex-col gap-4 p-4 border-b border-primary-100 bg-white last:border-0">
             <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
                     <div className="w-12 h-12 relative shrink-0">
@@ -101,7 +101,7 @@ export default function AdminUsersList({ users = [], title = "All Users List", v
                         </span>
                     </div>
                 </div>
-                <UserOptionsMenu id={user.id} role={user.role} />
+                <UserOptionsMenu id={user._id || user.id} role={user.role} />
             </div>
             
             <div className="flex flex-col gap-2 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">

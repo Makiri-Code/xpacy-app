@@ -23,7 +23,7 @@ export default function BookingOptionsMenu({ id }) {
         },
         {
             label: "Issue invoice",
-            href: `/admin/issue-invoice/${id}`,
+            href: `/dashboard/admin/bookings/issue-invoice/${id}`,
             icon: <MdOutlineReceipt className="text-gray-400" />
         },
         {

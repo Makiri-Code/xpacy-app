@@ -27,7 +27,6 @@ export default function Invoice({
   const update = (path, value) => {
     onChange?.(path, value)
   }
-  console.log(invoice)
 
   const itemsStr = JSON.stringify(invoice?.items || [])
 

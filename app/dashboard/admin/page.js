@@ -7,20 +7,19 @@ import PropertiesTableList from "@/app/_components/PropertiesTableList";
 import PropertyOwnerServicesTable from "@/app/_components/PropertyOwnerServicesTable";
 import ServicesTableList from "@/app/_components/ServicesTableList";
 import AdminBookingList from "@/app/_components/AdminBookingList";
-import { getAdminProfile, getAdminProperties, getAdminServices, getPropertyOwnerServices, getUserNotifications, getAdminPayments, getAdminBooking } from "@/app/_lib/data-services";
+import { getAdminProfile, getAdminProperties, getAdminServices, getPropertyOwnerServices, getUserNotifications, getAdminBooking } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
 
 export default async function Page() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")
     
-    // Parallel fetch for profile, properties, services, notifications, and payments
-    const [profile, propertiesData, services, notifications, payments, bookings] = await Promise.all([
+    // Parallel fetch for profile, properties, services, notifications, and bookings
+    const [profile, propertiesData, services, notifications, bookings] = await Promise.all([
         getAdminProfile(token),
         getAdminProperties(token),
         getAdminServices(token),
         getUserNotifications(token),
-        getAdminPayments(token),
         getAdminBooking(token)
     ]);
 

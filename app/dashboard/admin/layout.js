@@ -12,7 +12,7 @@ export default function Layout({children}){
             </div>
             <SidebarHeader role={"admin"}/>
             <main className=" overflow-y-auto lg:row-[2/3] lg:col-[2/-2]">
-                <div>
+                <div className="p-6">
                     {children}
                 </div>
             </main>

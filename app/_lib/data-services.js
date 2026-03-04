@@ -196,7 +196,6 @@ export async function getUserNotifications(token) {
       }
     });
     const { data } = await response.json();
-    console.log(data)
     return data
   } catch (error) {
     console.error("Error fetching user notifications:", error)
@@ -367,11 +366,10 @@ export async function getAdminServices(token) {
      return [];
   }
 }
-
-export async function getAdminPayments(token) {
+export async function getAdminServiceById(token, id) {
   if (!token?.value) return null;
   try {
-    const response = await fetch(`${url}/admin/fetch-payments`, {
+    const response = await fetch(`${url}/service/fetch-service/${id}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token?.value}`,
@@ -379,16 +377,20 @@ export async function getAdminPayments(token) {
       },
     });
     if (!response.ok) {
-        console.warn("Admin payments endpoint not found or failed.");
+        if (response.status !== 404) {
+            const text = await response.text();
+            console.error(`Error fetching admin service: ${response.status} ${response.statusText}`, text.slice(0, 100));
+        }
         return null;
     }
     const {data} = await response.json();
     return data
   } catch (error) {
-    console.error("Error fetching admin payments:", error);
-    return null;
+     console.error("Error fetching admin service (catch):", error)
+     return null;
   }
 }
+
 export async function getPropertyOwner(token) {
   if (!token?.value) return [];
   try {
@@ -537,6 +539,24 @@ export async function getAdminBooking(token) {
   } catch (error) {
     console.error("Error fetching admin bookings:", error)
     return []
+  }
+}
+export async function getAdminBookingById(token, id) {
+  if (!token?.value) return null;
+  try {
+    const response = await fetch(`${url}/admin/fetch-booking/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-type": "application/json",
+      },
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data.booking
+  } catch (error) {
+    console.error("Error fetching admin booking:", error)
+    return null;
   }
 }
 

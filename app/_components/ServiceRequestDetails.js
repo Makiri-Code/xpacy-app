@@ -19,11 +19,7 @@ export default function ServiceRequestDetails({ service }) {
         id
     } = service;
 
-    // Split owner name into first and last if possible
-    const ownerNameParts = (owner || "").split(" ");
-    const firstName = ownerNameParts[0] || owner || "N/A";
-    const lastName = ownerNameParts.slice(1).join(" ") || "N/A";
-
+ 
     return (
         <div className="flex flex-col gap-12 w-[796px] mx-auto pb-12">
             {/* Header */}
@@ -41,32 +37,20 @@ export default function ServiceRequestDetails({ service }) {
                             <FormInput label={"First Name"} id={"firstname"}>
                                 <input 
                                     disabled 
-                                    value={firstName}
+                                    value={service.user.firstname}
                                     className="rounded-lg border border-primary-200 bg-gray-50 px-4.5 py-3 focus:outline-none w-full text-gray-700 font-mono" 
                                 />
                             </FormInput>
-                            <FormInput label={"Last Name"} id={"lastname"}>
-                                <input 
-                                    disabled 
-                                    value={lastName}
-                                    className="rounded-lg border border-primary-200 bg-gray-50 px-4.5 py-3 focus:outline-none w-full text-gray-700 font-mono" 
-                                />
-                            </FormInput>
+                            
                         </div>
                         <FormInput label={"Email address"} id={"email"}>
                             <input 
                                 disabled 
-                                value={"N/A"} 
+                                value={service.user.email} 
                                 className="rounded-lg border border-primary-200 bg-gray-50 px-4.5 py-3 focus:outline-none w-full text-gray-700 font-mono" 
                             />
                         </FormInput>
-                        <FormInput label={"Phone number"} id={"phone"}>
-                            <input 
-                                disabled 
-                                value={"N/A"} 
-                                className="rounded-lg border border-primary-200 bg-gray-50 px-4.5 py-3 focus:outline-none w-full text-gray-700 font-mono" 
-                            />
-                        </FormInput>
+                        
                     </div>
                 </div>
 

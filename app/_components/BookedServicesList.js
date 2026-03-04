@@ -24,7 +24,7 @@ export default async function BookedServiceList({ services }) {
     if (!bookedServices || bookedServices.length <= 0) return <EmptyState message={"Oops!... You have no booked services yet."} cta={"Book A Service"} />
 
     const renderRow = (service) => (
-        <tr key={service.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors last:border-0 text-sm font-mono">
+        <tr key={service._id || service.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors last:border-0 text-sm font-mono">
             <td className="p-4">{service.service_type}</td>
             <td className="p-4">{service.address}</td>
             <td className="p-4">{new Date(service.scheduled_date).toLocaleDateString()}</td>
@@ -34,16 +34,16 @@ export default async function BookedServiceList({ services }) {
                 </div>
             </td>
             <td className="p-4 text-center">
-                <ServiceOptionsMenu id={service.id} />
+                <ServiceOptionsMenu id={service._id || service.id} />
             </td>
         </tr>
     );
 
     const renderMobileCard = (service) => (
-        <div key={service.id} className="py-6 flex flex-col gap-4 border-b border-gray-100 bg-white last:border-0 font-mono">
+        <div key={service._id || service.id} className="py-6 flex flex-col gap-4 border-b border-gray-100 bg-white last:border-0 font-mono">
             <div className="flex justify-between items-center">
                 <p className="text-sm font-bold text-gray-900">{new Date(service.scheduled_date).toLocaleDateString()}</p>
-                <ServiceOptionsMenu id={service.id} />
+                <ServiceOptionsMenu id={service._id || service.id} />
             </div>
             
             <div className="flex flex-col gap-1">

@@ -13,7 +13,7 @@ export default function ServiceOptionsMenu({ id, hasProvider }) {
         },
         {
             label: "Issue invoice",
-            href: `/admin/issue-invoice/${id}`,
+            href: `/dashboard/admin/services/issue-invoice/${id}`,
             icon: <MdOutlineReceipt className="text-gray-400" />,
         },
         {

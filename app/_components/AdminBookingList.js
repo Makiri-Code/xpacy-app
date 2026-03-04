@@ -1,4 +1,4 @@
-import { getAdminBooking, getAdminPayments } from "../_lib/data-services";
+import { getAdminBooking,  } from "../_lib/data-services";
 import { cookies } from "next/headers";
 import EmptyState from "./EmptyState";
 import StatusChips from "./StatusChips";
