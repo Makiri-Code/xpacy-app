@@ -10,11 +10,12 @@ export default function PaymentsSummary({ invoices = [], showHeading = true }) {
     const counts = {
         totalRevenue: invoices
             .filter(isPaid)
-            .reduce((acc, curr) => acc + (curr.amountPaid || curr.amount || curr.total || curr.property?.property_price || 0), 0),
+            .reduce((acc, curr) => acc + Number(curr.total || 0), 0),
         paidCount: invoices.filter(isPaid).length,
         pendingCount: invoices.filter(isPending).length,
         unpaidCount: invoices.filter(isUnpaid).length,
     };
+
 
     const summaryItems = [
         {

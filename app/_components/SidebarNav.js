@@ -101,7 +101,7 @@ const adminNavList = [
     },
     {
         text: "Reports & Analytics",
-        link: "/dashboard/admin/reports-analytics",
+        link: "/dashboard/admin/#",
         icon: <RiUserSettingsLine />
     },
     {
