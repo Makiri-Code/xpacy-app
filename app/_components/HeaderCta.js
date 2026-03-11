@@ -12,7 +12,7 @@ const HeaderCta = async () => {
     return (
         <>
             {
-                token ? <ProfileDisplay role={role?.role || ""} /> : (
+                token ? <ProfileDisplay role={role?.role || "user"} profile={role} /> : (
                     <div className=" hidden md:flex items-center space-x-5">
                         <Link
                             href="/auth/log-in"

@@ -3,7 +3,7 @@ import { useId } from "react";
 
 export default function CustomCheckbox({label, handleChange, checked, labelSize ="text-sm", id}) {
     const fallbackId = useId();
-    const checkboxId = id || (label ? `checkbox-${label.replace(/\s+/g, '-').toLowerCase()}` : fallbackId);
+    const checkboxId = id || (typeof label === "string" ? `checkbox-${label.replace(/\s+/g, "-").toLowerCase()}` : fallbackId);
     return (
         <label htmlFor={checkboxId} className="flex items-center space-x-3 cursor-pointer font-mono ">
             <input type="checkbox" className="hidden peer disabled:cursor-not-allowed" id={checkboxId} checked={checked} onChange={handleChange}  />

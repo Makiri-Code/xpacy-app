@@ -1,23 +1,30 @@
 "use client"
 import toast from "react-hot-toast";
-import {useRouter, usePathname} from "next/navigation" 
+import { useRouter, usePathname } from "next/navigation"
 import { handleBookProperty } from "../_lib/action";
 
-export default function BookShortletButton({ onOpen, children }) {
+export default function BookShortletButton({ onClick, children, id, property_status }) {
     const router = useRouter();
-    const pathname = usePathname()
-    const handleClick = async () => {
-        toast.promise( () =>  handleBookProperty(), {
-            loading: "Loading...",
-            success: (data) => {
-                onOpen("booking")
-            },
-            error: (err) => {
-                router.push(`/auth/log-in?redirectUrl=${encodeURIComponent(pathname)}`)
-                return "Please log in to book this property"
-            }
-        })
+    const pathname = usePathname();
+
+    const handleClick = async (e) => {
+        if (property_status === "Shortlet") {
+            // If it's a shortlet, let the modal wrapper (Modal.Open) handle it via onClick
+            if (onClick) onClick(e);
+        } else {
+            // Direct booking logic...
+            toast.promise(handleBookProperty(id), {
+                loading: "Booking...",
+                success: (data) => "Booking request sent successful",
+                error: (err) => {
+                    if (err.message.includes("Log in")) {
+                        router.push(`/auth/log-in?redirectUrl=${encodeURIComponent(pathname)}`);
+                    }
+                    return err.message || "Please log in to book this property";
+                }
+            });
+        }
     }
 
-    return <button onClick={handleClick} className="py-2 font-mono bg-primary rounded-lg text-white cursor-pointer">{children}</button>
+    return <button onClick={handleClick} className="py-2 px-4 w-full font-mono bg-primary rounded-lg text-white cursor-pointer">{children}</button>
 }

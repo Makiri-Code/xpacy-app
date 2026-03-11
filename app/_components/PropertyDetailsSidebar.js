@@ -14,7 +14,7 @@ export default function PropertyDetailsSidebar({property}){
                 <p className="text-[1.5rem] text-center tracking-widest font-mono font-bold text-secondary-500 ">{formatCurrency(property?.property_price)} {property?.property_status === "Shortlet" && "/night"}</p>
                 <Modal>
                     <Modal.Open name="booking" >
-                        <BookShortletButton>
+                        <BookShortletButton id={property?.id} property_status={property?.property_status}>
                             {property?.property_status === "Shortlet" ? "Book This Shortlet" : "Continue"}
                         </BookShortletButton>
                     </Modal.Open>

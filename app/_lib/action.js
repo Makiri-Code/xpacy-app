@@ -210,10 +210,28 @@ export async function handleSaveProperty(id) {
   return data;
 }
 
-export async function handleBookProperty() {
+export async function handleBookProperty(id) {
   const cookiesStore = await cookies();
   const token = cookiesStore.get("token");
-  if (!token) throw new Error("Please Log in to book this property")
+  if (!token?.value) throw new Error("Please Log in to book this property");
+  
+  try {
+    const res = await fetch(`${URL}/user/create-booking`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ propertyId: id })
+    });
+    
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Failed to book property");
+    return data;
+  } catch (error) {
+    console.error("Error booking property:", error);
+    throw error;
+  }
 }
 
 

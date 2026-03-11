@@ -10,7 +10,7 @@ import { RiUserSettingsLine } from "react-icons/ri";
 import { LuMessageCircleQuestion } from "react-icons/lu";
 import { IoCalendarOutline } from "react-icons/io5";
 import { RiHome2Line, RiSearchLine, RiSettings3Line, RiPulseLine } from "react-icons/ri";
-import { Settings, User } from "lucide-react";
+import { MessageSquare, Settings, User } from "lucide-react";
 import { FaCheck } from "react-icons/fa6";
 
 
@@ -88,6 +88,12 @@ const adminNavList = [
         text: "Users",
         link: "/dashboard/admin/users",
         icon: <User />
+    },
+
+    {
+        text: "Blogs",
+        link: "/dashboard/admin/blogs",
+        icon: <MessageSquare />
     },
     {
         text: "Bookings",

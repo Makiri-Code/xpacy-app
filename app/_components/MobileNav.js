@@ -44,6 +44,7 @@ const MobileNavBtns = ({ isOpen, open }) => {
                 <button onClick={open} className="text-2xl lg:hidden"><FaBarsStaggered /></button>
             )
             }
+            
         </>
     )
 }
