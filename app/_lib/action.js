@@ -408,14 +408,17 @@ export async function submitInvoiceAction(invoice, token) {
     issuedDate: invoice.issuedDate.toISOString().split("T")[0],
     dueDate: invoice.dueDate.toISOString().split("T")[0],
     invoice_reason: invoice.invoiceReason,
-    tax: taxAmount,
-    amountPaid: invoice.total,
+    tax: Number(invoice.tax),
+    amountPaid: 0,
+    total: subTotal + taxAmount,
     items: invoice.items.map(item => ({
       description: item.description,
       quantity: Number(item.quantity),
       unitPrice: Number(item.unitPrice),
     })),
   }
+
+  console.log("Payload getting to the server:", JSON.stringify(payload, null, 2));
 
   const res = await fetch(
     `${URL}/invoice/create-invoice`,
@@ -431,8 +434,20 @@ export async function submitInvoiceAction(invoice, token) {
   )
 
   if (!res.ok) {
-    const error = await res.text()
-    throw new Error(error || "Invoice creation failed")
+    let errorMsg = "Invoice creation failed";
+    try {
+      const errorData = await res.json();
+      errorMsg = errorData.message || errorData.error || errorMsg;
+    } catch {
+      const errorText = await res.text();
+      console.log("Invoice Server Error Raw:", errorText);
+      try {
+         // Attempt to extract title from HTML if it's an HTML error page
+         const titleMatch = errorText.match(/<title>(.*?)<\/title>/);
+         if (titleMatch && titleMatch[1]) errorMsg = titleMatch[1];
+      } catch (e) {}
+    }
+    throw new Error(errorMsg);
   }
   return res.json()
 }

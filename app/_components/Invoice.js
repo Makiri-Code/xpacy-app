@@ -124,14 +124,15 @@ export default function Invoice({
                   <>
                     <input
                       type="number"
-                      value={invoice?.tax || 0}
-                      onChange={(e) => update("tax", Number(e.target.value))}
+                      value={invoice?.tax !== undefined ? invoice.tax : ""}
+                      // Use update function instead of setTax
+                      onChange={(e) => update("tax", e.target.value)}
                       className="w-[80px] border py-1.5 px-3 rounded-lg border-primary-100 outline-none text-right font-mono"
                     />
                     <span>%</span>
                   </>
                 ) : (
-                  <span>{invoice?.tax || 0}% ({formatCurrency((invoice?.subTotal || 0) * (Number(invoice?.tax || 0) / 100))})</span>
+                  <span>{invoice?.tax}%</span>
                 )}
               </td>
             </tr>

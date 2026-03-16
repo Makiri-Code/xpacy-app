@@ -413,11 +413,15 @@ const AddNewPropertyForm = ({
                                 {errors.email && <span className="-mt-2 text-xs text-error">{errors.email.message}</span>}
                             </FormInput>
                             <FormInput label={"Phone number"} id={"phone"} >
-                                <input disabled {...register("phone")} type={"phone"} name={"phone"} id={"phone"} placeholder={"Enter your phone number"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.phone ? "border-error" : "border-primary-200"}`} />
+                                <input disabled {...register("phone", {
+                                    required: "Please enter your phone number"
+                                })} type={"phone"} name={"phone"} id={"phone"} placeholder={"Enter your phone number"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.phone ? "border-error" : "border-primary-200"}`} />
                                 {errors.phone && <span className="-mt-2 text-xs text-error">{errors.phone.message}</span>}
                             </FormInput>
                             <FormInput label={"Address"} id={"address"} >
-                                <input disabled {...register("owner_address")} type={"text"} name={"address"} id={"address"} placeholder={"Enter your address"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.owner_address ? "border-error" : "border-primary-200"}`} />
+                                <input disabled {...register("owner_address", {
+                                    required: "Please enter an owner address"
+                                })} type={"text"} name={"address"} id={"address"} placeholder={"Enter your address"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.owner_address ? "border-error" : "border-primary-200"}`} />
                                 {errors.owner_address && <span className="-mt-2 text-xs text-error">{errors.owner_address.message}</span>}
                             </FormInput>
                         </div>
@@ -497,7 +501,9 @@ const AddNewPropertyForm = ({
                                 <FormInput label={"Reserve Amount"} id={"reserve_amount"} >
                                     <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.reserve_amount ? "border-error" : "border-primary-200"}`}>
                                         <span><FaNairaSign /></span>
-                                        <input disabled={isReadOnly}  {...register("reserve_amount")} type={"number"} name={"reserve_amount"} id={"reserve_amount"} placeholder={"Enter reserve amount"} className={`focus:outline-none flex-1`} />
+                                        <input disabled={isReadOnly}  {...register("reserve_amount", {
+                                            required: "Reserve Amount is required",
+                                        })} type={"number"} name={"reserve_amount"} id={"reserve_amount"} placeholder={"Enter reserve amount"} className={`focus:outline-none flex-1`} />
                                     </div>
                                     {errors.reserve_amount && <span className="-mt-2 text-xs text-error">{errors.reserve_amount.message}</span>}
                                 </FormInput>
@@ -582,16 +588,20 @@ const AddNewPropertyForm = ({
                             </div>
                             <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
                                 <FormInput label={"Property size (square area)"} id={"property_square_area"} >
-                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_price ? "border-error" : "border-primary-200"}`}>
+                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_square_area ? "border-error" : "border-primary-200"}`}>
                                         <span>sqm2</span>
-                                        <input disabled={isReadOnly}  {...register("property_square_area")} type={"number"} name={"property_square_area"} id={"property_square_area"} placeholder={"Enter your property square area"} className={`focus:outline-none flex-1`} />
+                                        <input disabled={isReadOnly}  {...register("property_square_area", {
+                                            required: "Property size is required",
+                                        })} type={"number"} name={"property_square_area"} id={"property_square_area"} placeholder={"Enter your property square area"} className={`focus:outline-none flex-1`} />
                                     </div>
                                     {errors.property_square_area && <span className="-mt-2 text-xs text-error">{errors.property_square_area.message}</span>}
                                 </FormInput>
                                 <FormInput label={"Land area"} id={"land_area"} >
-                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_price ? "border-error" : "border-primary-200"}`}>
+                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.land_area ? "border-error" : "border-primary-200"}`}>
                                         <span>sqm2</span>
-                                        <input disabled={isReadOnly}  {...register("land_area")} type={"number"} name={"land_area"} id={"land_area"} placeholder={"Enter your land area"} className={`focus:outline-none flex-1`} />
+                                        <input disabled={isReadOnly}  {...register("land_area", {
+                                            required: "Land area is required",
+                                        })} type={"number"} name={"land_area"} id={"land_area"} placeholder={"Enter your land area"} className={`focus:outline-none flex-1`} />
                                     </div>
                                     {errors.land_area && <span className="-mt-2 text-xs text-error">{errors.land_area.message}</span>}
                                 </FormInput>
@@ -616,18 +626,24 @@ const AddNewPropertyForm = ({
                             </> :
                             <DragnDrop isReadOnly={isReadOnly} files={files} setFiles={setFiles} maxFiles={9} />}
                         <FormInput label={"Property Video Tour (Optional)"} id={"property_video_tour"} >
-                            <input  {...register("virtual_tour_url")} type={"text"} name={"virtual_tour_url"} id={"virtual_tour_url"} placeholder={"Enter your property video tour link"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.virtual_tour_url ? "border-error" : "border-primary-200"}`} />
+                            <input  {...register("virtual_tour_url", {
+                                required: "Video Tour Link is required",
+                            })} type={"text"} name={"virtual_tour_url"} id={"virtual_tour_url"} placeholder={"Enter your property video tour link"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.virtual_tour_url ? "border-error" : "border-primary-200"}`} />
                             {errors.virtual_tour_url && <span className="-mt-2 text-xs text-error">{errors.virtual_tour_url.message}</span>}
                         </FormInput>
                         <div className="flex flex-col gap-6">
                             <span className="font-mono font-medium">Location Coordinates <a className="text-blue-500 fonr-medium" href="https://www.latlong.net" target="_blank">(Get coordinates)</a></span>
                             <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
                                 <FormInput label={"Latitude"} id={"lat"} >
-                                    <input disabled={isReadOnly}  {...register("lat")} type={"text"} name={"lat"} id={"lat"} placeholder={"Enter your property latitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.lat ? "border-error" : "border-primary-200"}`} />
+                                    <input disabled={isReadOnly}  {...register("lat", {
+                                        required: "Latitude is required",
+                                    })} type={"text"} name={"lat"} id={"lat"} placeholder={"Enter your property latitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.lat ? "border-error" : "border-primary-200"}`} />
                                     {errors.lat && <span className="-mt-2 text-xs text-error">{errors.lat.message}</span>}
                                 </FormInput>
                                 <FormInput label={"Longitude"} id={"long"} >
-                                    <input disabled={isReadOnly}  {...register("long")} type={"text"} name={"long"} id={"long"} placeholder={"Enter your property longitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.long ? "border-error" : "border-primary-200"}`} />
+                                    <input disabled={isReadOnly}  {...register("long", {
+                                        required: "Longitude is required",
+                                    })} type={"text"} name={"long"} id={"long"} placeholder={"Enter your property longitude"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.long ? "border-error" : "border-primary-200"}`} />
                                     {errors.long && <span className="-mt-2 text-xs text-error">{errors.long.message}</span>}
                                 </FormInput>
                             </div>

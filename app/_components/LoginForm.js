@@ -57,7 +57,7 @@ export default function LoginForm({role}) {
                     <div className="space-y-2 text-center">
                         <h1 className="text-4xl text-primary font-bold">Welcome back!</h1>
                         <h2 className="text-xl font-mono text-gray-500 font-semibold uppercase">
-                            {role === 'property-owner' ? 'Property Owner' : role === 'admin' ? 'Admin' : 'User'} Login
+                            {role === 'property-owner' ? 'Property Owner' : role === 'admin' ? 'Admin' : 'User'}
                         </h2>
                         <p className="text-base text-black font-mono">Enter your email address and password to log in.</p>
                     </div>

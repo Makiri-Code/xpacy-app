@@ -57,7 +57,7 @@ export default function IssueInvoice({ token, users, booking, service }) {
     ],
     subTotal: bAmount,
     tax: 10,
-    total: bAmount,
+    total: bAmount + (bAmount * (10 / 100)),
     invoiceReason
   }
 
@@ -66,19 +66,25 @@ export default function IssueInvoice({ token, users, booking, service }) {
 
   const updateInvoice = (path, value) => {
     setInvoice(prev => {
-      const copy = structuredClone(prev)
-      const keys = path.split(".")
-      let obj = copy
-      for (let i = 0; i < keys.length - 1; i++) {
-        obj = obj[keys[i]]
+      if (path.startsWith("user.")) {
+        const key = path.split(".")[1]
+        return { ...prev, user: { ...prev.user, [key]: value } }
       }
-      obj[keys[keys.length - 1]] = value
-      return copy
+      
+      if (path.startsWith("items.")) {
+        const [, index, key] = path.split(".")
+        const newItems = [...prev.items]
+        newItems[index] = { ...newItems[index], [key]: value }
+        return { ...prev, items: newItems }
+      }
+
+      return { ...prev, [path]: value }
     })
   }
 
   const submitInvoice = async () => {
     try {
+      console.log("Submitting Invoice Payload:", invoice)
       setLoading(true)
       const res = await submitInvoiceAction(invoice, token)
       toast.success("Invoice created successfully")

@@ -477,7 +477,9 @@ export async function getAllAdmin(token) {
       },
     });
     if (!response.ok) {
-        console.error(`Error fetching admins: ${response.status}`);
+        if (response.status !== 401 && response.status !== 403) {
+            console.error(`Error fetching admins: ${response.status}`);
+        }
         return [];
     }
     const { data } = await response.json();
@@ -501,7 +503,7 @@ export async function getAllUsers(token) {
     if (!response.ok) {
         if (response.status === 404) {
              console.warn("Fetch users endpoint not found (404).");
-        } else {
+        } else if (response.status !== 401 && response.status !== 403) {
              console.error(`Error fetching users: ${response.status}`);
         }
         return [];
