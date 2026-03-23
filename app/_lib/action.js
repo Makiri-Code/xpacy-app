@@ -38,7 +38,7 @@ export const handleSearch = async (formData) => {
     maxPrice: Number(formData.get("maxPrice")) || "",
   }
   const { purpose, type, location, minBedrooms, minPrice, maxPrice } = search
-  redirect(`/search?purpose=${purpose}&type=${type}&location=${location}&minBedrooms=${minBedrooms}&minPrice=${minPrice}&maxPrice=${maxPrice}`)
+  redirect(`/search?purpose=${purpose}&type=${type}&state=${location}&minBedrooms=${minBedrooms}&minPrice=${minPrice}&maxPrice=${maxPrice}`)
 }
 
 export async function handleUserLogin(userData, redirectUrl) {
@@ -400,8 +400,8 @@ export async function handleRegisterOwner(formData) {
 
 export async function submitInvoiceAction(invoice, token) {
   const subTotal = invoice.items.reduce((sum, item) => sum + (Number(item.quantity || 0) * Number(item.unitPrice || 0)), 0);
-  const taxAmount = subTotal * (Number(invoice.tax || 0) / 100);
-
+  const taxAmount = subTotal * (Number(invoice.tax || invoice?.tax || 0) / 100);
+  const calculatedTotal = subTotal + taxAmount;
   const payload = {
     recipientId: Number(invoice.recipientId),
     recipientType: "User",
@@ -410,19 +410,15 @@ export async function submitInvoiceAction(invoice, token) {
     invoice_reason: invoice.invoiceReason,
     tax: Number(invoice.tax),
     amountPaid: 0,
-    total: subTotal + taxAmount,
+    total: Number(calculatedTotal),
     items: invoice.items.map(item => ({
       description: item.description,
       quantity: Number(item.quantity),
       unitPrice: Number(item.unitPrice),
     })),
   }
-
-  console.log("Payload getting to the server:", JSON.stringify(payload, null, 2));
-
-  const res = await fetch(
-    `${URL}/invoice/create-invoice`,
-    {
+  console.log(payload)
+  const res = await fetch(`${URL}/invoice/create-invoice`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

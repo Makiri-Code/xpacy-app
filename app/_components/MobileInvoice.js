@@ -99,7 +99,7 @@ export default function MobileInvoice({ invoice, users = [], ref }) {
                         </tr>
                         <tr className="border-b border-primary-100">
                             <td colSpan={3} className="p-3 text-left">Tax</td>
-                            <td className="p-3 text-right">{formatCurrency(invoice?.tax || 0)}</td>
+                            <td className="p-3 text-right">{Number(invoice?.tax || 0)}%</td>
                         </tr>
                         <tr className="border-b border-primary-100 bg-primary-200">
                             <td colSpan={3} className="p-3 text-left">TOTAL</td>

@@ -7,7 +7,6 @@ import BookShortletButton from "./BookShortletButton";
 import { FiPhone } from "react-icons/fi";
 
 export default function PropertyDetailsSidebar({property}){
-    console.log(property.id)
     return (
         <div className="flex flex-col gap-8 py-[38px]">
             <div className="px-4 pt-8 pb-8 flex flex-col gap-4 shadow-lg rounded-lg">

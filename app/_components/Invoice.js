@@ -124,9 +124,9 @@ export default function Invoice({
                   <>
                     <input
                       type="number"
-                      value={invoice?.tax !== undefined ? invoice.tax : ""}
+                      value={invoice?.tax ?? ""}
                       // Use update function instead of setTax
-                      onChange={(e) => update("tax", e.target.value)}
+                      onChange={(e) => update("tax", Number(e.target.value))}
                       className="w-[80px] border py-1.5 px-3 rounded-lg border-primary-100 outline-none text-right font-mono"
                     />
                     <span>%</span>

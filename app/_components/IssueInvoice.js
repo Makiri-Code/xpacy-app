@@ -84,7 +84,6 @@ export default function IssueInvoice({ token, users, booking, service }) {
 
   const submitInvoice = async () => {
     try {
-      console.log("Submitting Invoice Payload:", invoice)
       setLoading(true)
       const res = await submitInvoiceAction(invoice, token)
       toast.success("Invoice created successfully")

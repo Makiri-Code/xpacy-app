@@ -4,8 +4,8 @@ import {handleSearch} from "@/app/_lib/action"
 
 export default function Filter() {
   return (
-    <form action={handleSearch} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-2 items-center">
+    <form action={handleSearch} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex gap-2 md:flex-row flex-col">
+      <div className="grid grid-cols-1 sm:grid-cols-6 gap-2 items-center">
         <select className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all w-full" name="purpose">
           <option value={""}>Purpose</option>
           <option value={"buy"}>Buy</option>
@@ -95,13 +95,14 @@ export default function Filter() {
           <option value={200000000}>{"200m"}</option>
         </select>
 
-        <div className="col-span-1 sm:col-span-2 lg:col-span-3 xl:col-span-1">
+        
+      </div>
+      <div className="col-span-1 sm:col-span-2 lg:col-span-3 xl:col-span-1 flex justify-center">
           <LinkBtn className="w-full justify-center">
             <MagnifyingGlassIcon className="size-5 mr-2" />
             <span>Search</span>
           </LinkBtn>
         </div>
-      </div>
     </form>
   );
 }
