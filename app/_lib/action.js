@@ -328,20 +328,23 @@ export async function updateUserPassword(userData) {
 
 
 export async function createBooking(formData) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token");
-  if (!token?.value) throw new Error("Please Log in to continue");
-  const response = await fetch(`${URL}/user/create-booking`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${token?.value}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ ...formData })
-  });
-  const data = await response.json();
-  if (!data.success) throw new Error(data.message)
-  return data;
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token");
+    if (!token?.value) return { success: false, message: "Please Log in to continue" };
+    const response = await fetch(`${URL}/user/create-booking`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...formData })
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    return { success: false, message: error.message || "Server error while creating booking" };
+  }
 };
 
 export async function handleBookService(form) {

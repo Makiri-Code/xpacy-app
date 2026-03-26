@@ -1,4 +1,4 @@
-import { eachDayOfInterval, isPast, parse, format } from "date-fns";
+import { eachDayOfInterval, isPast, parse, format, isSameDay } from "date-fns";
 import toast from "react-hot-toast"
 import { useEffect, useState, useTransition, useMemo } from "react"
 import { DayPicker } from "react-day-picker";
@@ -113,7 +113,20 @@ function BookDayPicker({ onClose, property_id }) {
                             animate
                             mode="range"
                             selected={selected}
-                            onSelect={setSelected}
+                            onSelect={(range) => {
+                                if (range?.from && range?.to) {
+                                    const days = eachDayOfInterval({ start: range.from, end: range.to });
+                                    const isInvalid = days.some(day => {
+                                        if (isPast(day)) return true;
+                                        return bookedDates.some(booked => isSameDay(booked, day));
+                                    });
+                                    if (isInvalid) {
+                                        toast.error("You cannot select a range that includes already booked dates.");
+                                        return;
+                                    }
+                                }
+                                setSelected(range);
+                            }}
                             disabled={disabledDays}
                         />
                     )}

@@ -25,7 +25,7 @@ export default function PropertyDetailsSidebar({property}){
             </div>
             {property?.virtual_tour_url && <VideoTour property={property} />}
             <div className="flex flex-col p-4 shadow-lg items-center gap-6 rounded-lg">
-                <p className="text-center text-md">For Enquires</p>
+                <p className="text-center text-md">For Enquiries</p>
                 <p className="font-mono flex items-center gap-1 text-base">
                     <span><FiPhone/></span>
                     <span>Call +234 906 855 7780</span>
