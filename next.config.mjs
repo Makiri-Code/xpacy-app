@@ -6,7 +6,7 @@ const nextConfig = {
         protocol: "https",
         hostname: "app.xpacy.com",
         port: "",
-        pathname: "/src/upload/properties/**",
+        pathname: "/src/upload/**",
       },
       {
         protocol: "https",

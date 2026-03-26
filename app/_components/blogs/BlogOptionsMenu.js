@@ -1,8 +1,10 @@
+"use client";
+
 import { MoreVertical, Edit2, Trash2, Eye } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function BlogOptionsMenu({ id }) {
+export default function BlogOptionsMenu({ id, slug }) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -18,21 +20,21 @@ export default function BlogOptionsMenu({ id }) {
             {isOpen && (
                 <div className="absolute right-0 top-10 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
                     <Link
-                        href={`/dashboard/admin/blogs/${id}`}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        href={`/blogs/${slug}`}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
                     >
-                        <Eye className="w-4 h-4 text-gray-400" />
+                        <Eye className="w-4 h-4 " />
                         View Details
                     </Link>
                     <Link
-                        href={`/dashboard/admin/blogs/${id}/edit`}
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        href={`/dashboard/admin/blogs/${slug}`}
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 transition-colors"
                     >
-                        <Edit2 className="w-4 h-4 text-blue-500" />
+                        <Edit2 className="w-4 h-" />
                         Edit Blog
                     </Link>
                     <button
-                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-500  transition-colors text-left"
                     >
                         <Trash2 className="w-4 h-4" />
                         Delete Blog

@@ -903,3 +903,46 @@ export async function getAdminInvoice(token, id) {
     return null;
   }
 }
+
+export async function getBlogs() {
+  try {
+    const response = await fetch(`${url}/blog/all-posts`);
+    const { data } = await response.json();
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+    return [];
+  }
+}
+export async function getBlog(id) {
+  try {
+    const response = await fetch(`${url}/blog/post/${id}`);
+    const {data}  = await response.json();
+    return data || null;
+  } catch (error) {
+    console.error("Error fetching blog:", error);
+    return null;
+  }
+}
+export async function getBlogCategories() {
+  try {
+    const response = await fetch(`${url}/blog/all-categories`);
+    const { data } = await response.json();
+    return data || [];
+  } catch (error) {
+    console.error("Error fetching blog categories:", error);
+    return [];
+  }
+}
+
+export async function debugFetch(urlStr) {
+  try {
+    const response = await fetch(urlStr);
+    const text = await response.text();
+    console.log("Debug Fetch Response:", urlStr, text.slice(0, 500));
+    return text;
+  } catch (err) {
+    console.error("Debug Fetch Error:", urlStr, err);
+    return null;
+  }
+}

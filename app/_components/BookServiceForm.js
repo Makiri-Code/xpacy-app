@@ -26,9 +26,9 @@ const BookServiceForm = ({user}) => {
         startTransition(async () => {
             const response  = await handleBookService(formData);
             if(response.success) {
-                toast.success(response.message)
-            } else if(!response.ok){
-                toast.error("Something went wrong")
+                toast.success(response.message || "Service request submitted successfully")
+            } else {
+                toast.error(response.message || "Failed to submit service request. Please try again.")
             }
         })
         reset();

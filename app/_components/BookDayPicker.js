@@ -1,71 +1,122 @@
-"use client"
-import { format, isPast } from "date-fns";
+import { eachDayOfInterval, isPast, parse, format } from "date-fns";
 import toast from "react-hot-toast"
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useState, useTransition, useMemo } from "react"
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import { createBooking } from "../_lib/action";
+import { getProperty } from "../_lib/data-services";
 import { useRouter } from "next/navigation";
 import CustomCheckbox from "./CustomCheckbox";
 import Link from "next/link";
+import SpinnerMini from "./SpinnerMini";
+
 const selectOptions = [
-    {
-        label: "Lodging",
-    },
-    {
-        label: "House party",
-    },
-    {
-        label: "Get together",
-    },
-    {
-        label: "Photoshoot/Videoshoot",
-    },
-    {
-        label: "Others",
-    }
+    { label: "Lodging" },
+    { label: "House party" },
+    { label: "Get together" },
+    { label: "Photoshoot/Videoshoot" },
+    { label: "Others" }
 ]
-function BookDayPicker({onClose, property_id}) {
-    const [selected, setSelected] = useState({from: undefined, to: undefined});
-    const [isPending, startTransition] = useTransition()
-    const [bookingReason, setBookingReason] = useState("")
-    const router = useRouter()
-    
+
+function BookDayPicker({ onClose, property_id }) {
+    const [selected, setSelected] = useState({ from: undefined, to: undefined });
+    const [isPending, startTransition] = useTransition();
+    const [isLoadingDates, setIsLoadingDates] = useState(true);
+    const [bookedDates, setBookedDates] = useState([]);
+    const [bookingReason, setBookingReason] = useState("");
+    const router = useRouter();
+
+    useEffect(() => {
+        async function fetchBookedDates() {
+            try {
+                setIsLoadingDates(true);
+                const property = await getProperty(property_id);
+                
+                if (property?.bookings?.length > 0) {
+                    const allBookedDays = property.bookings.flatMap(booking => {
+                        if (!booking.start_date || !booking.end_date) return [];
+                        
+                        // Parse dates using the format we send to the backend
+                        const formatStr = "dd-MM-yyyy";
+                        const start = parse(booking.start_date, formatStr, new Date());
+                        const end = parse(booking.end_date, formatStr, new Date());
+                        
+                        if (isNaN(start) || isNaN(end)) {
+                            // Fallback to standard Date constructor if parse fails
+                            const fallbackStart = new Date(booking.start_date);
+                            const fallbackEnd = new Date(booking.end_date);
+                            if (isNaN(fallbackStart) || isNaN(fallbackEnd)) return [];
+                            return eachDayOfInterval({ start: fallbackStart, end: fallbackEnd });
+                        }
+                        
+                        return eachDayOfInterval({ start, end });
+                    });
+                    setBookedDates(allBookedDays);
+                }
+            } catch (error) {
+                console.error("Error fetching booked dates:", error);
+                // Non-blocking error, user can still try to book
+            } finally {
+                setIsLoadingDates(false);
+            }
+        }
+
+        if (property_id) fetchBookedDates();
+    }, [property_id]);
+
+    const disabledDays = useMemo(() => {
+        return [
+            (currDate) => isPast(currDate),
+            ...bookedDates
+        ];
+    }, [bookedDates]);
     const handleSubmit = (e) => {
         e.preventDefault();
-        startTransition ( () => {
-        if(!selected.from || !selected.to) {
+        if(!selected?.from || !selected?.to) {
             return toast.error("Please choose booking dates")
         }
-        const bookingData = {
-            property_id,
-            start_date: format(selected.from, "dd-MM-yyyy"),
-            end_date: format(selected.to, "dd-MM-yyyy"),
-            bookingReason,
-        }
-        toast.promise( async () => await createBooking(bookingData), {
-            loading: "Loading...",
-            success: (data) => {
-                router.push("/dashboard/user/my-properties");
-                return `${data.message}`
-            },
-            error: (error) => `${error.message}`
+        
+        startTransition(async () => {
+            try {
+                const bookingData = {
+                    property_id,
+                    start_date: format(selected.from, "dd-MM-yyyy"),
+                    end_date: format(selected.to, "dd-MM-yyyy"),
+                    bookingReason,
+                }
+                
+                // Using a regular async call inside startTransition for more granular control
+                const data = await createBooking(bookingData);
+                
+                if (data.success) {
+                    toast.success(data.message || "Booking created successfully!");
+                    router.push("/dashboard/user/my-properties");
+                    router.refresh();
+                } else {
+                    toast.error(data.message || "Failed to create booking. This date may already be taken.");
+                }
+            } catch (error) {
+                toast.error(error.message || "An unexpected error occurred during booking.");
+            }
         })
-    })
     }
 
     return (
         <div className="flex flex-col p-6 md:w-[450px] w-[350px] max-h-[500px] gap-6 font-mono ">
             <h3 className="text-primary md:text-xl text-md font-sans text-center font-bold lg:mb-4">Select booking dates</h3>
             <form className="flex flex-col gap-6 overflow-y-auto" onSubmit={handleSubmit}>
-                <div className="w-full">
-                    <DayPicker
-                        animate
-                        mode="range"
-                        selected={selected}
-                        onSelect={setSelected}
-                        disabled={(currDate) => isPast(currDate)}
-                    />
+                <div className="w-full flex justify-center min-h-[300px] items-center">
+                    {isLoadingDates ? (
+                        <SpinnerMini />
+                    ) : (
+                        <DayPicker
+                            animate
+                            mode="range"
+                            selected={selected}
+                            onSelect={setSelected}
+                            disabled={disabledDays}
+                        />
+                    )}
                 </div>
                 <div className="flex-1 flex-col flex gap-2">
                     <label className="text-gray-700">Reason for booking</label>
@@ -78,8 +129,11 @@ function BookDayPicker({onClose, property_id}) {
                     <CustomCheckbox labelSize="text-md" label={<p>I agree to the <Link href={"#"} className="text-primary font-bold"> Terms and Conditions</Link> </p>}/> 
                 </div>
                 <div className="flex items-center justify-between">
-                    <button onClick={onClose} className="py-2 px-3.5 border border-gray-400 rounded-lg bg-white cursor-pointer">Cancel</button>
-                    <button type="submit" className="py-2 px-5 border border-primary rounded-lg bg-primary cursor-pointer text-white">Book</button>
+                    <button type="button" onClick={onClose} className="py-2 px-3.5 border border-gray-400 rounded-lg bg-white cursor-pointer hover:bg-gray-50 transition-colors">Cancel</button>
+                    <button type="submit" disabled={isPending || isLoadingDates} className="py-2 px-5 border border-primary rounded-lg bg-primary cursor-pointer text-white hover:bg-primary-700 transition-colors flex items-center gap-2">
+                        {isPending && <SpinnerMini />}
+                        <span>Book</span>
+                    </button>
                 </div>
             </form>
         </div>

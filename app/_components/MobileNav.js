@@ -66,6 +66,9 @@ const MainAppWindow = ({ children }) => {
                 <Link href={"/buy"}>Buy</Link>
             </li>
             <li className="py-2 border-b border-primary-100">
+                <Link href={"/blogs"}>Blogs</Link>
+            </li>
+            <li className="py-2 border-b border-primary-100">
                 <Link href={"/management"}>Management</Link>
             </li>
             <li className="py-2 border-b border-primary-100">

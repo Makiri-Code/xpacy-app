@@ -19,7 +19,11 @@ import HomeCarousel from "./_components/HomeCarousel";
 import SectionLayout from "./_components/SectionLayout";
 import ServicesSection from "./_components/ServicesSection";
 import TestimonySection from "./_components/TestimonySection";
+import { getBlogs } from "./_lib/data-services";
+
 export default async function Home() {
+  const blogs = await getBlogs();
+
   return (
     <>
       <AppHeader />
@@ -168,7 +172,11 @@ export default async function Home() {
           "Expert Advice, Tips, and Trends to Make the Most of Your Property Journey"
         }
       >
-        <BlogCard />
+        <div className="flex flex-col md:flex-row gap-8 items-center justify-center">
+          {blogs?.slice(0, 3).map((blog) => (
+            <BlogCard key={blog.id} blog={blog} />
+          ))}
+        </div>
       </SectionLayout>
       <Footer />
     </>

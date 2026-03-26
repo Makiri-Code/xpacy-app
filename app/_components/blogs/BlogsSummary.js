@@ -5,8 +5,7 @@ import { IoTimeOutline } from "react-icons/io5";
 export default function BlogsSummary({
     totalBlogs = 0,
     publishedBlogs = 0,
-    draftBlogs = 0,
-    scheduledBlogs = 0,
+    featuredBlogs = 0,
 }) {
     const items = [
          {
@@ -17,19 +16,12 @@ export default function BlogsSummary({
             textColor: "text-green-900"
         },
         {
-            title: "Drafts",
-            count: draftBlogs,
+            title: "Featured",
+            count: featuredBlogs,
             icon: <MdOutlineDrafts className="text-yellow-500" size={20} />,
             color: "bg-yellow-50 border-yellow-100",
             textColor: "text-yellow-900"
         },
-        {
-            title: "Scheduled",
-            count: scheduledBlogs,
-            icon: <IoTimeOutline className="text-blue-500" size={20} />,
-            color: "bg-blue-50 border-blue-100",
-            textColor: "text-blue-900"
-        }
     ];
 
     return (

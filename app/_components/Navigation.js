@@ -20,6 +20,9 @@ export default function Navigation({children}) {
           <li className={`p-2.5 hover:border-b-2 hover:border-primary text-md ${pathname === '/buy' && 'border-b-2 border-primary'}`}>
             <Link href={"/buy"}>Buy</Link>
           </li>
+           <li className={`p-2.5 hover:border-b-2 hover:border-primary text-md ${pathname === '/blogs' && 'border-b-2 border-primary'}`}>
+            <Link href={"/blogs"}>Blogs</Link>
+          </li>
           <li className={`p-2.5 hover:border-b-2 hover:border-primary text-md ${pathname === '/management' && 'border-b-2 border-primary'}`}>
             <Link href={"/management"}>Management</Link>
           </li>

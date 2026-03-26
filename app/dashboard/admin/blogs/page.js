@@ -1,25 +1,32 @@
 import AdminBlogsList from "@/app/_components/blogs/AdminBlogsList";
 import BlogsSummary from "@/app/_components/blogs/BlogsSummary";
+import BlogFilter from "@/app/_components/blogs/BlogFilter";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { getBlogs, getBlogCategories } from "@/app/_lib/data-services";
 
-export default async function Page() {
+export default async function Page({ searchParams: searchParamsPromise }) {
+    const searchParams = await searchParamsPromise;
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
     
-    // Placeholder data until endpoint is ready
-    const blogs = [];
+    const [blogs, categories] = await Promise.all([
+        getBlogs(token),
+        getBlogCategories()
+    ]);
 
     const stats = {
         totalBlogs: blogs.length,
-        publishedBlogs: blogs.filter(b => b.status === 'published').length,
-        draftBlogs: blogs.filter(b => b.status === 'draft').length,
-        scheduledBlogs: blogs.filter(b => b.status === 'scheduled').length,
+        publishedBlogs: blogs.filter(b => b.is_published === true).length,
+        featuredBlogs: blogs.filter(b => b.is_featured === true).length,
     };
 
+    const search = searchParams?.search || "";
+    const category = searchParams?.category || "all";
+
     return (
-        <div className="p-6 space-y-6">
+        <div className=" space-y-6">
             <div className="flex justify-between items-center mb-2">
                 <h1 className="lg:text-4xl text-[28px] text-primary font-bold capitalize">Blogs Management</h1>
                 <Link 
@@ -32,9 +39,10 @@ export default async function Page() {
             </div>
             
             <BlogsSummary {...stats} />
-            
-            <div className="mt-8">
-                <AdminBlogsList blogs={blogs} title="All Blogs" />
+
+            <div className="mt-8 bg-gray-50/50 rounded-2xl border border-gray-100">
+                <BlogFilter categories={categories} />
+                <AdminBlogsList blogs={blogs} filter={category} search={search} />
             </div>
         </div>
     );

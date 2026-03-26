@@ -788,3 +788,100 @@ export async function updateProperty(id, formData, token) {
   const data = await response.json();
   return data;
 }
+
+// Blog Actions
+export async function createBlog(formData) {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token");
+    
+    const response = await fetch(`${URL}/blog/create-post`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+      },
+      body: formData,
+    });
+    
+    let data;
+    try {
+        data = await response.json();
+    } catch (e) {
+        const text = await response.text();
+        return { error: `Server returned non-JSON response: ${text}` };
+    }
+
+    if (!response.ok) {
+        return { error: data.message || data.error || data.details || "Failed to create blog post" };
+    }
+    
+    revalidateTag("blogs");
+    return data;
+  } catch (error) {
+    return { error: error.message || "An unexpected error occurred during creation" };
+  }
+}
+
+export async function updateBlog(id, formData) {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token");
+
+    const response = await fetch(`${URL}/blog/update-post/${id}`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+      },
+      body: formData,
+    });
+
+    let data;
+    try {
+        data = await response.json();
+    } catch (e) {
+        const text = await response.text();
+        return { error: `Server returned non-JSON response: ${text}` };
+    }
+
+    if (!response.ok) {
+        return { error: data.message || data.error || data.details || "Failed to update blog post" };
+    }
+
+    revalidateTag("blogs");
+    return data;
+  } catch (error) {
+    return { error: error.message || "An unexpected error occurred during update" };
+  }
+}
+
+export async function deleteBlog(id) {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token");
+
+    const response = await fetch(`${URL}/blog/delete-post/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token?.value}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    let data;
+    try {
+        data = await response.json();
+    } catch (e) {
+        const text = await response.text();
+        return { error: `Server returned non-JSON response: ${text}` };
+    }
+
+    if (!response.ok) {
+        return { error: data.message || data.error || data.details || "Failed to delete blog post" };
+    }
+
+    revalidateTag("blogs");
+    return data;
+  } catch (error) {
+    return { error: error.message || "An unexpected error occurred during deletion" };
+  }
+}
