@@ -26,8 +26,8 @@ export default function SidebarHeader({ role = "user" }) {
                 
                 {role === "admin" && (
                     <>
-                        <Link href="/admin/add-new-property" className="p-4 rounded-lg bg-white border border-primary hidden lg:flex items-center justify-center text-primary font-mono font-bold">Manage Service Requests</Link>
-                        <Link href="/admin/add-new-property" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Add New Property</Link>
+                        <Link href="/dashboard/admin/services" className="px-2 py-2 lg:p-4 rounded-lg bg-white border border-primary flex items-center justify-center text-primary font-mono font-bold lg:text-base whitespace-nowrap">Manage Service Requests</Link>
+                        <Link href="/admin/add-new-property" className="px-2 py-2 lg:p-4 rounded-lg bg-primary flex items-center justify-center text-white font-mono font-bold lg:text-base whitespace-nowrap">Add New Property</Link>
                         <div className="w-0.5 h-10 bg-gray-300 hidden lg:block"></div>
                     </>
                 )}

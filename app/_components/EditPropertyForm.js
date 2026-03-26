@@ -330,7 +330,6 @@ const EditPropertyForm = ({
 
                 headers: {
                     Authorization: `Bearer ${token?.value}`,
-                    "Content-Type": "multipart/form-data",
                 },
                 signal: controllerRef.current.signal,
                 onUploadProgress: (progressEvent) => progress(progressEvent, setIsOpenModal, setUploadingProgress, setEstimatedTime, startTime)
