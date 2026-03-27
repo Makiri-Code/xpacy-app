@@ -26,19 +26,20 @@ export default function BlogForm({ initialData = null, isEditMode = false }) {
     const [isImageRemoved, setIsImageRemoved] = useState(false);
     
     const [errors, setErrors] = useState({});
-    
-    const categories = [
-        {id: "1", name: "Real Estate"},
-        {id: "2", name: "Travel"},
-        {id: "3", name: "Food"},
-        {id: "4", name: "Lifestyle"},
-        {id: "5", name: "Technology"},
-        {id: "6", name: "Fashion"},
-        {id: "7", name: "Health"},
-        {id: "8", name: "Finance"},
-        {id: "9", name: "Education"},
-        {id: "10", name: "Entertainment"},
-    ];
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        const loadCategories = async () => {
+            try {
+                const data = await getBlogCategories();
+                setCategories(data || []);
+            } catch (error) {
+                console.error("Failed to fetch blog categories:", error);
+                toast.error("Failed to load categories");
+            }
+        };
+        loadCategories();
+    }, []);
 
     // Initialize existing image from initialData
     useEffect(() => {
@@ -164,23 +165,7 @@ export default function BlogForm({ initialData = null, isEditMode = false }) {
         return null;
     }, [newImageFile, existingImageUrl, isImageRemoved]);
 
-    const handleDelete = async () => {
-        if (!confirm("Are you sure you want to delete this blog post? This action cannot be undone.")) return;
-        
-        startTransition(async () => {
-            const result = await deleteBlog(initialData.id);
-            if (result?.error) {
-                if (typeof result.error === 'string') {
-                    toast.error(result.error);
-                } else {
-                    toast.error("Failed to delete blog post.");
-                }
-            } else {
-                toast.success("Blog deleted successfully");
-                router.push("/dashboard/admin/blogs");
-            }
-        });
-    };
+    
 
     return (
         <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto pb-20">
@@ -238,7 +223,30 @@ export default function BlogForm({ initialData = null, isEditMode = false }) {
                                 </p>
                             )}
                         </div>
+                        
                         <div className="space-y-2">
+                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">
+                            Category <span className="text-red-500">*</span>
+                        </label>
+                        <select 
+                            value={category_id}
+                            onChange={(e) => setCategory_id(e.target.value)}
+                            required
+                            className="w-full px-5 py-4 rounded-2xl border-2 border-gray-200 bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all font-medium text-gray-800 appearance-none cursor-pointer"
+                        >
+                            <option value="">Select Category</option>
+                            {categories.map(cat => (
+                                <option key={cat.id || cat._id} value={cat.id || cat._id}>{cat.name}</option>
+                            ))}
+                        </select>
+                        {errors.category_id && (
+                            <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                                <AlertCircle size={12} /> {errors.category_id.message}
+                            </p>
+                        )}
+                        </div>
+                    </div>
+                    <div className="space-y-2">
                             <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">
                                 Slug <span className="text-red-500">*</span>
                             </label>
@@ -255,29 +263,8 @@ export default function BlogForm({ initialData = null, isEditMode = false }) {
                                 </p>
                             )}
                         </div>
-                    </div>
 
-                    <div className="space-y-2">
-                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">
-                            Category <span className="text-red-500">*</span>
-                        </label>
-                        <select 
-                            value={category_id}
-                            onChange={(e) => setCategory_id(e.target.value)}
-                            required
-                            className="w-full px-5 py-4 rounded-2xl border-2 border-gray-200 bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all font-medium text-gray-800 appearance-none cursor-pointer"
-                        >
-                            <option value="">Select Category</option>
-                            {categories.map(cat => (
-                                <option key={cat.id} value={cat.id}>{cat.name}</option>
-                            ))}
-                        </select>
-                        {errors.category_id && (
-                            <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                                <AlertCircle size={12} /> {errors.category_id.message}
-                            </p>
-                        )}
-                    </div>
+                    
 
                     {/* Content */}
                     <div className="space-y-2">
@@ -379,22 +366,14 @@ export default function BlogForm({ initialData = null, isEditMode = false }) {
                     {isEditMode ? (
                         <button 
                             type="button" 
-                            onClick={handleDelete} 
-                            disabled={isPending} 
-                            className="flex items-center gap-2 text-sm font-black text-red-500/60 hover:text-red-500 hover:bg-red-50 px-4 py-2 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                        >
-                            {isPending ? <SpinnerMini /> : <Trash2 size={18} />}
-                            {isPending ? "DELETING..." : "DELETE"}
-                        </button>
-                    ) : <div />}
-                    <div className="flex items-center gap-4">
-                        <button 
-                            type="button" 
                             onClick={() => router.back()} 
                             className="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
                         >
                             Cancel
                         </button>
+                    ) : <div />}
+                    <div className="flex items-center gap-4">
+                        
                         <button 
                             type="submit" 
                             disabled={isPending} 
