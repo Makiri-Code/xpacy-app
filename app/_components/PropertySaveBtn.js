@@ -12,13 +12,23 @@ export default function PropertySaveBtn({ isSaved, propertyId, isPropertyCard })
     const pathname = usePathname();
     const handleSave = () => {
         startTransition( () => {
-            toast.promise(() => handleSaveProperty(propertyId), {
+            const savePromise = handleSaveProperty(propertyId);
+            toast.promise(savePromise, {
                 loading: "Saving..",
                 success: (data) => ` ${data.message}`,
                 error: (err) => {
+                    if (err.message === "Please log in to continue") {
                         router.push(`/auth/log-in?redirectUrl=${encodeURIComponent(pathname)}`);
-                    return `Please log-in to continue`
+                        return `Please log-in to continue`
+                    }
+                    return `${err.message}`
                 }
+            });
+
+            savePromise.then(() => {
+                router.push("/dashboard/user/saved-properties");
+            }).catch((err) => {
+               console.error("Save Error:", err)
             });
 
         })

@@ -30,22 +30,22 @@ export default function Invoice({
 
   const itemsStr = JSON.stringify(invoice?.items || [])
 
-  // Recalculate subtotal, tax, total whenever items change
-  useEffect(() => {
-    const itemsList = invoice?.items || []
-    const subTotal = itemsList.reduce(
-      (sum, i) => sum + Number(i?.unitPrice || 0) * Number(i?.quantity || 0),
-      0
-    )
-    
-    // In this new model, invoice.tax represents a percentage (e.g., 5 for 5%)
-    const taxRate = Number(invoice?.tax || 0); 
-    const calculatedTaxAmount = subTotal * (taxRate / 100);
-    const total = subTotal + calculatedTaxAmount;
+  // Calculate derived values directly during render
+  const itemsList = invoice?.items || []
+  const calculatedSubTotal = itemsList.reduce(
+    (sum, i) => sum + Number(i?.unitPrice || 0) * Number(i?.quantity || 0),
+    0
+  );
+  
+  const taxRate = Number(invoice?.tax || 0); 
+  const calculatedTaxAmount = calculatedSubTotal * (taxRate / 100);
+  const calculatedTotal = calculatedSubTotal + calculatedTaxAmount;
 
-    if (invoice?.subTotal !== subTotal) onChange?.("subTotal", subTotal)
-    if (invoice?.total !== total) onChange?.("total", total)
-  }, [itemsStr, invoice?.tax])
+  // Fire onChange to update parent state if they diverge
+  useEffect(() => {
+    if (invoice?.subTotal !== calculatedSubTotal) onChange?.("subTotal", calculatedSubTotal);
+    if (invoice?.total !== calculatedTotal) onChange?.("total", calculatedTotal);
+  }, [itemsStr, invoice?.tax, calculatedSubTotal, calculatedTotal, invoice?.subTotal, invoice?.total, onChange]);
 
   return (
     <div ref={ref} className={`${className} flex-col gap-8 lg:gap-16 p-4 lg:p-6 rounded-lg border-2 border-primary-200 bg-white`}>
@@ -78,9 +78,19 @@ export default function Invoice({
             <EditableText value={recipient?.phone || recipient?.phone_number || ""} isEdit={isEdit} onChange={v => update("user.phone", v)} placeholder={"Enter Recipent's phone number"} />
           </div>
         </div>
-        <span className="bg-error w-max text-secondary-100 px-4 py-2 rounded-full text-2xl font-bold font-mono">
-          {invoice?.status || "Pending"}
-        </span>
+        {(() => {
+          const status = invoice?.status || "Pending";
+          const statusLower = status.toLowerCase();
+          let statusColor = "bg-error";
+          if (['paid', 'completed', 'active', 'confirmed', 'success', 'successful'].includes(statusLower)) statusColor = "bg-green-500";
+          else if (['pending', 'processing'].includes(statusLower)) statusColor = "bg-yellow-500";
+          
+          return (
+            <span className={`${statusColor} w-max text-secondary-100 px-4 py-2 rounded-full text-2xl font-bold font-mono`}>
+              {status}
+            </span>
+          )
+        })()}
       </section>
 
       {/* Items */}
@@ -115,7 +125,7 @@ export default function Invoice({
           <tfoot className="font-bold">
             <tr className="border-b">
               <td colSpan={3} className="p-4 text-left">Sub-total</td>
-              <td className="p-4 text-right">{formatCurrency(invoice?.subTotal || 0)}</td>
+              <td className="p-4 text-right">{formatCurrency(calculatedSubTotal || 0)}</td>
             </tr>
             <tr className="border-b">
               <td colSpan={3} className="p-4 text-left">Tax (%)</td>
@@ -138,7 +148,7 @@ export default function Invoice({
             </tr>
             <tr className="border-b bg-primary-200">
               <td colSpan={3} className="p-4 text-left">TOTAL</td>
-              <td className="p-4 text-right">{formatCurrency(invoice?.total || 0)}</td>
+              <td className="p-4 text-right">{formatCurrency(calculatedTotal || 0)}</td>
             </tr>
           </tfoot>
         </table>

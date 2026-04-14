@@ -27,12 +27,9 @@ const statusBg = {
     "incomplete": " bg-[#FFF8BE] text-[#9D7B40] ",
 };
 
-export default async function InvoiceListTable() {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("token");
-    const invoices = await getInvoiceList(token);
-
-    if (invoices?.length === 0) return <div className="grid place-content-center p-6 border border-primary-200 bg-white rounded-lg"><EmptyState message={"Opps... No invoices available"} /></div>
+export default async function InvoiceListTable({invoices}) {
+    const invoiceList = invoices.data
+    if (invoiceList?.length === 0) return <div className="grid place-content-center p-6 border border-primary-200 bg-white rounded-lg"><EmptyState message={"Opps... No invoices available"} /></div>
 
     const renderRow = (invoice) => (
         <tr key={invoice.id} className="border-b border-gray-100 text-sm font-mono hover:bg-gray-50 transition-colors last:border-0">
@@ -105,7 +102,7 @@ export default async function InvoiceListTable() {
         <DataTable
             title="Invoice list"
             headers={tableHeadings}
-            data={invoices}
+            data={invoiceList}
             renderRow={renderRow}
             renderMobileCard={renderMobileCard}
             showPagination={false}

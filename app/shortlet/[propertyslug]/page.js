@@ -14,7 +14,7 @@ export async function generateMetadata({params}){
         description: property?.description,
         openGraph: {
             title: property?.property_name,
-            description: property.description,
+            description: property?.description,
             images: [
                 {url: `https://app.xpacy.com/src/upload/properties/${property?.images.at(0)}`,
                     width: 1200,

@@ -58,9 +58,19 @@ export default function MobileInvoice({ invoice, users = [], ref }) {
                         <p>{recipient?.phone || recipient?.phone_number || ""}</p>
                     </div>
                 </div>
-                <span className="bg-error w-max text-secondary-100 px-4 py-2 rounded-full text-xl font-bold font-mono">
-                    {invoice?.status || "Pending"}
-                </span>
+                {(() => {
+                    const status = invoice?.status || "Pending";
+                    const statusLower = status.toLowerCase();
+                    let statusColor = "bg-error";
+                    if (['paid', 'completed', 'active', 'confirmed', 'success', 'successful'].includes(statusLower)) statusColor = "bg-green-500";
+                    else if (['pending', 'processing'].includes(statusLower)) statusColor = "bg-yellow-500 text-black";
+                    
+                    return (
+                        <span className={`${statusColor} w-max text-secondary-100 px-4 py-2 rounded-full text-xl font-bold font-mono`}>
+                            {status}
+                        </span>
+                    )
+                })()}
             </section>
 
             {/* Items */}

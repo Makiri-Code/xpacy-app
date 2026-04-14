@@ -233,7 +233,7 @@ export async function getInvoiceList(token) {
         "Authorization": `Bearer ${token?.value}`,
       }
     });
-    const  {data}  = await response.json();
+    const  data  = await response.json();
     return data
   } catch (error) {
     console.error("Error fetching user invoices:", error)

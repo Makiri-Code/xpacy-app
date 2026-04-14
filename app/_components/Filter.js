@@ -54,6 +54,8 @@ export default function Filter() {
 
         <select name="minPrice" className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all w-full">
           <option value={""}>Min Price</option>
+          <option value={45000}>{"N45k"}</option>
+          <option value={50000}>{"N50k"}</option>
           <option value={100000}>{"N100k"}</option>
           <option value={200000}>{"N200k"}</option>
           <option value={500000}>{"N500k"}</option>
@@ -76,6 +78,8 @@ export default function Filter() {
 
         <select name="maxPrice" className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all w-full">
           <option value={""}>Max Price</option>
+          <option value={100000}>{"N100k"}</option>
+          <option value={200000}>{"N200k"}</option>
           <option value={500000}>{"N500k"}</option>
           <option value={1000000}>{"N1m"}</option>
           <option value={2000000}>{"N2m"}</option>

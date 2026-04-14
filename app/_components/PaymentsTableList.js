@@ -57,7 +57,7 @@ export default function PaymentsTableList({ invoices }) {
                     </span>
                 </td>
                 <td className="p-4 text-right font-bold text-primary">
-                    {invoice.amount || invoice.total || invoice.property?.property_price ? formatCurrency(invoice.amount || invoice.total || invoice.property?.property_price) : "N/A"}
+                    {invoice.total || invoice.amount || invoice.property?.property_price ? formatCurrency(invoice.total || invoice.amount || invoice.property?.property_price) : "N/A"}
                 </td>
                 <td className="p-4 text-center">
                     <PaymentsOptionsMenu id={invoice.id || invoice._id} />

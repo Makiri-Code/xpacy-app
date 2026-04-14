@@ -9,7 +9,7 @@ export default async function Page() {
         const cookieStore = await cookies();
     const token = cookieStore.get("token");
     const {data, pagination} = await getSavedProperties(token);
-        if(data.length <= 0 ) return <EmptyState message={"Oops!... You have no booked services yet."} cta={"Explore properties"}/>
+        if(data.length <= 0 ) return <EmptyState message={"Oops!... You have no saved properties yet."} cta={"Explore properties"}/>
     
     return (
         <main className="p-6 flex flex-col lg:gap-4 gap-6">

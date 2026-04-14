@@ -19,7 +19,7 @@ export default function PropertyDetailsHeader({propertyName, propertyAddress, pr
             <div className="flex items-center space-x-2 font-mono text-black text-sm md:text-base">
                 <Link href={"/"}>Home</Link>
                 <span className="text-md"><MdKeyboardArrowRight /></span>
-                <Link href={`/${propertyStatus.toLowerCase()}`} className={"capitalize"}>{propertyStatus}</Link>
+                <Link href={`/${propertyStatus?.toLowerCase() || ""}`} className={"capitalize"}>{propertyStatus || "Details"}</Link>
                 <span className="text-md"><MdKeyboardArrowRight /></span>
                 { viewPhotos && 
                 (<> 

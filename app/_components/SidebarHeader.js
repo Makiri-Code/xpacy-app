@@ -18,7 +18,6 @@ export default function SidebarHeader({ role = "user" }) {
                 {/* Static Navigations hoisted out of Suspense to ensure they always load instantly */}
                 {role === "user" && (
                     <>
-                        <SearchInput />
                         <Link href="/book-service" className="p-4 rounded-lg bg-primary hidden lg:flex items-center justify-center text-white font-mono font-bold">Book A Service</Link>
                         <div className="w-0.5 h-10 bg-gray-300 hidden lg:block"></div>
                     </>

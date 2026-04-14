@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers"
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 const URL = "https://app.xpacy.com";
 
@@ -194,19 +194,30 @@ export async function resendPropertyOwnerRegistrationEmail(email) {
 }
 
 export async function handleSaveProperty(id) {
+  console.log("handleSaveProperty called with id:", id, "type:", typeof id);
   const cookiesStore = await cookies();
   const token = cookiesStore.get("token")
   if (!token?.value) throw new Error("Please log in to continue")
+  
+  const body = JSON.stringify({ propertyId: id });
+  console.log("Save Property Request Body:", body);
+
   const response = await fetch(`${URL}/user-property/saved-properties`, {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${token?.value}`,
       "Content-type": "application/json",
     },
-    body: JSON.stringify({ propertyId: id })
+    body: body
   });
   const data = await response.json();
+  console.log("Save Property API Response:", response.status, data);
+  if (!response.ok) {
+    throw new Error(data.message || data.error || "Failed to save property");
+  }
+  
   revalidateTag("saved-properties");
+  revalidatePath("/dashboard/user/saved-properties");
   return data;
 }
 
@@ -249,6 +260,7 @@ export async function handleDelteSavedProp(savedPropertyId) {
   });
   const data = await response.json();
   revalidateTag('saved-properties');
+  revalidatePath("/dashboard/user/saved-properties");
   return data
 }
 
@@ -402,18 +414,15 @@ export async function handleRegisterOwner(formData) {
 
 
 export async function submitInvoiceAction(invoice, token) {
-  const subTotal = invoice.items.reduce((sum, item) => sum + (Number(item.quantity || 0) * Number(item.unitPrice || 0)), 0);
-  const taxAmount = subTotal * (Number(invoice.tax || invoice?.tax || 0) / 100);
-  const calculatedTotal = subTotal + taxAmount;
   const payload = {
     recipientId: Number(invoice.recipientId),
     recipientType: "User",
     issuedDate: invoice.issuedDate.toISOString().split("T")[0],
     dueDate: invoice.dueDate.toISOString().split("T")[0],
     invoice_reason: invoice.invoiceReason,
-    tax: Number(invoice.tax),
+    tax: Number(invoice.tax || 0),
     amountPaid: 0,
-    total: Number(calculatedTotal),
+    total: Number(invoice.total || 0),
     items: invoice.items.map(item => ({
       description: item.description,
       quantity: Number(item.quantity),

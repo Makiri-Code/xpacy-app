@@ -1,10 +1,11 @@
 import Image from "next/image";
 import UserFilterMenu from "./UserFilterMenu";
 import { format } from "date-fns";
-import OptionsMenu from "./OptionsMenu";
+import TableItemOptionsMenu from "./TableItemOptionsMenu";
 import { formatCurrency } from "../_lib/utils";
 import EmptyState from "./EmptyState";
 import DataTable from "./DataTable";
+import Link from "next/link";
 
 const tableHeadings = [
     { heading: "Property Name/Address" },
@@ -16,9 +17,18 @@ const tableHeadings = [
 ];
 
 export default function BookingsTableList({ bookings }) {
+
     if (!bookings?.length) return <EmptyState message={"Opps you don't have any bookings yet."} />
 
-    const renderRow = (booking) => (
+    const renderRow = (booking) => {
+        const actions = [
+            {
+                label: "View booking",
+                href: `/dashboard/user/booked-services/${booking?.id}`
+            }
+        ];
+
+        return (
         <tr key={booking.id} className="text-neutrals-900 text-sm font-mono border-b border-primary-100 hover:bg-gray-50/50 transition-colors last:border-0">
             <td className="p-4">
                 <div className="flex items-center gap-2 text-sm">
@@ -30,9 +40,19 @@ export default function BookingsTableList({ bookings }) {
             </td>
             <td className="p-4 text-center">
                 <div className="flex justify-center">
-                    <span className="bg-error text-secondary-100 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase whitespace-nowrap">
-                        {booking?.status}
-                    </span>
+                    {(() => {
+                        const status = booking?.status || "Pending";
+                        const statusLower = status.toLowerCase();
+                        let statusColor = "bg-error";
+                        if (['paid', 'completed', 'active', 'confirmed', 'success', 'successful'].includes(statusLower)) statusColor = "bg-green-500";
+                        else if (['pending', 'processing'].includes(statusLower)) statusColor = "bg-orange-500 text-black";
+                        
+                        return (
+                            <span className={`${statusColor} text-secondary-100 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase whitespace-nowrap`}>
+                                {status}
+                            </span>
+                        )
+                    })()}
                 </div>
             </td>
             <td className="p-4 text-center">
@@ -50,13 +70,24 @@ export default function BookingsTableList({ bookings }) {
             </td>
             <td className="p-4 relative text-center">
                 <div className="flex justify-center">
-                    <OptionsMenu id={"booking"} />
+                    <Link href={`/dashboard/user/my-properties/${booking?.property?.id}`} className="text-primary px-2.5 py-1 text-sm font-bold whitespace-nowrap hover:underline">
+                        View
+                    </Link>
                 </div>
             </td>
         </tr>
-    );
+        );
+    };
 
-    const renderMobileCard = (booking) => (
+    const renderMobileCard = (booking) => {
+        const actions = [
+            {
+                label: "View booking",
+                href: `/dashboard/user/booked-services/${booking?.id}`
+            }
+        ];
+
+        return (
         <div key={booking.id} className="flex flex-col gap-4 p-4 border-b border-primary-100 bg-white last:border-0 font-mono">
             <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-2">
@@ -64,7 +95,7 @@ export default function BookingsTableList({ bookings }) {
                         {booking?.property?.property_status}
                     </span>
                 </div>
-                <OptionsMenu id={"booking"} />
+                <TableItemOptionsMenu menuId={`booking-menu-mobile-${booking?.id}`} actions={actions} />
             </div>
 
             <div className="flex items-center gap-3">
@@ -84,7 +115,19 @@ export default function BookingsTableList({ bookings }) {
                 </div>
                 <div className="flex flex-col items-end">
                     <span className="text-gray-400 uppercase font-bold text-[9px] mb-1">Payment Status</span>
-                    <span className="bg-error text-secondary-100 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase">{booking?.status}</span>
+                    {(() => {
+                        const status = booking?.status || "Pending";
+                        const statusLower = status.toLowerCase();
+                        let statusColor = "bg-error";
+                        if (['paid', 'completed', 'active', 'confirmed', 'success', 'successful'].includes(statusLower)) statusColor = "bg-green-500";
+                        else if (['pending', 'processing'].includes(statusLower)) statusColor = "bg-yellow-500 text-black";
+                        
+                        return (
+                            <span className={`${statusColor} text-secondary-100 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase`}>
+                                {status}
+                            </span>
+                        )
+                    })()}
                 </div>
                 <div className="flex flex-col col-span-2 border-t border-gray-100 pt-2">
                     <span className="text-gray-400 uppercase font-bold text-[9px] mb-1">Booking Date</span>
@@ -92,7 +135,8 @@ export default function BookingsTableList({ bookings }) {
                 </div>
             </div>
         </div>
-    );
+        );
+    };
 
     return (
         <DataTable
