@@ -10,7 +10,7 @@ import TestimonySection from "./TestimonySection";
 import OtherProperties from "./OtherProperties";
 import PropertyDetailsSidebar from "./PropertyDetailsSidebar";
 import ReviewsBox from "./ReviewsBox";
-function PropertiesDetailsSection({ property }) {
+function PropertiesDetailsSection({ property, isAuthenticated }) {
 
     return (
         <>
@@ -67,7 +67,7 @@ function PropertiesDetailsSection({ property }) {
                     </div>
                 </div>
                 <section className="md:col-span-1 md:hidden">
-                    <PropertyDetailsSidebar property={property} />
+                    <PropertyDetailsSidebar property={property} isAuthenticated={isAuthenticated} />
                 </section>
                 <div className="border border-neutral-300"></div>
                 {/* Property features */}
@@ -126,7 +126,7 @@ function PropertiesDetailsSection({ property }) {
 
             </div>
             <section className="md:col-span-1 hidden md:block">
-                <PropertyDetailsSidebar property={property} />
+                <PropertyDetailsSidebar property={property} isAuthenticated={isAuthenticated} />
             </section>
             <section className="flex flex-col col-span-4 gap-[72px]">
                 {/* Map */}

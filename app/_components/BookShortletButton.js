@@ -3,13 +3,19 @@ import toast from "react-hot-toast";
 import { useRouter, usePathname } from "next/navigation"
 import { handleBookProperty } from "../_lib/action";
 
-export default function BookShortletButton({ onClick, children, id, property_status }) {
+export default function BookShortletButton({ onClick, children, id, property_status, isAuthenticated }) {
     const router = useRouter();
     const pathname = usePathname();
 
     const handleClick = async (e) => {
-        if (property_status === "Shortlet") {
-            // If it's a shortlet, let the modal wrapper (Modal.Open) handle it via onClick
+        if (!isAuthenticated) {
+            toast.error("Please log in to continue");
+            if (onClick) onClick(e);
+            return;
+        }
+
+        if (property_status === "Shortlet" || property_status === "Rent") {
+            // let the modal wrapper (Modal.Open) handle it via onClick
             if (onClick) onClick(e);
         } else {
             // Direct booking logic...

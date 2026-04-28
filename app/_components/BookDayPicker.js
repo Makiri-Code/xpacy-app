@@ -18,8 +18,9 @@ const selectOptions = [
     { label: "Others" }
 ]
 
-function BookDayPicker({ onClose, property_id }) {
-    const [selected, setSelected] = useState({ from: undefined, to: undefined });
+function BookDayPicker({ onClose, property_id, property_status }) {
+    const isInspection = property_status === "Rent";
+    const [selected, setSelected] = useState(isInspection ? undefined : { from: undefined, to: undefined });
     const [isPending, startTransition] = useTransition();
     const [isLoadingDates, setIsLoadingDates] = useState(true);
     const [bookedDates, setBookedDates] = useState([]);
@@ -72,17 +73,32 @@ function BookDayPicker({ onClose, property_id }) {
     }, [bookedDates]);
     const handleSubmit = (e) => {
         e.preventDefault();
-        if(!selected?.from || !selected?.to) {
-            return toast.error("Please choose booking dates")
+        
+        if (isInspection) {
+            if (!selected) return toast.error("Please choose an inspection date");
+        } else {
+            if(!selected?.from || !selected?.to) {
+                return toast.error("Please choose booking dates")
+            }
         }
         
         startTransition(async () => {
             try {
-                const bookingData = {
-                    property_id,
-                    start_date: format(selected.from, "dd-MM-yyyy"),
-                    end_date: format(selected.to, "dd-MM-yyyy"),
-                    bookingReason,
+                let bookingData;
+                if (isInspection) {
+                    bookingData = {
+                        property_id,
+                        start_date: format(selected, "dd-MM-yyyy"),
+                        end_date: format(selected, "dd-MM-yyyy"), // usually same day for single booking/inspection
+                        bookingReason: bookingReason || "Inspection",
+                    }
+                } else {
+                    bookingData = {
+                        property_id,
+                        start_date: format(selected.from, "dd-MM-yyyy"),
+                        end_date: format(selected.to, "dd-MM-yyyy"),
+                        bookingReason,
+                    }
                 }
                 
                 // Using a regular async call inside startTransition for more granular control
@@ -102,8 +118,8 @@ function BookDayPicker({ onClose, property_id }) {
     }
 
     return (
-        <div className="flex flex-col p-6 md:w-[450px] w-[350px] max-h-[500px] gap-6 font-mono ">
-            <h3 className="text-primary md:text-xl text-md font-sans text-center font-bold lg:mb-4">Select booking dates</h3>
+        <div className="flex flex-col p-6 md:w-[450px] w-[350px] max-h-[600px] gap-6 font-mono ">
+            <h3 className="text-primary md:text-xl text-md font-sans text-center font-bold lg:mb-4">{isInspection ? "Select inspection date" : "Select booking dates"}</h3>
             <form className="flex flex-col gap-6 overflow-y-auto" onSubmit={handleSubmit}>
                 <div className="w-full flex justify-center min-h-[300px] items-center">
                     {isLoadingDates ? (
@@ -111,33 +127,45 @@ function BookDayPicker({ onClose, property_id }) {
                     ) : (
                         <DayPicker
                             animate
-                            mode="range"
+                            mode={isInspection ? "single" : "range"}
                             selected={selected}
-                            onSelect={(range) => {
-                                if (range?.from && range?.to) {
-                                    const days = eachDayOfInterval({ start: range.from, end: range.to });
-                                    const isInvalid = days.some(day => {
-                                        if (isPast(day)) return true;
-                                        return bookedDates.some(booked => isSameDay(booked, day));
-                                    });
-                                    if (isInvalid) {
-                                        toast.error("You cannot select a range that includes already booked dates.");
-                                        return;
+                            onSelect={(val) => {
+                                if (isInspection) {
+                                    if (val) {
+                                        if (isPast(val)) return toast.error("You cannot select a past date.");
+                                        if (bookedDates.some(booked => isSameDay(booked, val))) {
+                                            toast.error("You cannot select a date that is already booked or taken.");
+                                            return;
+                                        }
                                     }
+                                    setSelected(val);
+                                } else {
+                                    const range = val;
+                                    if (range?.from && range?.to) {
+                                        const days = eachDayOfInterval({ start: range.from, end: range.to });
+                                        const isInvalid = days.some(day => {
+                                            if (isPast(day)) return true;
+                                            return bookedDates.some(booked => isSameDay(booked, day));
+                                        });
+                                        if (isInvalid) {
+                                            toast.error("You cannot select a range that includes already booked dates.");
+                                            return;
+                                        }
+                                    }
+                                    setSelected(range);
                                 }
-                                setSelected(range);
                             }}
                             disabled={disabledDays}
                         />
                     )}
                 </div>
-                <div className="flex-1 flex-col flex gap-2">
+                {!isInspection && <div className="flex-1 flex-col flex gap-2">
                     <label className="text-gray-700">Reason for booking</label>
                     <select name="bookingReason" className="px-3 py-3.5 border border-gray-300 rounded-lg placeholder:text-gray-500 " onChange={(e) => {setBookingReason(e.target.value)}}>
                         <option value="">Please choose the reason for booking</option>
                         {selectOptions.map(option => <option value={option.label} key={option.label}>{option.label}</option>)}
                     </select>
-                </div>
+                </div>}
                 <div className="mb-2">
                     <CustomCheckbox labelSize="text-md" label={<p>I agree to the <Link href={"#"} className="text-primary font-bold"> Terms and Conditions</Link> </p>}/> 
                 </div>

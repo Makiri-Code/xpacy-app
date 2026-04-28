@@ -6,6 +6,8 @@ import PropertyPhotoSection from "@/app/_components/PropertyPhotosSection";
 import PropertySavedIcon from "@/app/_components/ProperySavedIcon";
 import { getProperty } from "@/app/_lib/data-services"
 
+import { cookies } from "next/headers";
+
 export async function generateMetadata({params}){
     const pageParams = await params
     const property = await getProperty(pageParams.propertyslug);
@@ -26,6 +28,9 @@ export async function generateMetadata({params}){
 }
 export default async function Page({ params }) {
     const pageParams = await params;
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token");
+    const isAuthenticated = !!token?.value;
     const property = await getProperty(pageParams.propertyslug)
     return (
         <>
@@ -36,7 +41,7 @@ export default async function Page({ params }) {
                 </PropertyDetailsHeader>
                 <PropertyPhotoSection property={property} />
                 <div className="grid grid-cols-4 gap-12 py-12">
-                    <PropertiesDetailsSection property={property} />
+                    <PropertiesDetailsSection property={property} isAuthenticated={isAuthenticated} />
                 </div>
             </main>
             <Footer />
