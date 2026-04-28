@@ -21,7 +21,7 @@ export default async function BookedServiceList({ services }) {
         bookedServices = await getBookedServices(token);
     }
     
-    if (!bookedServices || bookedServices.length <= 0) return <EmptyState message={"Oops!... You have no booked services yet."} cta={"Book A Service"} />
+    if (!bookedServices || bookedServices.length <= 0) return <EmptyState message={"Oops!... You have no booked services yet."} cta={"Book A Service"} link={"/book-service"} />
 
     const renderRow = (service) => (
         <tr key={service._id || service.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors last:border-0 text-sm font-mono">

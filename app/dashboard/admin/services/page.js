@@ -1,15 +1,15 @@
 import PropertyOwnerServicesTable from "@/app/_components/PropertyOwnerServicesTable";
 import DashboardGridItem from "@/app/_components/DashboardGridItems";
 import ServicesOverviewWrapper from "@/app/_components/ServicesOverviewWrapper";
-import { getAdminServices } from "@/app/_lib/data-services";
+import { getAdminServices, getAdminServiceProviders } from "@/app/_lib/data-services";
 import { cookies } from "next/headers";
-import ServicesTableList from "@/app/_components/ServicesTableList";
-import AdminServiceList from "@/app/_components/AdminServiceList";
+import AdminServicesTabs from "@/app/_components/AdminServicesTabs";
 
 export default async function Page() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
     const services = await getAdminServices(token) || [];
+    const serviceProviders = await getAdminServiceProviders(token) || [];
 
     return (
         <div className="p-6">
@@ -19,8 +19,8 @@ export default async function Page() {
                <ServicesOverviewWrapper services={services} />
             </div>
 
-            <DashboardGridItem title={"All Service Requests"}>
-                <AdminServiceList services={services} />
+            <DashboardGridItem title={"Service Management"}>
+                <AdminServicesTabs services={services} serviceProviders={serviceProviders} />
             </DashboardGridItem>
         </div>
     );

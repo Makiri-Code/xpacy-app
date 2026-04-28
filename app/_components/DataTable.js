@@ -31,7 +31,7 @@ export default function DataTable({
     if (!data?.length) return <EmptyState message={emptyMessage} />;
 
     return (
-        <div className={`flex flex-col gap-6 p-6 border-[1.5px] border-primary-200 rounded-lg ${className}`}>
+        <div className={`flex flex-col gap-6 rounded-lg ${className}`}>
             {(title || headerActions) && (
                 <header className="flex items-center justify-between">
                     {title && <h2 className="text-xl font-bold text-primary-700 flex items-center gap-2">{title}</h2>}

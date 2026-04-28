@@ -84,7 +84,7 @@ export default function LoginForm({role, customRedirectUrl}) {
                             </div>
                             <Link href="/auth/forgot-password" className="font-mono text-base text-primary">Forgot Password?</Link>
                         </div>
-                        <div className="flex justify-center w-full my-4">
+                        <div className="flex justify-start w-full my-4">
                             <ReCAPTCHA
                                 sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"}
                                 onChange={setCaptchaValue}

@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { useTransition } from "react"
+import { useTransition, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSearchParams } from "next/navigation"
 
@@ -11,14 +11,20 @@ import SpinnerMini from "./SpinnerMini";
 import toast from "react-hot-toast"
 import { useUser } from "../_context/UserContext"
 import ResendOwnerEmail from "./ResendOwnerEmail";
+import ReCAPTCHA from "react-google-recaptcha"
 
 export default function SignupForm({ cities, role = "user" }) {
     const searchParams = useSearchParams();
     const { userData, setUserData } = useUser()
     const referralCode = searchParams.get("referralCode")
     const [pending, startTransition] = useTransition();
+    const [captchaValue, setCaptchaValue] = useState(null);
     const { register, handleSubmit, formState: { errors }, reset, getValues } = useForm()
     async function onSubmit(data) {
+        if (!captchaValue) {
+            toast.error("Please verify that you are not a robot.");
+            return;
+        }
         startTransition(async () => {
              let response;
             if (role === "property-owner") {
@@ -83,6 +89,12 @@ export default function SignupForm({ cities, role = "user" }) {
             <div className="flex items-center gap-1 font-mono -mt-2">
                 <input type="checkbox" id="checkbox" className="w-6 h-6" />
                 <label htmlFor="checkbox" className="text-base text-black">I agree to Xpacy’s Terms & Conditions and Privacy Policy.</label>
+            </div>
+            <div className="flex justify-start w-full my-4">
+                <ReCAPTCHA
+                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"}
+                    onChange={setCaptchaValue}
+                />
             </div>
             <button type="submit" disabled={pending} className="bg-primary text-white  cursor-pointer  px-5 py-3 font-semibold flex space-x-2.5 font-mono items-center justify-center rounded-md hover:shadow-md disabled:bg-gray-900 disabled:cursor-not-allowed"> <span>Sign Up</span> <span>{pending && <SpinnerMini />}</span> </button>
             {role === "property-owner" && <ResendOwnerEmail />}
