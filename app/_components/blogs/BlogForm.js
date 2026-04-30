@@ -8,6 +8,7 @@ import { Camera, Save, Trash2, X, AlertCircle } from "lucide-react";
 import SpinnerMini from "../SpinnerMini";
 import { createBlog, updateBlog, deleteBlog } from "../../_lib/action";
 import { getBlogCategories } from "../../_lib/data-services";
+import { compressImages } from "../../_lib/image-compression";
 
 export default function BlogForm({ initialData = null, isEditMode = false }) {
     const [isPending, startTransition] = useTransition();
@@ -64,13 +65,23 @@ export default function BlogForm({ initialData = null, isEditMode = false }) {
         }
     }, [newImageFile]);
 
-    const handleImageChange = (e) => {
+    const handleImageChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            setNewImageFile(file);
-            // Clear existing image when new one is added
-            setExistingImageUrl("");
-            setIsImageRemoved(true);
+            try {
+                const compressedFile = await compressImages(file);
+                setNewImageFile(compressedFile);
+                // Clear existing image when new one is added
+                setExistingImageUrl("");
+                setIsImageRemoved(true);
+            } catch (error) {
+                console.error("Blog image compression error:", error);
+                toast.error("Failed to compress image");
+                // Fallback to original file
+                setNewImageFile(file);
+                setExistingImageUrl("");
+                setIsImageRemoved(true);
+            }
         }
     };
 

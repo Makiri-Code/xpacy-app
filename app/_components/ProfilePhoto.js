@@ -5,21 +5,32 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { uploadDisplayPhoto } from "../_lib/action";
 import SpinnerMini from "./SpinnerMini";
 import toast from "react-hot-toast";
+import { compressImages } from "../_lib/image-compression";
+
 export default function ProfilePhoto({ profile, uploadAction }) {
     const fileInputRef = useRef(null)
     const [isPending, startTransition] = useTransition();
-    const handleChange = (e) => {
+    const handleChange = async (e) => {
         const image = e.target.files[0]
-        const formData = new FormData();
-        formData.append("display_picture", image)
-        startTransition( () => {
-            const action = uploadAction || uploadDisplayPhoto;
-            toast.promise( async () => await action(formData), {
-                loading: "Loading...",
-                success: (data) => `${data.message}`,
-                error: "Error uploading photo, please try again"
-            })
-        })
+        if (!image) return;
+
+        startTransition(async () => {
+            try {
+                const compressedImage = await compressImages(image);
+                const formData = new FormData();
+                formData.append("display_picture", compressedImage);
+
+                const action = uploadAction || uploadDisplayPhoto;
+                await toast.promise(action(formData), {
+                    loading: "Uploading...",
+                    success: (data) => `${data.message}`,
+                    error: "Error uploading photo, please try again"
+                });
+            } catch (error) {
+                console.error("Compression/Upload error:", error);
+                toast.error("An error occurred during upload.");
+            }
+        });
     }
     return (
         <div className="flex lg:items-center gap-8 lg:gap-0 flex-col lg:flex-row lg:justify-between">

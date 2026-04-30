@@ -68,7 +68,7 @@ export default function PropertiesSummary({ properties, totalProperties, showHea
                 {/* Grid Items */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {summaryItems.map((item, index) => (
-                        <div key={index} className="flex flex-col items-center justify-center p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white border border-primary-100 w-full">
+                        <div key={index} className="flex flex-col items-center justify-center p-6 rounded-lg border border-primary-200 w-full">
                             <p className="font-mono text-primary-700 text-base text-center">{item.title}</p>
                             <p className="text-center font-bold text-lg font-mono">{item.count}</p>
                         </div>
