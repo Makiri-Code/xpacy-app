@@ -5,7 +5,7 @@ const statusBg = {
     "rented": "bg-[#C3E5C4] text-[#357B38] ",
     "active": "bg-[#C3E5C4] text-[#357B38] ",
     "draft": "bg-gray-200 text-gray-700",
-    "pending": "bg-[#FFF8BE] text-[#9D7B40]",
+    "pending": "bg-[#FEE2E2] text-[#EF4444]", // Red/Pink
     "verified": "bg-[#C3E5C4] text-[#357B38]",
     "n/a": "bg-gray-100 text-gray-500",
     
@@ -15,8 +15,10 @@ const statusBg = {
     "declined": "bg-red-100 text-red-700",
     
     // Service Statuses
-    "in-progress": "bg-[#FFF8BE] text-[#9D7B40]",
+    "in progress": "bg-[#FEF9C3] text-[#A16207]", // Yellow
+    "in-progress": "bg-[#FEF9C3] text-[#A16207]",
     "completed": "bg-[#C3E5C4] text-[#357B38]",
+    "upcoming": "bg-[#DBEAFE] text-[#1D4ED8]", // Blue
 }
 
 export default function StatusChips({status}) {

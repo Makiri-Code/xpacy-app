@@ -1,20 +1,14 @@
-import ServiceRequestDetails from "@/app/_components/ServiceRequestDetails";
-import BackBtn from "@/app/_components/BackBtn";
-import Logo from "@/app/_components/Logo";
-import { getServiceRequestById } from "@/app/_lib/data-services";
+import React from 'react';
 import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+import { getAdminServices } from "../../../_lib/data-services";
+import BackBtn from "../../../_components/BackBtn";
+import Logo from "../../../_components/Logo";
+import AssignServiceTable from "../../../_components/AssignServiceTable";
 
-export default async function Page({ params }) {
-    const { serviceId } = await params;
+export default async function AssignServiceRequestsPage() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
-    
-    const service = await getServiceRequestById(token, serviceId);
-
-    if (!service) {
-        notFound();
-    }
+    const services = await getAdminServices(token);
 
     return (
         <div className="flex-1 flex flex-col min-h-screen bg-white">
@@ -32,8 +26,12 @@ export default async function Page({ params }) {
             </nav>
 
             {/* Content Area */}
-            <main className="flex-1 max-w-[900px] mx-auto w-full py-12 px-6">
-                <ServiceRequestDetails service={service} />
+            <main className="flex-1 max-w-[1200px] mx-auto w-full py-12 px-6 flex flex-col gap-10">
+                <header className="flex flex-col items-center gap-4">
+                    <h1 className="text-[2.5rem] font-bold text-primary-900 font-mono tracking-tight">Assign Service Requests</h1>
+                </header>
+
+                <AssignServiceTable services={services} />
             </main>
         </div>
     );

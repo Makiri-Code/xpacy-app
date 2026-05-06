@@ -1,100 +1,151 @@
 "use client";
-import DataTable from "./DataTable";
-import StatusChips from "./StatusChips";
+
+import { useState } from "react";
+import { IoSearch } from "react-icons/io5";
+import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
+import { HiOutlinePlus } from "react-icons/hi";
 import UserOptionsMenu from "./UserOptionsMenu";
 import Image from "next/image";
-
-const headings = [
-    { heading: "Provider Name" },
-    { heading: "Contact Info" },
-    { heading: "Service Type" },
-    {heading: "Location"},
-    { heading: "Completed Services", center: true },
-    { heading: "" }
-];
+import Link from "next/link";
 
 export default function AdminServiceProvidersList({ providers = [] }) {
-    const renderRow = (provider) => (
-        <tr key={provider._id || provider.id} className="text-neutrals-900 text-sm font-mono border-b border-primary-100 hover:bg-gray-50 transition-colors last:border-0">
-            <td className="p-4">
-                <div className="flex items-center gap-3 text-sm">
-                    <div className="w-10 h-10 relative shrink-0">
-                        <Image src={provider.display_picture ? `https://app.xpacy.com/src/upload/display_img/${provider.display_picture}` : "/avatar.png"} alt="provider-photo" className="object-cover rounded-full" unoptimized fill />
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="truncate font-semibold">{provider.company_name || provider.provider_name || provider.name || provider.firstname || "N/A"} {(!provider.company_name && !provider.business_name && !provider.name) ? provider.lastname : ""}</span>
-                        </div>
-                </div>
-            </td>
-            <td className="p-4">
-                <span className="text-gray-500 text-xs">{provider.email}</span><br/>
-                <span className="text-gray-500 text-[10px]">{provider.phone || "N/A"}</span>
-            </td>
-            <td className="p-4">
-                <span className="text-gray-900 capitalize">{provider.service_type || provider.specialization || provider.category || "N/A"}</span>
-            </td>
-            <td className="p-4 ">
-                <span className="text-gray-900 font-bold text-sm">{provider.city}</span><br/>
-                <span className="text-gray-900 font-bold text-xs">{provider.address}</span>
-            </td>
-            <td className="p-4 text-center">
-                <div className="flex justify-center capitalize">
-                <span className="text-gray-900 font-bold text-base">{provider.completed_services || provider.completed_jobs || provider.jobs_completed || 0}</span>
-                </div>
-            </td>
-            <td className="p-4 relative text-center">
-                <div className="flex justify-center">
-                    <UserOptionsMenu id={provider._id || provider.id} role={provider?.user_role || "provider"} /> 
-                </div>
-            </td>
-        </tr>
-    );
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const renderMobileCard = (provider) => (
-        <div key={provider._id || provider.id} className="flex flex-col gap-4 p-4 border-b border-primary-100 bg-white last:border-0">
-            <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-3">
-                     <div className="w-12 h-12 relative shrink-0">
-                        <Image src={provider.display_picture ? `https://app.xpacy.com/src/upload/display_img/${provider.display_picture}` : "/avatar.png"} alt="provider-photo" className="object-cover rounded-full" unoptimized fill />
+    const filteredProviders = providers.filter(provider => {
+        const searchStr = searchTerm.toLowerCase();
+        const name = `${provider.company_name || provider.name || provider.firstname || ""} ${provider.lastname || ""}`.toLowerCase();
+        return (
+            name.includes(searchStr) ||
+            provider.email?.toLowerCase().includes(searchStr) ||
+            provider.service_type?.toLowerCase().includes(searchStr) ||
+            provider.city?.toLowerCase().includes(searchStr)
+        );
+    });
+
+    return (
+        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+            {/* Top Bar */}
+            <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <h3 className="text-xl font-bold text-primary-900 font-mono">Service Providers List</h3>
+                
+                <div className="flex items-center gap-4">
+                    {/* Search */}
+                    <div className="relative w-full md:w-[340px]">
+                        <input 
+                            type="text" 
+                            placeholder="Search provider, service type, email or location"
+                            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        <IoSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
                     </div>
-                    <div className="flex flex-col">
-                        <h3 className="font-bold text-sm text-neutrals-900 truncate">{provider.company_name || provider.business_name || provider.name || provider.firstname || "N/A"} {(!provider.company_name && !provider.business_name && !provider.name) ? provider.lastname : ""}</h3>
-                        <p className="text-xs text-gray-500">{provider.email}</p>
-                        <p className="text-[10px] text-gray-400">{provider.phone || "N/A"}</p>
+
+                    {/* Sort By */}
+                    <div className="flex items-center gap-2 font-mono text-sm text-gray-500 whitespace-nowrap">
+                        <span>Sort by:</span>
+                        <select className="border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none">
+                            <option>Default</option>
+                            <option>Highest Rated</option>
+                            <option>Most Completed</option>
+                        </select>
                     </div>
+
+                    {/* Filter Icon */}
+                    <button className="p-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors">
+                        <HiOutlineAdjustmentsHorizontal className="text-xl" />
+                    </button>
                 </div>
-                <UserOptionsMenu id={provider._id || provider.id} role={provider?.user_role || "provider"} />
             </div>
-            
-            <div className="flex flex-col gap-2 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
-                <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-gray-500 uppercase">Contact Name:</span>
-                    <span className="font-medium text-gray-900">{provider.user?.name || provider.name || provider.firstname || provider.first_name || "N/A"} {provider.lastname || provider.last_name || ""}</span>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-gray-500 uppercase">Service Type:</span>
-                    <span className="font-medium text-gray-900 capitalize">{provider.service_type || provider.specialization || "N/A"}</span>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-gray-500 uppercase">Completed Services:</span>
-                    <span className="font-bold text-gray-900">{provider.completed_services || provider.completed_jobs || provider.jobs_completed || 0}</span>
-                </div>
-                <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-gray-500 uppercase">Status:</span>
-                    <StatusChips status={provider.status || "active"} />
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+                <table className="w-full text-left border-separate border-spacing-0">
+                    <thead>
+                        <tr className="text-gray-400 font-mono text-[10px] uppercase tracking-wider border-b border-gray-50">
+                            <th className="px-6 py-4 font-bold">N/O</th>
+                            <th className="px-6 py-4 font-bold">Provider's Name</th>
+                            <th className="px-6 py-4 font-bold">Contact Info</th>
+                            <th className="px-6 py-4 font-bold">Service Type</th>
+                            <th className="px-6 py-4 font-bold">Location</th>
+                            <th className="px-6 py-4 font-bold text-center">Completed Services</th>
+                            <th className="px-6 py-4 font-bold text-right"></th>
+                        </tr>
+                    </thead>
+                    <tbody className="font-mono text-[13px]">
+                        {filteredProviders.length > 0 ? (
+                            filteredProviders.map((provider, index) => (
+                                <tr key={provider._id || index} className="group hover:bg-gray-50/50 transition-colors">
+                                    <td className="px-6 py-6 border-t border-gray-50 font-bold">{index + 1}</td>
+                                    <td className="px-6 py-6 border-t border-gray-50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 relative shrink-0">
+                                                <Image 
+                                                    src={provider.display_picture ? `https://app.xpacy.com/src/upload/display_img/${provider.display_picture}` : "/avatar.png"} 
+                                                    alt="provider" 
+                                                    className="object-cover rounded-full" 
+                                                    unoptimized 
+                                                    fill 
+                                                />
+                                            </div>
+                                            <span className="font-semibold">{provider.company_name || provider.name || provider.firstname || "N/A"} {provider.lastname || ""}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-6 border-t border-gray-50">
+                                        <div className="flex flex-col">
+                                            <span>{provider.phone || "N/A"}</span>
+                                            <span className="text-gray-400 text-[11px]">{provider.email || "N/A"}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-6 border-t border-gray-50 capitalize">{provider.service_type || provider.specialization || "N/A"}</td>
+                                    <td className="px-6 py-6 border-t border-gray-50">
+                                        <div className="flex flex-col">
+                                            <span>{provider.city || "N/A"}</span>
+                                            <span className="text-gray-400 text-[11px]">{provider.state || ""}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-6 border-t border-gray-50 text-center font-bold">
+                                        {provider.completed_services || 0}
+                                    </td>
+                                    <td className="px-6 py-6 border-t border-gray-50 text-right relative">
+                                        <UserOptionsMenu id={provider._id || provider.id} role={provider?.user_role || "provider"} /> 
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="7" className="px-6 py-20 text-center text-gray-400">
+                                    No service providers found matching your search.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="p-6 border-t border-gray-50 flex flex-col gap-8">
+                <Link 
+                    href="/admin/add-new-provider"
+                    className="flex items-center gap-2 text-primary-900 font-bold font-mono text-sm hover:text-primary transition-colors"
+                >
+                    <HiOutlinePlus className="text-lg" />
+                    <span>Add New Provider</span>
+                </Link>
+
+                {/* Pagination */}
+                <div className="flex items-center justify-center gap-2 font-mono text-sm">
+                    <button className="text-gray-400 hover:text-primary-900">&lt; Previous</button>
+                    <div className="flex items-center gap-1">
+                        <button className="w-8 h-8 rounded bg-primary-50 text-primary-900 font-bold">1</button>
+                        <button className="w-8 h-8 rounded hover:bg-gray-100">2</button>
+                        <button className="w-8 h-8 rounded hover:bg-gray-100">3</button>
+                        <span className="mx-1">...</span>
+                        <button className="w-8 h-8 rounded hover:bg-gray-100">7</button>
+                    </div>
+                    <button className="text-gray-400 hover:text-primary-900">Next &gt;</button>
                 </div>
             </div>
         </div>
-    );
-
-    return (
-        <DataTable
-            headers={headings}
-            data={providers}
-            renderRow={renderRow}
-            renderMobileCard={renderMobileCard}
-            emptyMessage="No service providers found."
-            showPagination={true}
-        />
     );
 }
