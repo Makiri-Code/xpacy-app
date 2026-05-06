@@ -107,7 +107,7 @@ function BookDayPicker({ onClose, property_id, property_status }) {
                 if (data.success) {
                     toast.success(data.message || "Booking created successfully!");
                     router.push("/dashboard/user/my-properties");
-                    router.refresh();
+                   // router.refresh();
                 } else {
                     toast.error(data.message || "Failed to create booking. This date may already be taken.");
                 }

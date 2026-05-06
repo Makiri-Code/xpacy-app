@@ -187,14 +187,12 @@ export async function getUserNotifications(token) {
   if (!token?.value) return [];
   try {
     const response = await fetch(`${url}/notification/fetch-notifications`, {
-      next: {
-        tags: ['user-notifications']
-      },
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token?.value}`,
       }
     });
+    console.log(response)
     const { data } = await response.json();
     return data
   } catch (error) {

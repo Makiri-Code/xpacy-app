@@ -344,17 +344,31 @@ export async function createBooking(formData) {
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
     if (!token?.value) return { success: false, message: "Please Log in to continue" };
+    
     const response = await fetch(`${URL}/user/create-booking`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token?.value}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...formData })
+      body: JSON.stringify({ 
+        ...formData,
+        propertyId: formData.propertyId || formData.property_id 
+      })
     });
+    
     const data = await response.json();
-    return data;
+    
+    if (!response.ok) {
+      return { 
+        success: false, 
+        message: data.message || "Failed to create booking. This date may already be taken." 
+      };
+    }
+
+    return { success: true, ...data };
   } catch (error) {
+    console.error("Booking error:", error);
     return { success: false, message: error.message || "Server error while creating booking" };
   }
 };
