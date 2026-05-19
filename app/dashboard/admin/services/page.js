@@ -13,7 +13,6 @@ export default async function Page() {
 
     return (
         <div className="p-6">
-            <h1 className="lg:text-4xl text-[28px] text-primary font-bold capitalize mb-8">Services</h1>
             
             <div className="mb-8">
                <ServicesOverviewWrapper services={services} />

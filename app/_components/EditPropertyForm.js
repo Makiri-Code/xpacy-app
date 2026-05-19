@@ -222,7 +222,6 @@ const EditPropertyForm = ({
     const [uploadingProgress, setUploadingProgress] = useState(0);
     const [estimatedTime, setEstimatedTime] = useState(0);
     const controllerRef = useRef(null);
-    console.log(propertyObj)
     const { register, handleSubmit, formState: { errors }, reset, getValues, setValue } = useForm({
         defaultValues: {
             firstname: propertyOwner?.first_name,
@@ -388,7 +387,7 @@ const EditPropertyForm = ({
                         <div className="flex flex-col gap-6">
                             <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
                                 <FormInput label={"First Name"} id={"firstname"} >
-                                    <input disabled {...register("firstname", {
+                                    <input  disabled {...register("firstname", {
                                         required: "Please enter your first name"
                                     })} type={"text"} name={"firstname"} id={"firstname"} placeholder={"Enter your first name"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.firstname ? "border-error" : "border-primary-200"}`} />
                                     {errors.firstname && <span className="-mt-2 text-xs text-error">{errors.firstname.message}</span>}

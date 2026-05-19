@@ -32,7 +32,7 @@ export default function AssignServiceTable({ services = [] }) {
     }
 
     return (
-        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white border border-gray-300 rounded-2xl overflow-hidden">
             {/* Search Bar */}
             <div className="p-6 pb-2">
                 <div className="relative w-[340px]">
@@ -48,7 +48,7 @@ export default function AssignServiceTable({ services = [] }) {
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto ">
                 <table className="w-full text-left border-separate border-spacing-0">
                     <thead>
                         <tr className="text-gray-400 font-mono text-sm border-b border-gray-50">

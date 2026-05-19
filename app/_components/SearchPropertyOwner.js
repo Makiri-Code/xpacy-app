@@ -32,7 +32,7 @@ const SearchPropertyOwner = ({ allOwners, propertyOwner, setPropertyOwner, disab
                             },
                         }}
                         PaperComponent={CustomPaper}
-                        options={allOwners}
+                        options={allOwners || []}
                         // onBlur={(event) => event.target.value !== searchField ? setSearchField(event.target.value) : null}
                         getOptionLabel={(option) =>
                             typeof option === "string"

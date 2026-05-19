@@ -192,8 +192,8 @@ export async function getUserNotifications(token) {
         "Authorization": `Bearer ${token?.value}`,
       }
     });
-    console.log(response)
     const { data } = await response.json();
+
     return data
   } catch (error) {
     console.error("Error fetching user notifications:", error)
