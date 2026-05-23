@@ -514,12 +514,27 @@ const EditPropertyForm = ({
                                     <input disabled={true} value={effectiveData?.views || 0} type={"number"} name={"views"} id={"views"} placeholder={"0"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200`} />
                                 </FormInput>
                             </div>
-                            <FormInput label={"Property Description"} id={"description"} >
-                                <textarea disabled={isReadOnly} {...register("description", {
-                                    required: "Property Description is required",
-                                })} name={"description"} id={"description"} placeholder={"Enter your property description"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 h-32 resize-none focus:outline-none ${errors.description ? "border-error" : "border-primary-200"}`}></textarea>
-                                {errors.description && <span className="-mt-2 text-xs text-error">{errors.description.message}</span>}
-                            </FormInput>
+                            <div className="md:flex-1 w-full flex flex-col space-y-2 font-mono">
+                                <label htmlFor="description" className="text-sm text-black flex items-center gap-2">
+                                    Property Description
+                                    <span className="text-[10px] font-normal text-gray-500">(HTML Supported)</span>
+                                </label>
+                                <textarea 
+                                    disabled={isReadOnly}
+                                    {...register("description", {
+                                        required: "Property Description is required",
+                                    })}
+                                    id="description"
+                                    rows={12} 
+                                    className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 resize-none focus:outline-none ${errors.description ? "border-error" : "border-primary-200"}`} 
+                                    placeholder="Enter your property description here..." 
+                                />
+                                {errors.description && (
+                                    <span className="-mt-2 text-xs text-error">
+                                        {errors.description.message}
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </>
                 )}
