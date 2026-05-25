@@ -175,7 +175,7 @@ export default async function AdminPropertyList({ properties, bookings = [], pag
             renderMobileCard={renderMobileCard}
             showPagination={true}
             pagination={pagination}
-            className="p-0! border-none shadow-none bg-transparent"
+            className="p-0! border-none shadow-none bg-transparent "
         />
     );
 }

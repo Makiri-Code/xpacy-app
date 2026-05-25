@@ -40,7 +40,7 @@ export default function DataTable({
             )}
 
             {/* Desktop View - Table */}
-            <div className="bg-white border border-primary-100 rounded-xl overflow-hidden shadow-sm hidden lg:block">
+            <div className="bg-white border border-primary-100 rounded-xl overflow-x-scroll shadow-sm hidden lg:block">
                 <table className="w-full text-left border-collapse">
                     <thead className="bg-gray-50 text-neutrals-900 text-sm font-mono font-bold border-b border-primary-100">
                         <tr>

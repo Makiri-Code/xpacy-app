@@ -52,7 +52,7 @@ export default async function Page({searchParams}) {
             
             <PropertiesSummary properties={allProperties || []} totalProperties={allProperties?.length || 0} />
             
-            <div className={`border-[1.5px] border-primary-200 p-6 flex flex-col gap-4 rounded-lg`}>
+            <div className={`border-[1.5px] border-primary-200 p-6 flex flex-col gap-4 rounded-lg `}>
                 <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between border-b border-primary-100 pb-4">
                     <h3 className="lg:text-md text-black text-base font-sans font-bold">All Properties</h3>
                     <div className="flex items-center gap-4">
