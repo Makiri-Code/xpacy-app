@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition, useRef, useCallback, useMemo } from "react";
 import ProgressBar from "./ProgressBar";
 import SearchPropertyOwner from "./SearchPropertyOwner";
 import FormInput from "./FormInput";
@@ -16,185 +16,69 @@ import { url } from "../_lib/data-services";
 import toast from "react-hot-toast";
 import { progress } from "../_lib/utils";
 import UploadingFileModal from "./UploadingFileModal";
-import { useCompressImage } from "../_hooks/useCompressImage";
 import { usePathname } from "next/navigation";
 
-
-// options for property type
+// Move static data outside component to prevent re-renders
 const propertyType = [
-    {
-        id: 1,
-        type: "Commercial",
-    },
-    {
-        id: 2,
-        type: "Residential",
-    },
-    {
-        id: 3,
-        type: "Terrace",
-    },
-    {
-        id: 4,
-        type: "Flat/Apartment",
-    },
-    {
-        id: 5,
-        type: "Duplex",
-    },
-    {
-        id: 6,
-        type: "Semi-detached",
-    },
-    {
-        id: 7,
-        type: "Fully-detached",
-    },
-    {
-        id: 9,
-        type: "Villa",
-    },
+    { id: 1, type: "Commercial" },
+    { id: 2, type: "Residential" },
+    { id: 3, type: "Terrace" },
+    { id: 4, type: "Flat/Apartment" },
+    { id: 5, type: "Duplex" },
+    { id: 6, type: "Semi-detached" },
+    { id: 7, type: "Fully-detached" },
+    { id: 9, type: "Villa" },
 ];
-// Options for availability status
+
 const availabilityStatus = [
-    {
-        id: 1,
-        status: "Available",
-    },
-    {
-        id: 2,
-        status: "Unavailable",
-    },
-    {
-        id: 3,
-        status: "Sold",
-    },
+    { id: 1, status: "Available" },
+    { id: 2, status: "Unavailable" },
+    { id: 3, status: "Sold" },
 ];
+
 const propertyStatus = [
-    {
-        id: 1,
-        status: "Sale",
-    },
-    {
-        id: 2,
-        status: "Rent",
-    },
-    {
-        id: 3,
-        status: "Lease",
-    },
-    {
-        id: 4,
-        status: "Shortlet",
-    },
+    { id: 1, status: "Sale" },
+    { id: 2, status: "Rent" },
+    { id: 3, status: "Lease" },
+    { id: 4, status: "Shortlet" },
 ];
+
 const bedroomCounts = [
-    {
-        id: 1,
-        count: 1,
-    },
-    {
-        id: 2,
-        count: 2,
-    },
-    {
-        id: 3,
-        count: 3,
-    },
-    {
-        id: 4,
-        count: 4,
-    },
-    {
-        id: 5,
-        count: 5,
-    },
-    {
-        id: 6,
-        count: 6,
-    },
+    { id: 1, count: 1 },
+    { id: 2, count: 2 },
+    { id: 3, count: 3 },
+    { id: 4, count: 4 },
+    { id: 5, count: 5 },
+    { id: 6, count: 6 },
 ];
+
 const bathroomCounts = [
-    {
-        id: 1,
-        count: 1,
-    },
-    {
-        id: 2,
-        count: 2,
-    },
-    {
-        id: 3,
-        count: 3,
-    },
-    {
-        id: 4,
-        count: 4,
-    },
-    {
-        id: 5,
-        count: 5,
-    },
-    {
-        id: 6,
-        count: 6,
-    },
+    { id: 1, count: 1 },
+    { id: 2, count: 2 },
+    { id: 3, count: 3 },
+    { id: 4, count: 4 },
+    { id: 5, count: 5 },
+    { id: 6, count: 6 },
 ];
+
 const toiletCounts = [
-    {
-        id: 1,
-        count: 1,
-    },
-    {
-        id: 2,
-        count: 2,
-    },
-    {
-        id: 3,
-        count: 3,
-    },
-    {
-        id: 4,
-        count: 4,
-    },
-    {
-        id: 5,
-        count: 5,
-    },
-    {
-        id: 6,
-        count: 6,
-    },
+    { id: 1, count: 1 },
+    { id: 2, count: 2 },
+    { id: 3, count: 3 },
+    { id: 4, count: 4 },
+    { id: 5, count: 5 },
+    { id: 6, count: 6 },
 ];
+
 const parkingAreaCount = [
-    {
-        id: 1,
-        count: "Fit 1 car",
-    },
-    {
-        id: 2,
-        count: "Fit 2 cars",
-    },
-    {
-        id: 3,
-        count: "Fit 3 cars",
-    },
-    {
-        id: 4,
-        count: "Fit 4 cars",
-    },
-    {
-        id: 5,
-        count: "Fit 5 cars",
-    },
+    { id: 1, count: "Fit 1 car" },
+    { id: 2, count: "Fit 2 cars" },
+    { id: 3, count: "Fit 3 cars" },
+    { id: 4, count: "Fit 4 cars" },
+    { id: 5, count: "Fit 5 cars" },
 ];
-import AdminUsersList from "./AdminUsersList";
-import PropertyOwnerServicesTable from "./PropertyOwnerServicesTable";
-import PaymentsTableList from "./PaymentsTableList";
 
-// ... (keep previous options)
-
-const ViewPropertyForm = ({ 
+const EditPropertyForm = ({ 
     allOwners, 
     allCities, 
     token, 
@@ -204,29 +88,46 @@ const ViewPropertyForm = ({
     propertyOwnerInfo = null, 
     disableSearch, 
     propertyObj = {},
-    isReadOnly = true
+    isReadOnly = false
 }) => {
-    // Merge props logic
+    // Simplify prop merging logic
     const effectiveOwner = preSelectedOwner || propertyOwnerInfo || null;
-    const effectiveData = initialData || (Object.keys(propertyObj).length > 0 ? propertyObj : null) || {};
+    const effectiveData = useMemo(() => {
+        if (initialData && Object.keys(initialData).length > 0) return initialData;
+        if (propertyObj && Object.keys(propertyObj).length > 0) return propertyObj;
+        return {};
+    }, [initialData, propertyObj]);
 
-    const [activeStep, setActiveStep] = useState(1);
+    // Calculate minimum step based on whether owner is pre-selected
+    const minStep = effectiveOwner ? 2 : 1;
+    const [activeStep, setActiveStep] = useState(effectiveOwner ? 2 : 1);
     const [propertyOwner, setPropertyOwner] = useState(() => effectiveOwner);
     const [propertyAmenities, setPropertyAmenities] = useState(() => effectiveData?.property_amenities || []);
-    const [files, setFiles] = useState(() => effectiveData?.images || []); 
-    const { files: selectedFiles } = useCompressImage(files, setFiles);
+    
+    // Separate existing images URLs from new file objects
+    const [existingImages, setExistingImages] = useState(() => {
+        if (effectiveData?.images && Array.isArray(effectiveData.images)) {
+            return effectiveData.images;
+        }
+        return [];
+    });
+    const [newFiles, setNewFiles] = useState([]);
     const [isFeatured, setIsFeatured] = useState(() => effectiveData?.isFeatured || effectiveData?.is_featured || false);
     const [isPending, setIsPending] = useState(false);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [uploadingProgress, setUploadingProgress] = useState(0);
     const [estimatedTime, setEstimatedTime] = useState(0);
-    const controller = new AbortController();
+    const controllerRef = useRef(null);
+    const pathname = usePathname();
+    
+    // State for live preview
+    const [showPreview, setShowPreview] = useState(false);
 
-    const { register, handleSubmit, formState: { errors }, reset, getValues, setValue } = useForm({
+    const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = useForm({
         defaultValues: {
-            firstname: propertyOwner?.first_name,
-            lastname: propertyOwner?.last_name,
-            email: propertyOwner?.email,
+            firstname: propertyOwner?.first_name || "",
+            lastname: propertyOwner?.last_name || "",
+            email: propertyOwner?.email || "",
             phone: propertyOwner?.phone || "",
             owner_address: propertyOwner?.address || "",
             property_name: effectiveData?.property_name || "",
@@ -251,238 +152,759 @@ const ViewPropertyForm = ({
         }
     });
 
-    const onSubmit = (data) => {
-        // ... (existing onSubmit logic)
-    }
+    // Watch description for live preview
+    const description = watch("description");
 
-    // ... (existing submitForm, useEffects)
+    // Navigation functions - simplified
+    const goToPreviousStep = useCallback(() => {
+        setActiveStep(prev => Math.max(prev - 1, minStep));
+    }, [minStep]);
 
-    const pathname = usePathname();
+    const goToNextStep = useCallback(() => {
+        setActiveStep(prev => Math.min(prev + 1, 4));
+    }, []);
+
+    // Handle file changes from DragnDrop
+    const handleFilesChange = useCallback((files) => {
+        setNewFiles(files);
+    }, []);
+
+    // Handle removing existing images
+    const handleRemoveExistingImage = useCallback((indexToRemove) => {
+        setExistingImages(prev => prev.filter((_, index) => index !== indexToRemove));
+    }, []);
+
+    // Helper function to insert HTML tags at cursor position
+    const insertTag = (textarea, openTag, closeTag = "") => {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const selectedText = text.substring(start, end);
+        
+        let newText;
+        if (selectedText) {
+            newText = text.substring(0, start) + openTag + selectedText + closeTag + text.substring(end);
+        } else {
+            newText = text.substring(0, start) + openTag + closeTag + text.substring(end);
+        }
+        
+        // Update the form value
+        textarea.value = newText;
+        const event = new Event('input', { bubbles: true });
+        textarea.dispatchEvent(event);
+        
+        // Set cursor position inside the tags
+        setTimeout(() => {
+            if (selectedText) {
+                textarea.selectionStart = start + openTag.length;
+                textarea.selectionEnd = end + openTag.length;
+            } else {
+                textarea.selectionStart = start + openTag.length;
+                textarea.selectionEnd = start + openTag.length;
+            }
+            textarea.focus();
+        }, 0);
+    };
+
+    const onSubmit = useCallback(async (data) => {
+        // Remove owner fields from property data
+        const { firstname, lastname, email, phone, owner_address, ...propertyData } = data;
+        
+        // Validation
+        if (!data.state) return toast.error("State is required");
+        if (!data.property_type) return toast.error("Property Type is required");
+        if (!data.availability_status) return toast.error("Availability Status is required");
+        if (!data.property_status) return toast.error("Property Status is required");
+        if (!data.total_bedrooms) return toast.error("Number of bedrooms is required");
+        if (!data.total_bathrooms) return toast.error("Number of bathrooms is required");
+        if (!data.total_toilets) return toast.error("Number of toilets is required");
+        if (!data.parking_area) return toast.error("Parking Area is required");
+        if (!propertyOwner?.id) return toast.error("Property owner is required");
+
+        // Handle images: In edit mode, only send new files if there are any
+        let imagesToSend = [];
+        
+        if (isEditMode) {
+            // For edit mode: send existing image URLs that weren't removed, plus new files
+            imagesToSend = [...existingImages];
+            if (newFiles.length > 0) {
+                imagesToSend.push(...newFiles);
+            }
+        } else {
+            // For create mode: only send new files
+            imagesToSend = newFiles;
+        }
+
+        const propertyInfo = {
+            ...propertyData,
+            property_owner_id: propertyOwner.id,
+            property_amenities: propertyAmenities,
+            isFeatured: isFeatured,
+            total_bathrooms: Number(data.total_bathrooms),
+            total_bedrooms: Number(data.total_bedrooms),
+            total_toilets: Number(data.total_toilets),
+            property_price: Number(data.property_price),
+            reserve_amount: Number(data.reserve_amount || 0),
+            long: Number(data.long),
+            lat: Number(data.lat),
+            images: imagesToSend,
+        };
+
+        setIsPending(true);
+        
+        toast.promise(submitForm(propertyInfo), {
+            loading: isEditMode ? 'Updating property...' : 'Adding new property...',
+            success: (response) => {
+                setActiveStep(minStep);
+                setIsPending(false);
+                if (!response.success) throw new Error(response.message || response.errors?.[0]?.message || `Failed to ${isEditMode ? 'update' : 'add'} property.`);
+                reset();
+                setIsOpenModal(false);
+                setNewFiles([]);
+                if (!isEditMode) setExistingImages([]);
+                return `Property ${isEditMode ? 'updated' : 'added'} successfully!`;
+            },
+            error: (error) => {
+                setIsPending(false);
+                setIsOpenModal(false);
+                if (error.message === "canceled" || error.message === "Upload cancelled") return "Upload cancelled.";
+                return `${error.message || `Failed to ${isEditMode ? 'update' : 'add'} property.`}`;
+            },
+        });
+    }, [propertyOwner, propertyAmenities, isFeatured, isEditMode, existingImages, newFiles, reset, minStep]);
+
+    const submitForm = useCallback(async (propertyInfo) => {
+        controllerRef.current = new AbortController();
+        const formData = new FormData();
+        
+        Object.entries(propertyInfo).forEach(([key, value]) => {
+            if (value === null || value === undefined) return;
+            
+            if (key === 'images' && Array.isArray(value)) {
+                // Handle images specially - send each image appropriately
+                value.forEach((item, index) => {
+                    if (item instanceof File) {
+                        // This is a new file upload
+                        formData.append(`images`, item);
+                    } else if (typeof item === 'string' && item.startsWith('http')) {
+                        // This is an existing image URL - send as string
+                        formData.append(`existing_images`, item);
+                    } else if (typeof item === 'string') {
+                        // This might be a filename from server
+                        formData.append(`existing_images`, item);
+                    }
+                });
+            } else if (Array.isArray(value)) {
+                // Handle other arrays (like property_amenities)
+                value.forEach((item) => {
+                    formData.append(`${key}[]`, item);
+                });
+            } else {
+                formData.append(key, value);
+            }
+        });
+
+        const startTime = new Date();
+        const propertyId = effectiveData?.id || effectiveData?._id;
+        
+        // Determine API endpoint
+        let apiUrl;
+        if (isEditMode && propertyId) {
+            apiUrl = `${url}/property/update-property/${propertyId}`;
+        } else if (isEditMode && !propertyId) {
+            throw new Error("Property ID is missing for update operation");
+        } else {
+            apiUrl = `${url}/property/create-property`;
+        }
+
+        try {
+            const response = await axios({
+                method: isEditMode ? 'PUT' : 'POST',
+                url: apiUrl,
+                data: formData,
+                headers: {
+                    Authorization: `Bearer ${token?.value}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+                signal: controllerRef.current.signal,
+                onUploadProgress: (progressEvent) => {
+                    if (progressEvent.total) {
+                        progress(progressEvent, setIsOpenModal, setUploadingProgress, setEstimatedTime, startTime);
+                    }
+                }
+            });
+            
+            if (controllerRef.current.signal.aborted) throw new Error("Upload cancelled");
+            return response.data;
+        } catch (error) {
+            if (axios.isCancel(error)) {
+                throw new Error("Upload cancelled");
+            }
+            console.error("Error submitting form:", error);
+            throw new Error(error?.response?.data?.message || error.message || "An error occurred. Please try again.");
+        }
+    }, [isEditMode, effectiveData, token]);
+
+    // Update form values when propertyOwner changes
+    useEffect(() => {
+        if (propertyOwner) {
+            setValue("firstname", propertyOwner.first_name || "");
+            setValue("lastname", propertyOwner.last_name || "");
+            setValue("email", propertyOwner.email || "");
+            setValue("phone", propertyOwner.phone || "");
+            setValue("owner_address", propertyOwner.address || "");
+        }
+    }, [propertyOwner, setValue]);
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            if (controllerRef.current) {
+                controllerRef.current.abort();
+            }
+        };
+    }, []);
+
+    // Determine page title and behavior
+    const isPropertyDetailsPage = useMemo(() => {
+        const pathParts = pathname.split("/");
+        const isDetailsPage = pathname.includes("property-details") || 
+                             (pathname.includes("/dashboard/property-owner/properties/") && !pathname.includes("/add"));
+        return isDetailsPage;
+    }, [pathname]);
+
+    const pageTitle = useMemo(() => {
+        if (isPropertyDetailsPage) return "Property Details";
+        if (pathname.includes("edit-property") || isEditMode) return "Edit Property";
+        return "Add New Property";
+    }, [isPropertyDetailsPage, pathname, isEditMode]);
+
+    const showProgressBar = !isPropertyDetailsPage && !isEditMode;
+
+    // Get image URL base from environment variable
+    const imageUrlBase = process.env.NEXT_PUBLIC_IMAGE_URL || 'https://app.xpacy.com/src/upload/properties';
 
     return (
-        <div className="flex flex-col gap-12 w-[840px] mx-auto pb-12">
+        <div className="flex flex-col gap-12 w-[796px] mx-auto pb-12">
             {/* Header */}
             <header className="flex flex-col items-center justify-center gap-4">
                 <h2 className="text-3xl font-bold text-primary">
-                    {
-                        pathname.includes("property-details") || pathname.includes("/dashboard/property-owner/properties/") && !pathname.includes("/add") ? "Property Details" : 
-                        pathname.includes("edit-property") || isEditMode ? "Edit Property" : 
-                        "Add New Property"
-                    }
+                    {pageTitle}
                 </h2>
-                {pathname.includes("property-details") || (pathname.includes("/dashboard/property-owner/properties/") && !pathname.includes("/add")) || isEditMode ? null : <p className="font-mono text-center">Fill in the correct detailed information for the new property.</p>}
-            </header>
-
-            <ProgressBar activeStep={activeStep} setActiveStep={setActiveStep} />
-
-            <form className="p-6 flex flex-col gap-8" onSubmit={handleSubmit(onSubmit)}>
-                {/* 1. Overview (Owner Info + Property Overview) */}
-                {activeStep === 1 && (
-                    <div className="flex flex-col gap-8">
-                        <section className="flex flex-col gap-6">
-                            <h3 className="text-xl font-bold font-mono text-primary pb-2 border-b border-primary-100">Owner Information</h3>
-                            <SearchPropertyOwner disabled={disableSearch || isReadOnly} propertyOwner={propertyOwner} setPropertyOwner={setPropertyOwner} allOwners={allOwners} />
-                            <div className="flex flex-col gap-6">
-                                <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
-                                    <FormInput label={"First Name"} id={"firstname"} >
-                                        <input disabled {...register("firstname", { required: "Required" })} type={"text"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.firstname ? "border-error" : "border-primary-200"}`} />
-                                    </FormInput>
-                                    <FormInput label={"Last Name"} id={"lastname"} >
-                                        <input disabled {...register("lastname", { required: "Required" })} type={"text"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.lastname ? "border-error" : "border-primary-200"}`} />
-                                    </FormInput>
-                                </div>
-                                <FormInput label={"Email address"} id={"email"} >
-                                    <input disabled {...register("email", { required: "Required" })} type={"email"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.email ? "border-error" : "border-primary-200"}`} />
-                                </FormInput>
-                            </div>
-                        </section>
-
-                        <section className="flex flex-col gap-6">
-                            <h3 className="text-xl font-bold font-mono text-primary pb-2 border-b border-primary-100">Property Overview</h3>
-                            <div className="flex flex-col gap-6">
-                                <FormInput label={"Property Name"} id={"property_name"} >
-                                    <input disabled={isReadOnly} {...register("property_name", { required: "Required" })} type={"text"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_name ? "border-error" : "border-primary-200"}`} />
-                                </FormInput>
-                                <FormInput label={"Property Address"} id={"address"} >
-                                    <input disabled={isReadOnly} {...register("address", { required: "Required" })} type={"text"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.address ? "border-error" : "border-primary-200"}`} />
-                                </FormInput>
-                                <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
-                                    <FormInput label={"State"} id={"state"} >
-                                        <input disabled={isReadOnly} {...register("state", { required: "Required" })} type="text" placeholder="State" className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200 w-full`} />
-                                    </FormInput>
-                                    <FormInput label={"City/Town"} id={"city"} >
-                                        <input disabled={isReadOnly} {...register("city", { required: "Required" })} type={"text"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200`} />
-                                    </FormInput>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
+                {!isPropertyDetailsPage && !isEditMode && (
+                    <p className="font-mono">Fill in the correct detailed information for the new property.</p>
                 )}
-
-                {/* 2. Property Info */}
-                {activeStep === 2 && (
-                    <section className="flex flex-col gap-6">
-                        <h3 className="text-xl font-bold font-mono text-primary pb-2 border-b border-primary-100">Property Details</h3>
+            </header>
+            
+            {/* Progress bar - only show for new property creation */}
+            {showProgressBar && (
+                <ProgressBar activeStep={activeStep} setActiveStep={setActiveStep} />
+            )}
+            
+            {/* Form Steps */}
+            <form className="p-6 flex flex-col gap-8" onSubmit={handleSubmit(onSubmit)}>
+                {/* 1. Owner Info */}
+                {activeStep === 1 && (
+                    <>
+                        <h3 className="text-lg">Owner Information</h3>
+                        <SearchPropertyOwner 
+                            disabled={disableSearch || isReadOnly} 
+                            propertyOwner={propertyOwner} 
+                            setPropertyOwner={setPropertyOwner} 
+                            allOwners={allOwners} 
+                        />
                         <div className="flex flex-col gap-6">
                             <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
-                                <FormInput label={"Property Type"} id={"property_type"} >
-                                    <input disabled={isReadOnly} {...register("property_type", { required: "Required" })} type="text" placeholder="Property Type" className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200 w-full`} />
+                                <FormInput label={"First Name"} id={"firstname"}>
+                                    <input 
+                                        disabled={isReadOnly} 
+                                        {...register("firstname", {
+                                            required: "Please enter your first name"
+                                        })} 
+                                        type={"text"} 
+                                        id={"firstname"} 
+                                        placeholder={"Enter your first name"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.firstname ? "border-error" : "border-primary-200"}`} 
+                                    />
+                                    {errors.firstname && <span className="-mt-2 text-xs text-error">{errors.firstname.message}</span>}
                                 </FormInput>
-                                <FormInput label={"Property Status"} id={"property_status"} >
-                                    <input disabled={isReadOnly} {...register("property_status", { required: "Required" })} type="text" placeholder="Property Status" className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200 w-full`} />
-                                </FormInput>
-                            </div>
-                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
-                                <FormInput label={"Property Price"} id={"property_price"} >
-                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200 w-full`}>
-                                        <span><FaNairaSign className="text-gray-500" /></span>
-                                        <input disabled={isReadOnly} {...register("property_price")} type="text" placeholder="Price" className={`focus:outline-none flex-1 bg-transparent`} />
-                                    </div>
-                                </FormInput>
-                                <FormInput label={"Reserve Amount"} id={"reserve_amount"} >
-                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200 w-full`}>
-                                        <span><FaNairaSign className="text-gray-500" /></span>
-                                        <input disabled={isReadOnly} {...register("reserve_amount")} type="text" placeholder="Reserve Amount" className={`focus:outline-none flex-1 bg-transparent`} />
-                                    </div>
-                                </FormInput>
-                            </div>
-                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
-                                <FormInput label={"Views"} id={"views"} >
-                                    <input disabled={true} value={effectiveData?.views || 0} type={"number"} name={"views"} id={"views"} placeholder={"0"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200 w-full`} />
-                                </FormInput>
-                                <div className="flex items-center justify-between font-mono w-full px-4 border border-primary-200 bg-[#FCFEFF] rounded-lg py-3 mt-6">
-                                    <span className="text-gray-500 font-medium">Featured Property</span>
-                                    <CustomToogle disabled={true} checked={isFeatured} onChange={() => {}} />
-                                </div>
-                            </div>
-                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
-                                <FormInput label={"Bedrooms"} id={"total_bedrooms"} >
-                                    <input disabled={isReadOnly} {...register("total_bedrooms")} type="text" placeholder="Bedrooms" className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200 w-full`} />
-                                </FormInput>
-                                <FormInput label={"Bathrooms"} id={"total_bathrooms"} >
-                                    <input disabled={isReadOnly} {...register("total_bathrooms")} type="text" placeholder="Bathrooms" className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200 w-full`} />
+                                <FormInput label={"Last Name"} id={"lastname"}>
+                                    <input 
+                                        disabled={isReadOnly} 
+                                        {...register("lastname", {
+                                            required: "Please enter your lastname"
+                                        })} 
+                                        type={"text"} 
+                                        id={"lastname"} 
+                                        placeholder={"Enter your last name"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.lastname ? "border-error" : "border-primary-200"}`} 
+                                    />
+                                    {errors.lastname && <span className="-mt-2 text-xs text-error">{errors.lastname.message}</span>}
                                 </FormInput>
                             </div>
-                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
-                                <FormInput label={"Property size (sqm)"} id={"property_square_area"} >
-                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200`}>
-                                        <input disabled={isReadOnly}  {...register("property_square_area")} type={"number"} name={"property_square_area"} id={"property_square_area"} placeholder={"e.g. 500"} className={`focus:outline-none flex-1`} />
-                                        <span className="text-gray-400">sqm</span>
-                                    </div>
-                                </FormInput>
-                                <FormInput label={"Land area (sqm)"} id={"land_area"} >
-                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200`}>
-                                        <input disabled={isReadOnly}  {...register("land_area")} type={"number"} name={"land_area"} id={"land_area"} placeholder={"e.g. 1000"} className={`focus:outline-none flex-1`} />
-                                        <span className="text-gray-400">sqm</span>
-                                    </div>
-                                </FormInput>
-                            </div>
-                            <SelectAmeneties readOnly={isReadOnly} propertyAmenities={propertyAmenities} setPropertyAmenities={setPropertyAmenities} />
+                            <FormInput label={"Email address"} id={"email"}>
+                                <input 
+                                    disabled={isReadOnly} 
+                                    {...register("email", {
+                                        required: "Email is required", 
+                                        pattern: {
+                                            value: /\S+@\S+\.\S+/,
+                                            message: "Provide a valid email address",
+                                        }
+                                    })} 
+                                    type={"email"} 
+                                    id={"email"} 
+                                    placeholder={"Enter your email address"} 
+                                    className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.email ? "border-error" : "border-primary-200"}`} 
+                                />
+                                {errors.email && <span className="-mt-2 text-xs text-error">{errors.email.message}</span>}
+                            </FormInput>
+                            <FormInput label={"Phone number"} id={"phone"}>
+                                <input 
+                                    disabled={isReadOnly} 
+                                    {...register("phone")} 
+                                    type={"tel"} 
+                                    id={"phone"} 
+                                    placeholder={"Enter your phone number"} 
+                                    className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.phone ? "border-error" : "border-primary-200"}`} 
+                                />
+                                {errors.phone && <span className="-mt-2 text-xs text-error">{errors.phone.message}</span>}
+                            </FormInput>
+                            <FormInput label={"Address"} id={"owner_address"}>
+                                <input 
+                                    disabled={isReadOnly} 
+                                    {...register("owner_address")} 
+                                    type={"text"} 
+                                    id={"owner_address"} 
+                                    placeholder={"Enter your address"} 
+                                    className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.owner_address ? "border-error" : "border-primary-200"}`} 
+                                />
+                                {errors.owner_address && <span className="-mt-2 text-xs text-error">{errors.owner_address.message}</span>}
+                            </FormInput>
                         </div>
-                    </section>
+                    </>
                 )}
-
-                {/* 3. Media */}
+                
+                {/* 2. Property Overview */}
+                {activeStep === 2 && (
+                    <>
+                        <h3 className="text-lg">Property Overview</h3>
+                        <div className="flex flex-col gap-6">
+                            <FormInput label={"Property Name"} id={"property_name"}>
+                                <input 
+                                    disabled={isReadOnly} 
+                                    {...register("property_name", {
+                                        required: "Property Name is required",
+                                    })} 
+                                    type={"text"} 
+                                    id={"property_name"} 
+                                    placeholder={"Enter your property name"} 
+                                    className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_name ? "border-error" : "border-primary-200"}`} 
+                                />
+                                {errors.property_name && <span className="-mt-2 text-xs text-error">{errors.property_name.message}</span>}
+                            </FormInput>
+                            <FormInput label={"Property Address"} id={"address"}>
+                                <input 
+                                    disabled={isReadOnly} 
+                                    {...register("address", {
+                                        required: "Property Address is required",
+                                    })} 
+                                    type={"text"} 
+                                    id={"address"} 
+                                    placeholder={"Enter your property address"} 
+                                    className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.address ? "border-error" : "border-primary-200"}`} 
+                                />
+                                {errors.address && <span className="-mt-2 text-xs text-error">{errors.address.message}</span>}
+                            </FormInput>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"State"} id={"state"}>
+                                    <select 
+                                        disabled={isReadOnly} 
+                                        {...register("state", {
+                                            required: "State is required",
+                                        })} 
+                                        id={"state"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.state ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a state</option>
+                                        {allCities.map(city => (
+                                            <option key={city.id} value={city.location}>{city.location}</option>
+                                        ))}
+                                    </select>
+                                    {errors.state && <span className="-mt-2 text-xs text-error">{errors.state.message}</span>}
+                                </FormInput>
+                                <FormInput label={"City/Town"} id={"city"}>
+                                    <input 
+                                        disabled={isReadOnly} 
+                                        {...register("city", {
+                                            required: "City/Town is required",
+                                        })} 
+                                        type={"text"} 
+                                        id={"city"} 
+                                        placeholder={"Enter your city/town"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.city ? "border-error" : "border-primary-200"}`} 
+                                    />
+                                    {errors.city && <span className="-mt-2 text-xs text-error">{errors.city.message}</span>}
+                                </FormInput>
+                            </div>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Property Type"} id={"property_type"}>
+                                    <select 
+                                        disabled={isReadOnly} 
+                                        {...register("property_type", {
+                                            required: "Property Type is required",
+                                        })} 
+                                        id={"property_type"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_type ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a property type</option>
+                                        {propertyType.map(item => (
+                                            <option key={item.id} value={item.type}>{item.type}</option>
+                                        ))}
+                                    </select>
+                                    {errors.property_type && <span className="-mt-2 text-xs text-error">{errors.property_type.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Availability Status"} id={"availability_status"}>
+                                    <select 
+                                        disabled={isReadOnly} 
+                                        {...register("availability_status", {
+                                            required: "Availability Status is required",
+                                        })} 
+                                        id={"availability_status"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.availability_status ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select an availability status</option>
+                                        {availabilityStatus.map(item => (
+                                            <option key={item.id} value={item.status}>{item.status}</option>
+                                        ))}
+                                    </select>
+                                    {errors.availability_status && <span className="-mt-2 text-xs text-error">{errors.availability_status.message}</span>}
+                                </FormInput>
+                            </div>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Property Price"} id={"property_price"}>
+                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_price ? "border-error" : "border-primary-200"}`}>
+                                        <span><FaNairaSign /></span>
+                                        <input 
+                                            disabled={isReadOnly} 
+                                            {...register("property_price", {
+                                                required: "Property Price is required",
+                                            })} 
+                                            type={"number"} 
+                                            id={"property_price"} 
+                                            placeholder={"Enter your property price"} 
+                                            className={`focus:outline-none flex-1`} 
+                                        />
+                                    </div>
+                                    {errors.property_price && <span className="-mt-2 text-xs text-error">{errors.property_price.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Reserve Amount"} id={"reserve_amount"}>
+                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.reserve_amount ? "border-error" : "border-primary-200"}`}>
+                                        <span><FaNairaSign /></span>
+                                        <input 
+                                            disabled={isReadOnly} 
+                                            {...register("reserve_amount")} 
+                                            type={"number"} 
+                                            id={"reserve_amount"} 
+                                            placeholder={"Enter reserve amount"} 
+                                            className={`focus:outline-none flex-1`} 
+                                        />
+                                    </div>
+                                    {errors.reserve_amount && <span className="-mt-2 text-xs text-error">{errors.reserve_amount.message}</span>}
+                                </FormInput>
+                            </div>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Property Status"} id={"property_status"}>
+                                    <select 
+                                        disabled={isReadOnly} 
+                                        {...register("property_status", {
+                                            required: "Property Status is required",
+                                        })} 
+                                        id={"property_status"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_status ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a property status</option>
+                                        {propertyStatus.map(item => (
+                                            <option key={item.id} value={item.status}>{item.status}</option>
+                                        ))}
+                                    </select>
+                                    {errors.property_status && <span className="-mt-2 text-xs text-error">{errors.property_status.message}</span>}
+                                </FormInput>
+                                {isEditMode && (
+                                    <FormInput label={"Views"} id={"views"}>
+                                        <input 
+                                            disabled={true} 
+                                            value={effectiveData?.views || 0} 
+                                            type={"number"} 
+                                            id={"views"} 
+                                            className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200`} 
+                                        />
+                                    </FormInput>
+                                )}
+                            </div>
+                            
+                            {/* Property Description with Live Preview */}
+                            <div className="md:flex-1 w-full flex flex-col space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <label htmlFor="description" className="text-sm text-black flex items-center gap-2">
+                                        Property Description
+                                        <span className="text-[10px] font-normal text-gray-500">(HTML Supported)</span>
+                                    </label>
+                                  
+                                </div>
+                                
+                                       <div className="border border-slate-200 rounded-lg bg-slate-50 overflow-hidden">
+                                        <div 
+                                            className="prose prose-sm max-w-none p-4 min-h-[300px]"
+                                            dangerouslySetInnerHTML={{ 
+                                                __html: description && description.trim() !== "" 
+                                                    ? description 
+                                                    : "<em class='text-gray-400'>No content yet. Start writing your description...</em>"
+                                            }}
+                                        />
+                                    </div>
+                                        
+                                  
+                                
+                                {errors.description && (
+                                    <span className="-mt-2 text-xs text-error">
+                                        {errors.description.message}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    </>
+                )}
+                
+                {/* 3. Property Information */}
                 {activeStep === 3 && (
-                    <section className="flex flex-col gap-6">
-                        <h3 className="text-xl font-bold font-mono text-primary capitalize">Media</h3>
-                        <div className="space-y-4">
-                            <p className="font-mono font-semibold text-gray-700"> Photos</p>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    {files.map((file, index) => (
-                                        <div key={index} className="aspect-image relative rounded-lg overflow-hidden  ">
-                                            <img src={`https://app.xpacy.com/src/upload/properties/${file}`} alt={`Property Image ${index + 1}`} className="w-full h-full object-cover" />
-                                        </div>
-                                    ))}
-                                    {effectiveData?.virtual_tour_url && (
-                                        <div className="aspect-video relative rounded-lg overflow-hidden border border-primary-200 bg-primary-50 flex flex-col items-center justify-center p-4 text-center">
-                                            <p className="text-primary font-bold text-xs mb-2">Virtual Tour</p>
-                                            <a href={effectiveData.virtual_tour_url} target="_blank" className="bg-primary text-white text-xs px-4 py-2 rounded-lg">Watch Video</a>
-                                        </div>
-                                    )}
-                                </div>
+                    <>
+                        <h3 className="text-lg">Property Information</h3>
+                        <div className="flex flex-col gap-6">
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Bedrooms"} id={"total_bedrooms"}>
+                                    <select 
+                                        disabled={isReadOnly} 
+                                        {...register("total_bedrooms", {
+                                            required: "Number of bedrooms is required",
+                                        })} 
+                                        id={"total_bedrooms"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.total_bedrooms ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a bedroom count</option>
+                                        {bedroomCounts.map(item => (
+                                            <option key={item.id} value={item.count}>{item.count}</option>
+                                        ))}
+                                    </select>
+                                    {errors.total_bedrooms && <span className="-mt-2 text-xs text-error">{errors.total_bedrooms.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Bathrooms"} id={"total_bathrooms"}>
+                                    <select 
+                                        disabled={isReadOnly} 
+                                        {...register("total_bathrooms", {
+                                            required: "Number of bathrooms is required",
+                                        })} 
+                                        id={"total_bathrooms"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.total_bathrooms ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a bathroom count</option>
+                                        {bathroomCounts.map(item => (
+                                            <option key={item.id} value={item.count}>{item.count}</option>
+                                        ))}
+                                    </select>
+                                    {errors.total_bathrooms && <span className="-mt-2 text-xs text-error">{errors.total_bathrooms.message}</span>}
+                                </FormInput>
+                            </div>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Toilets"} id={"total_toilets"}>
+                                    <select 
+                                        disabled={isReadOnly} 
+                                        {...register("total_toilets", {
+                                            required: "Number of toilets is required",
+                                        })} 
+                                        id={"total_toilets"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.total_toilets ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a toilet count</option>
+                                        {toiletCounts.map(item => (
+                                            <option key={item.id} value={item.count}>{item.count}</option>
+                                        ))}
+                                    </select>
+                                    {errors.total_toilets && <span className="-mt-2 text-xs text-error">{errors.total_toilets.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Parking Area"} id={"parking_area"}>
+                                    <select 
+                                        disabled={isReadOnly} 
+                                        {...register("parking_area", {
+                                            required: "Parking area is required",
+                                        })} 
+                                        id={"parking_area"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.parking_area ? "border-error" : "border-primary-200"}`}>
+                                        <option value="">Select a parking area</option>
+                                        {parkingAreaCount.map(item => (
+                                            <option key={item.id} value={item.count}>{item.count}</option>
+                                        ))}
+                                    </select>
+                                    {errors.parking_area && <span className="-mt-2 text-xs text-error">{errors.parking_area.message}</span>}
+                                </FormInput>
+                            </div>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Property size (square area)"} id={"property_square_area"}>
+                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.property_square_area ? "border-error" : "border-primary-200"}`}>
+                                        <span>sqm²</span>
+                                        <input 
+                                            disabled={isReadOnly} 
+                                            {...register("property_square_area")} 
+                                            type={"number"} 
+                                            id={"property_square_area"} 
+                                            placeholder={"Enter your property square area"} 
+                                            className={`focus:outline-none flex-1`} 
+                                        />
+                                    </div>
+                                    {errors.property_square_area && <span className="-mt-2 text-xs text-error">{errors.property_square_area.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Land area"} id={"land_area"}>
+                                    <div className={`flex items-center gap-2 rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.land_area ? "border-error" : "border-primary-200"}`}>
+                                        <span>sqm²</span>
+                                        <input 
+                                            disabled={isReadOnly} 
+                                            {...register("land_area")} 
+                                            type={"number"} 
+                                            id={"land_area"} 
+                                            placeholder={"Enter your land area"} 
+                                            className={`focus:outline-none flex-1`} 
+                                        />
+                                    </div>
+                                    {errors.land_area && <span className="-mt-2 text-xs text-error">{errors.land_area.message}</span>}
+                                </FormInput>
+                            </div>
+                            <SelectAmeneties 
+                                readOnly={isReadOnly} 
+                                propertyAmenities={propertyAmenities} 
+                                setPropertyAmenities={setPropertyAmenities} 
+                            />
                         </div>
-                        <FormInput label={"Virtual Tour URL"} id={"virtual_tour_url"} >
-                            <input {...register("virtual_tour_url")} type={"text"} disabled={isReadOnly} placeholder={"e.g. https://youtube.com/..."} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none border-primary-200`} />
-                        </FormInput>
-                    </section>
+                    </>
                 )}
-
-                {/* 4. Tenant Info */}
+                
+                {/* 4. Media */}
                 {activeStep === 4 && (
-                    <section className="flex flex-col gap-6">
-                        <h3 className="text-xl font-bold font-mono text-primary pb-2 border-b border-primary-100">Tenant Information</h3>
-                        <AdminUsersList 
-                            users={(effectiveData?.bookings || effectiveData?.transactions || []).map(b => ({
-                                id: b.id || b._id,
-                                first_name: b.user?.firstname || b.user?.first_name || "Unknown",
-                                last_name: b.user?.lastname || b.user?.last_name || "",
-                                email: b.user?.email || "N/A",
-                                phone: b.user?.phone || "N/A",
-                                user_type: b.user?.role || b.user?.user_type || "Tenant",
-                                display_picture: b.user?.display_picture || b.user?.profile_picture || "",
-                                property_name: b.property?.property_name || effectiveData?.property_name || "N/A",
-                                start_date: b.start_date || b.createdAt ? new Date(b.start_date || b.createdAt).toLocaleDateString() : "N/A",
-                                end_date: b.end_date ? new Date(b.end_date).toLocaleDateString() : "N/A",
-                                price: b.amount || b.property?.property_price ? `₦${Number(b.amount || b.property?.property_price).toLocaleString()}` : "N/A"
-                            }))} 
-                            variant="tenant" 
-                            title="Property Tenants" 
-                        />
-                    </section>
+                    <>
+                        <h3 className="text-lg">Media</h3>
+                        {isPropertyDetailsPage ? (
+                            <>
+                                <p className="font-mono">Photos</p>
+                                <div className="grid grid-cols-3 gap-x-6 gap-y-12">
+                                    {existingImages.map((file, index) => (
+                                        <img 
+                                            key={index} 
+                                            src={`${imageUrlBase}/${file}`} 
+                                            alt={`Property Image ${index + 1}`} 
+                                            className="object-cover rounded-lg" 
+                                        />
+                                    ))}
+                                </div>
+                            </>
+                        ) : (
+                            <DragnDrop 
+                                isReadOnly={isReadOnly} 
+                                files={newFiles} 
+                                setFiles={handleFilesChange} 
+                                maxFiles={9} 
+                                existingImages={existingImages}
+                                onRemoveExisting={handleRemoveExistingImage}
+                                imageUrlBase={imageUrlBase}
+                            />
+                        )}
+                        <FormInput label={"Property Video Tour (Optional)"} id={"virtual_tour_url"}>
+                            <input  
+                                {...register("virtual_tour_url")} 
+                                type={"text"} 
+                                id={"virtual_tour_url"} 
+                                placeholder={"Enter your property video tour link"} 
+                                className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.virtual_tour_url ? "border-error" : "border-primary-200"}`} 
+                            />
+                            {errors.virtual_tour_url && <span className="-mt-2 text-xs text-error">{errors.virtual_tour_url.message}</span>}
+                        </FormInput>
+                        <div className="flex flex-col gap-6">
+                            <span className="font-mono font-medium">
+                                Location Coordinates 
+                                <a className="text-blue-500 font-medium ml-1" href="https://www.latlong.net" target="_blank" rel="noopener noreferrer">(Get coordinates)</a>
+                            </span>
+                            <div className="flex md:items-center items-start gap-6 flex-col md:flex-row">
+                                <FormInput label={"Latitude"} id={"lat"}>
+                                    <input 
+                                        disabled={isReadOnly}  
+                                        {...register("lat")} 
+                                        type={"text"} 
+                                        id={"lat"} 
+                                        placeholder={"Enter your property latitude"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.lat ? "border-error" : "border-primary-200"}`} 
+                                    />
+                                    {errors.lat && <span className="-mt-2 text-xs text-error">{errors.lat.message}</span>}
+                                </FormInput>
+                                <FormInput label={"Longitude"} id={"long"}>
+                                    <input 
+                                        disabled={isReadOnly}  
+                                        {...register("long")} 
+                                        type={"text"} 
+                                        id={"long"} 
+                                        placeholder={"Enter your property longitude"} 
+                                        className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.long ? "border-error" : "border-primary-200"}`} 
+                                    />
+                                    {errors.long && <span className="-mt-2 text-xs text-error">{errors.long.message}</span>}
+                                </FormInput>
+                            </div>
+                            <div className="flex items-center justify-between font-mono">
+                                <span>Feature this property</span>
+                                <CustomToogle 
+                                    disabled={isReadOnly} 
+                                    checked={isFeatured} 
+                                    onChange={setIsFeatured} 
+                                />
+                            </div>
+                        </div>
+                    </>
                 )}
-
-                {/* 5. Service Request */}
-                {activeStep === 5 && (
-                    <section className="flex flex-col gap-6">
-                        <h3 className="text-xl font-bold font-mono text-primary pb-2 border-b border-primary-100">Service Requests</h3>
-                        <PropertyOwnerServicesTable services={effectiveData?.services || []} showFilters={false} />
-                    </section>
-                )}
-
-                {/* 6. Transaction History */}
-                {activeStep === 6 && (
-                    <section className="flex flex-col gap-6">
-                        <h3 className="text-xl font-bold font-mono text-primary pb-2 border-b border-primary-100">Transaction History</h3>
-                        <PaymentsTableList bookings={effectiveData?.transactions || effectiveData?.bookings || []} />
-                    </section>
-                )}
-
+                
                 {/* Navigation Buttons */}
-                <div className="flex items-center justify-between pt-6 border-t border-gray-100">
-                    <button 
-                        type="button" 
-                        disabled={activeStep === 1}
-                        onClick={() => setActiveStep(prev => prev > 1 ? prev - 1 : 1)} 
-                        className={`px-6 py-2.5 font-mono font-bold text-primary rounded-lg hover:bg-primary-50 transition flex items-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed`}
-                    >
-                        <FaAngleLeft /><span>Previous</span>
-                    </button>
-                    
-                    {activeStep < 6 ? (
+                <div className={`${activeStep > minStep ? "flex items-center justify-between" : "self-end"}`}>
+                    {activeStep > minStep && (
                         <button 
                             type="button" 
-                            onClick={() => setActiveStep(prev => prev + 1)} 
-                            className={`px-6 py-2.5 font-mono font-bold text-primary rounded-lg  hover:bg-primary-50 transition flex items-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed`}
+                            onClick={goToPreviousStep} 
+                            className={`bg-white px-4 py-2 font-mono text-primary rounded-lg hover:bg-primary-100/80 cursor-pointer transition flex items-center gap-2 ${activeStep === 2 && effectiveOwner ? "invisible" : ""}`}
                         >
-                            <span>Next</span><FaAngleRight />
+                            <span><FaAngleLeft /></span>
+                            <span>Previous</span>
+                        </button>
+                    )}
+                    {activeStep < 4 ? (
+                        <button 
+                            type="button" 
+                            onClick={goToNextStep} 
+                            className="px-4 py-2 font-mono text-primary rounded-lg hover:bg-primary-100/80 cursor-pointer transition flex items-center gap-2"
+                        >
+                            <span>Next</span>
+                            <span><FaAngleRight /></span>
                         </button>
                     ) : (
-                        !isReadOnly && (
+                        !isPropertyDetailsPage && (
                             <button 
-                                disabled={isPending}
+                                disabled={isPending} 
                                 type="submit" 
-                                className="bg-primary text-white px-10 py-2.5 rounded-lg font-mono font-bold hover:bg-primary-700 transition shadow-lg flex items-center gap-2"
+                                className="px-4 py-2 bg-primary-200 font-mono text-primary rounded-lg hover:bg-primary-200/80 cursor-pointer transition flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
                             >
-                                {isPending && <SpinnerMini />}
-                                <span>{isEditMode ? "Save Changes" : "Create Property"}</span>
+                                <span>{isEditMode ? "Update Property" : "Finish"}</span>
+                                {isPending && <span><SpinnerMini /></span>}
                             </button>
                         )
                     )}
                 </div>
             </form>
+            
+            <UploadingFileModal
+                isOpenModal={isOpenModal}
+                setIsOpenModal={setIsOpenModal}
+                uploadingProgress={uploadingProgress}
+                estimatedTime={estimatedTime}
+                controller={controllerRef.current}
+            />
         </div>
     );
 };
 
-export default ViewPropertyForm;
+export default EditPropertyForm;
