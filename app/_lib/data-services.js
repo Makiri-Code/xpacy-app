@@ -108,6 +108,7 @@ export async function getOtherProperties() {
 }
 
 export async function getUserProfile(token) {
+
   if (!token?.value) return null;
   try {
     const response = await fetch(`${url}/user/fetch-profile`, {
@@ -294,6 +295,7 @@ export async function getAdminProfile(token) {
         return null;
     }
     const { admin } = await response.json();
+    console.log(response)
     return admin
   } catch (error) {
     console.error("Error fetching admin profile (catch):", error)

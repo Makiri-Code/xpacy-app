@@ -22,8 +22,6 @@ export default async function Page() {
             {/* Form */}
             <div className="flex flex-col items-center justify-center">
                 <AddNewPropertyForm allOwners={allOwners} allCities={allCities} token={token} />
-
-
             </div>
         </div>
     )

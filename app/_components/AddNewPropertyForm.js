@@ -56,6 +56,15 @@ const propertyType = [
         id: 9,
         type: "Villa",
     },
+    {
+        id: 10,
+        type: "Office Space",
+    },
+    {
+        id: 11,
+        type: "Conference room",
+    },
+    
 ];
 // Options for availability status
 const availabilityStatus = [
@@ -90,7 +99,7 @@ const propertyStatus = [
         status: "Shortlet",
     },
 ];
-const bedroomCounts = [
+const roomCount = [
     {
         id: 1,
         count: 1,
@@ -558,7 +567,7 @@ const AddNewPropertyForm = ({
                                         required: "Property Status is required",
                                     })} name={"total_bedrooms"} id={"total_bedrooms"} placeholder={"Enter your bedrooms"} className={`rounded-lg border bg-[#FCFEFF] px-4.5 py-3 focus:outline-none ${errors.total_bedrooms ? "border-error" : "border-primary-200"}`}>
                                         <option value="">Select a bedroom count</option>
-                                        {bedroomCounts.map(item => (
+                                        {roomCount.map(item => (
                                             <option key={item.id} value={item.count}>{item.count}</option>
                                         ))}
                                     </select>

@@ -8,7 +8,7 @@ import { PiFloppyDiskThin } from "react-icons/pi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useCompressImage } from "../_hooks/useCompressImage";
 
-export default function DragnDrop({ accept, maxFiles, files, setFiles, isReadOnly = false }) {
+export default function DragnDrop({existingImages = [], onRemoveExisting, imageUrlBase, accept, maxFiles, files, setFiles, isReadOnly = false }) {
   const {
     compressImage,
     files: selectedFiles,
