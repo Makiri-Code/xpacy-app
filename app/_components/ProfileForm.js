@@ -11,10 +11,10 @@ export default function ProfileForm({ profile, updateAction }) {
     const [pending, startTransition] = useTransition();
     const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
-            firstname: profile?.first_name,
-            lastname: profile?.last_name,
+            firstname: profile?.firstname,
+            lastname: profile?.lastname,
             email: profile?.email,
-            phone_number: profile?.phone,
+            phone_number: profile?.phone_number,
             address: profile?.address,
             state: profile?.state
         }

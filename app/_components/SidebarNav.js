@@ -4,7 +4,7 @@ import {usePathname} from "next/navigation";
 import { RxDashboard } from "react-icons/rx";
 import { FiBell } from "react-icons/fi";
 import { BiBuildingHouse } from "react-icons/bi";
-import { FaRegHeart } from "react-icons/fa";
+import { FaIdCard, FaRegHeart } from "react-icons/fa";
 import { IoCardOutline } from "react-icons/io5";
 import { RiUserSettingsLine } from "react-icons/ri";
 import { LuMessageCircleQuestion } from "react-icons/lu";
@@ -59,6 +59,12 @@ const userNavList = [
         text: "Help/Support",
         link: "/contact",
         icon: <LuMessageCircleQuestion />
+    },
+    {
+        text: "KYC Verification",
+        link: "/dashboard/user/kyc",
+        icon: <FaIdCard />
+
     }
 ]
 

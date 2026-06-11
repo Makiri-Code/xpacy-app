@@ -495,17 +495,21 @@ export async function resetPassword(token, newPassword) {
 }
 
 export async function uploadKyc(formData) {
+  // Log the file for debugging
+  console.log('Uploading KYC file:', formData);
   const cookieStore = await cookies();
   const token = cookieStore.get("token");
   if (!token?.value) throw new Error("Please Log in to continue");
-  
+
   const response = await fetch(`${URL}/user/upload-kyc`, {
     method: "PUT",
     headers: { "Authorization": `Bearer ${token?.value}` },
-    body: formData
+    // Send the FormData directly; browser will set multipart/form-data
+    body: formData,
   });
   const data = await response.json();
   revalidateTag("user-profile");
+  console.log('Upload response:', data);
   return data;
 }
 
@@ -519,7 +523,7 @@ export async function addFeaturedProperty(propertyId) {
       "Content-Type": "application/json"
     }
   });
-  const data = await response.json();
+  const {data} = await response.json();
   revalidateTag("featured-properties");
   return data;
 }
